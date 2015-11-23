@@ -1,0 +1,52 @@
+/*
+ * ContourObject.h
+ *
+ *  Created on: 18.11.2015
+ *      Author: Standardbenutzer
+ */
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <ostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+
+using namespace cv;
+using namespace std;
+
+#ifndef CONTOUROBJECT_H_
+#define CONTOUROBJECT_H_
+
+class ContourObject {
+private:
+	Point2f massCenter;
+	vector<Point> contour;
+	Point firstPoint, lastPoint;
+public:
+
+	ContourObject(Point2f, vector<Point>);
+
+	virtual ~ContourObject();
+
+	//getter setter
+	Point2f getMassCenter();
+
+	vector<Point> getContour();
+	Point getLastPoint();
+	Point getFirstPoint();
+
+	friend ostream& operator<<(ostream& out, ContourObject& c) {
+		out << "massCenter: [" << c.massCenter.x << ", " << c.massCenter.y << "]" << endl;
+		out << "contLength: " << c.contour.size() << endl;
+		out << "firstPoint: " << c.firstPoint << " lasPoint: " << c.lastPoint << endl;
+		return out;
+	}
+
+	void drawContourOnMat(Mat);
+
+};
+
+#endif /* CONTOUROBJECT_H_ */
