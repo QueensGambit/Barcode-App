@@ -26,6 +26,7 @@
 								<option id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.667109812" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.468256953" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;G:\opencv249\opencv\release\install\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\opencv249\opencv\release\install\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\opencv249\opencv\release\install\include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.181947432" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -57,6 +58,7 @@
 								</option>
 								<option id="gnu.cpp.link.option.paths.1509246736" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;G:\opencv249\opencv\release\lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\opencv249\opencv\release\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\opencv249\opencv\release\lib&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1068023569" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
