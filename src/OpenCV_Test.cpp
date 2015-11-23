@@ -111,7 +111,7 @@ int main() {
 	skel3.copyTo(mfiltered);
 	cvtColor(mfiltered, mfiltered, CV_GRAY2BGR);
 
-	cvtColor(skel3, skel3, CV_GRAY2BGR);
+//	cvtColor(skel3, skel3, CV_GRAY2BGR);
 
 	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, 4 ));
 	cout << "fVecCO.size(): " << fVecCO.size() << endl;
@@ -126,7 +126,8 @@ int main() {
 //	draw_Lines(fVecCO, mfiltered);
 
 	//Mat mRotRect = Mat::zeros(mfiltered.size(), CV_8UC3);
-	draw_minRectangles(vecCO, mfiltered);
+//	draw_minRectangles(vecCO, mfiltered);
+	draw_minRectangles(fVecCO, mfiltered);
 	//bitwise_and(mfiltered, mRotRect, mfiltered);
 
 	//resize(skel2, skel2, blank.size());
@@ -137,9 +138,9 @@ int main() {
 	imshow("mFiltered", mfiltered);
 
 	/* namedWindow("Skel2 Adaptive Threshold", CV_WINDOW_AUTOSIZE);
-	 imshow("Skel2 Adaptiv Threshold", skel2);*/
+	 imshow("Skel2 Adaptiv Threshold", skel2);
 	 namedWindow("Skel3 Adaptive Threshold Gauss", CV_WINDOW_AUTOSIZE);
-	 imshow("Skel3 Adaptive Threshold Gauss", skel3);
+	 imshow("Skel3 Adaptive Threshold Gauss", skel3);*/
 
 	//probabilistic_hough( );
 	//cout << "wPixel 0,0 - 50,50" << count_whitePixel(Point2f(0,0), Point2f(50, 50), skel3) << endl;
@@ -611,7 +612,6 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 
 vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, int thresh) {
 
-	cout << "hallo" << endl;
 	  vector<RotatedRect> minRect( vecCO.size() );
 	  vector<ContourObject> fVecCO;
 	  //vector<RotatedRect> minEllipse( vecCO.size() );
@@ -640,10 +640,10 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, int thre
 	    	   //Point cur = rect_points[j];
 	    		//for (int z = 0; z < iteration; z++) {
 	    			//cur += fac * direction.getOrtsV();
-//	   		circle(m, rect_points[j], 2, Scalar(255,0,255), -1, 8, 0);
-//	    			if (m.at<uchar>(rect_points[j]) == 255) {
 
+//	    			if (m.at<uchar>(rect_points[j]) == 255) {
 	    	   	    if (wPxl_in_Area(rect_points[j], m, 1)) {
+	    		   		circle(m, normalize(rect_points[j], m), 2, Scalar(255,0,255), -1, 8, 0);
 	    				hits++;
 	    			}
 	    		//}
