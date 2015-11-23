@@ -61,6 +61,7 @@ int main() {
 	//blank = imread("C:/Users/Suhay/Dropbox/BarCode/bilder/gut/blank.jpg", CV_LOAD_IMAGE_COLOR);
 
 	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
 	//blank = imread("G:/Gimp/DBV/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 
@@ -278,8 +279,8 @@ bool wPxl_in_Area(Point center, Mat m, int dst) {
 	int endY = center.y + dst;
 	//cout << "endX: " << endX << endl;
 
-	for (int x = center.x-dst; x <= endX && x <= m.rows; x++) {
-		for (int y = center.y-dst; y <= endY && y <= m.cols; y++) {
+	for (int x = center.x-dst; x <= endX && x <= m.rows && x >= 0; x++) {
+		for (int y = center.y-dst; y <= endY && y <= m.cols && y >= 0; y++) {
 			//if (m.at<uchar>( normalize(Point(x, y), m) ) == 255) {
 				if (m.at<uchar>( Point(x, y)) == 255) {
 				circle(m, Point(x, y), 2, Scalar(255,0,255), -1, 8, 0);
@@ -658,7 +659,7 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, int thre
 	       //bitwise_and(m, mask, dst);
 
 	       if (hits >= thresh) {
-	    	   cout << "hits: " << hits << endl;
+//	    	   cout << "hits: " << hits << endl;
 	    	   fVecCO.push_back(vecCO[i]);
 	       }
 
