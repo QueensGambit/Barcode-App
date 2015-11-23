@@ -60,7 +60,9 @@ int main() {
 	//blank = imread("C:/Users/Suhay/Dropbox/BarCode/bilder/gut/blank.jpg", CV_LOAD_IMAGE_COLOR);
 
 	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
-	blank = imread("G:/Gimp/DBV/blank2.jpg", CV_LOAD_IMAGE_COLOR);
+	//blank = imread("G:/Gimp/DBV/blank2.jpg", CV_LOAD_IMAGE_COLOR);
+	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
+
 	int pxl_Sum = src.cols * src.rows;
 
 	cvtColor(src, gray, CV_BGR2GRAY);
