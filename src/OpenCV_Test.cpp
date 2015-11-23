@@ -48,6 +48,7 @@ char* skel_window = "Skel Window";
 //http://docs.opencv.org/doc/tutorials/imgproc/shapedescriptors/moments/moments.html
 
 int main() {
+	//Test Comment
 	/// Load source image, convert it to gray and blur it
 	//Mat blank;
 	Mat src;	//, gray;
