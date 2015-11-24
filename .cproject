@@ -26,9 +26,11 @@
 								<option id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.667109812" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.468256953" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;G:\opencv249\opencv\release\install\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Suhay\Downloads\InstallOpenCV\opencv\release\install\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\opencv249\opencv\release\install\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\opencv249\opencv\release\install\include&quot;"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.include.files.1884185829" name="Include files (-include)" superClass="gnu.cpp.compiler.option.include.files"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.181947432" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug.1170671618" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug">
@@ -58,6 +60,7 @@
 								</option>
 								<option id="gnu.cpp.link.option.paths.1509246736" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;G:\opencv249\opencv\release\lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Suhay\Downloads\InstallOpenCV\opencv\release\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\opencv249\opencv\release\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\opencv249\opencv\release\lib&quot;"/>
 								</option>
