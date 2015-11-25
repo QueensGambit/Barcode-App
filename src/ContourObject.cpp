@@ -34,6 +34,17 @@ Point ContourObject::getLastPoint(){
 Point ContourObject::getFirstPoint(){
 	return firstPoint;
 }
+void ContourObject::setRectPoints(Point2f point[4]){
+	for(int i =0; i<4;i++){
+		rect_point[i] = point[i];
+	}
+}
+void ContourObject::getRectPoints(Point2f p[4]){
+//	return rect_point;
+	for (int i = 0; i<4; i++){
+		p[i] = rect_point[i];
+	}
+}
 /*ostream& ContourObject::operator<<(ostream& out, ContourObject& c) {
 	out << "massCenter: [" << c.massCenter.x << ", " << c.massCenter.y << "]" << endl;
 	out << "contLength: " << c.contour.size();

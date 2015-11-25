@@ -559,6 +559,7 @@ vector<ContourObject> filter_lines(vector<ContourObject> vecCO, Mat skel, int hi
 void draw_Circles(vector<Point2f> mc, Mat m) {
 
 	cout << "mc.size() = " << mc.size() << endl;
+
 	for (int i = 0; i < mc.size(); i++) {
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
 				rng.uniform(0, 255));
@@ -579,15 +580,15 @@ void draw_Circles(vector<ContourObject> vecCO, Mat m) {
 
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 	  /// Find the rotated rectangles and ellipses for each contour
-	  vector<RotatedRect> minRect( vecCO.size() );
+//	  vector<RotatedRect> minRect( vecCO.size() );
 	  //vector<RotatedRect> minEllipse( vecCO.size() );
 
-	  for( int i = 0; i < vecCO.size(); i++ ) {
-		  minRect[i] = minAreaRect( Mat(vecCO[i].getContour()) );
-	       if( vecCO[i].getContour().size() > 5 ) {
-	    	   //minEllipse[i] = fitEllipse( Mat(vecCO[i].getContour()) ); }
-	       }
-	     }
+//	  for( int i = 0; i < vecCO.size(); i++ ) {
+//		  minRect[i] = minAreaRect( Mat(vecCO[i].getContour()) );
+//	       if( vecCO[i].getContour().size() > 5 ) {
+//	    	   //minEllipse[i] = fitEllipse( Mat(vecCO[i].getContour()) ); }
+//	       }
+//	     }
 
 	  /// Draw contours + rotated rects + ellipses
 	  //Mat drawing = Mat::zeros( threshold_output.size(), CV_8UC3 );
@@ -600,7 +601,8 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 	       //ellipse( m, minEllipse[i], color, 2, 8 );
 	       // rotated rectangle
 	       Point2f rect_points[4];
-	       minRect[i].points( rect_points );
+	       vecCO[i].getRectPoints(rect_points);
+//	       minRect[i].points( rect_points );
 	       Point intRect_points[4];
 	       for( int j = 0; j < 4; j++ ) {
 	    	  intRect_points[j] = rect_points[j];
@@ -650,6 +652,7 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, int thre
 	    		//}
 	          //line( m, rect_points[j], rect_points[(j+1)%4], color, 2, 8 );
 	       }
+
 	       //Mat cropedImage = fullImage(Rect(X,Y,Width,Height));
 	       //Mat cropedM = m(minRect[i].boundingRect());
 	       //Mat mask = Mat::zeros(cropedM.size(), CV_8UC3);
@@ -660,7 +663,9 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, int thre
 
 	       if (hits >= thresh) {
 //	    	   cout << "hits: " << hits << endl;
+	    	   vecCO[i].setRectPoints(rect_points);
 	    	   fVecCO.push_back(vecCO[i]);
+
 	       }
 
 	       /*if (countNonZero(dst) >= countNonZero(mask)*thresh) {
