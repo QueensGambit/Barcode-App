@@ -36,7 +36,7 @@ vector<ContourObject> filter_lines(vector<ContourObject>, Mat, int);
 vector<Point2f> island_filter(vector<Point2f>, Mat, int);
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
 vector<ContourObject> filter_by_rect(vector<ContourObject>, Mat, int);
-
+void cluster_rect(Mat, vector<ContourObject>);
 //global variables
 Mat skel, skel2, skel3, gray, blank, hough;
 int thresh = 127;
@@ -137,7 +137,8 @@ int main() {
 
 	namedWindow("mFiltered", CV_WINDOW_AUTOSIZE);	//CV_WINDOW_NORMAL
 	imshow("mFiltered", mfiltered);
-
+	Mat cluster = Mat::zeros(mfiltered.size(),CV_8UC1);
+	cluster_rect(cluster, fVecCO);
 	/* namedWindow("Skel2 Adaptive Threshold", CV_WINDOW_AUTOSIZE);
 	 imshow("Skel2 Adaptiv Threshold", skel2);
 	 namedWindow("Skel3 Adaptive Threshold Gauss", CV_WINDOW_AUTOSIZE);
@@ -609,7 +610,9 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 	          //line( m, rect_points[j], rect_points[(j+1)%4], color, 2, 8 );
 	       }
 //	       rectangle( m, minRect[i].boundingRect(), color, 8, 0);
-	       fillConvexPoly( m, intRect_points, 4, color, 8, 0);
+//	       fillConvexPoly( m, intRect_points, 4, color, 8, 0);
+	       fillConvexPoly( m, intRect_points, 4, Scalar(255,255,255), 8, 0);
+
 	     }
 }
 
@@ -677,9 +680,46 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, int thre
       /*namedWindow("bitwise_and", 1);
       imshow("bitwise_and", dst);*/
 	  return fVecCO;
-
 }
+void cluster_rect(Mat b, vector<ContourObject> vecCO){
+//	cvtColor(b, b, CV_BGR2);
+		draw_minRectangles(vecCO, b);
 
+		namedWindow("Rect", CV_WINDOW_AUTOSIZE);
+		imshow("Rect", b);
+
+
+		Mat kernel = getStructuringElement(MORPH_RECT, Size(21, 7));
+		morphologyEx(b, b, MORPH_CLOSE, kernel);
+
+					//namedWindow("closedThresh", 1);
+					//imshow("closedThresh", closed);
+
+					erode(b, b, kernel);
+
+					//namedWindow("closedDilate", 1);
+					//imshow("closedErode", closed);
+					blur(b,b,Size(9,9));
+					dilate(b, b, kernel);
+//--------------------------------------------------------------------------------------
+//					Rect bounding_rect;
+//
+//					for (unsigned int i = 0; i < contours.size(); i++) {
+//									double a = contourArea(contours[i], false);
+//									if (a > largest_area) {
+//										largest_area = a;
+//										largest_cnt_index = i;
+//										bounding_rect = boundingRect(contours[i]);
+//									}
+//								}
+//
+//								Scalar color(255, 255, 255);
+//								drawContours(saveImg, contours, largest_cnt_index, color,
+//										CV_WARP_INVERSE_MAP, 8, hierarchy);
+//								rectangle(saveImg, bounding_rect, Scalar(0, 255, 0), 2, 8, 0);
+		namedWindow("RectDilate", CV_WINDOW_AUTOSIZE);
+		imshow("RectDilate", b);
+}
 Point normalize (Point p, Mat m) {
 	if (p.x < 0) {
 		p.x = 0;
