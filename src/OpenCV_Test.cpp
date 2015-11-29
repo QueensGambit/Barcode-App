@@ -30,12 +30,13 @@ int chess_length(Point, Point);
 int count_whitePixel(Point2f, Point2f, Mat);
 Point2f topLeftPixel(Point2f, Mat);
 Point2f bottomRightPixel(Point2f, Mat);
-bool wPxl_in_Area(Point, Mat, int);
+bool wPxl_in_Area(Point2f&, Mat&, float);
+double filling(Mat&, RotatedRect&);
 
 vector<ContourObject> filter_lines(vector<ContourObject>, Mat, int);
 vector<Point2f> island_filter(vector<Point2f>, Mat, int);
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
-vector<ContourObject> filter_by_rect(vector<ContourObject>, Mat, int);
+vector<ContourObject> filter_by_rect(vector<ContourObject>, Mat, double);
 void cluster_rect(Mat, vector<ContourObject>);
 //global variables
 Mat skel, skel2, skel3, gray, blank, hough;
@@ -57,10 +58,11 @@ int main() {
 	//src = imread("G:/Gimp/DBV/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
 	//src = imread("G:/Gimp/DBV/sample.png", CV_LOAD_IMAGE_COLOR);
 	//src = imread("G:/Gimp/DBV/barcode_object3.png", CV_LOAD_IMAGE_COLOR);
-	//src = imread("G:/Gimp/DBV/bilder/kritisch/2015-10-07 13.18.46.jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("G:/Gimp/DBV/bilder/kritisch/2015-10-07 13.18.46.jpg", CV_LOAD_IMAGE_COLOR);
 	//blank = imread("C:/Users/Suhay/Dropbox/BarCode/bilder/gut/blank.jpg", CV_LOAD_IMAGE_COLOR);
 
 	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
 	//blank = imread("G:/Gimp/DBV/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
@@ -90,7 +92,7 @@ int main() {
 	//make_skelekton(skel3);
 	//cout << "pxl_Sum * 0.0005 = " << pxl_Sum * 0.00005 << endl;
 	//vector<Point2f> mc (find_moments( gray , pxl_Sum * 0.00005));
-	vector<ContourObject> vecCO(find_moments(gray, pxl_Sum * 0.00001, skel3));
+	vector<ContourObject> vecCO(find_moments(gray, pxl_Sum * 0.0001, skel3));
 	//vector<ContourObject> vecCO;
 	//vector<ContourObject> vecCO(find_moments(skel3, pxl_Sum * 0.00001, skel3));
 
@@ -114,7 +116,7 @@ int main() {
 
 //	cvtColor(skel3, skel3, CV_GRAY2BGR);
 
-	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, 4 ));
+	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .95 ));
 	cout << "fVecCO.size(): " << fVecCO.size() << endl;
 	//draw_Lines(vecCOfiltered, mfiltered);
 	//draw_Circles(mc_island_filtered, mfiltered);
@@ -216,7 +218,7 @@ vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel) {
 						//if (skel.at<uchar>(Point(tempMassCenter.x+dstX % skel.rows, tempMassCenter.y+dstY % skel.cols)) == 255) {
 						//if (skel.at<uchar>(Point(x , y )) == 255) {
 //						if (skel.at<uchar>( normalize(Point(x, y), skel) ) == 255) {
-						if (wPxl_in_Area(tempMassCenter, skel, 1)) {
+						if (wPxl_in_Area(tempMassCenter, skel, 2)) {
 							//int tempSize = vecCO[i].getContour().size();
 							ContourObject temp(tempMassCenter, contours[i]);
 							vecCO.push_back(temp);
@@ -274,16 +276,17 @@ vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel) {
 	return vecCO;
 }
 
-bool wPxl_in_Area(Point center, Mat m, int dst) {
+bool wPxl_in_Area(Point2f& center, Mat& m, float dst) {
 
-	int endX = center.x + dst;
-	int endY = center.y + dst;
+	float endX = center.x + dst;
+	float endY = center.y + dst;
 	//cout << "endX: " << endX << endl;
 
-	for (int x = center.x-dst; x <= endX && x <= m.rows && x >= 0; x++) {
-		for (int y = center.y-dst; y <= endY && y <= m.cols && y >= 0; y++) {
+	for (float x = center.x-dst; x <= endX && x <= m.rows && x >= 0; x+= 1.0f) {
+		for (float y = center.y-dst; y <= endY && y <= m.cols && y >= 0; y+= 1.0f) {
 			//if (m.at<uchar>( normalize(Point(x, y), m) ) == 255) {
-				if (m.at<uchar>( Point(x, y)) == 255) {
+//				if (m.at<uchar>( Point(x, y)) == 255) {
+				if (m.at<uchar>(Point2f(x,y)) != 0) {
 				circle(m, Point(x, y), 2, Scalar(255,0,255), -1, 8, 0);
 				return true;
 			}
@@ -616,7 +619,7 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 	     }
 }
 
-vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, int thresh) {
+vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, double thresh) {
 
 	  vector<RotatedRect> minRect( vecCO.size() );
 	  vector<ContourObject> fVecCO;
@@ -634,7 +637,30 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, int thre
 
 	     minRect[i] = minAreaRect( Mat(vecCO[i].getContour()) );
 
-	       Point2f rect_points[4];
+	    /* if (i == 100) {
+	 // rect is the RotatedRect (I got it from a contour...)
+//			 RotatedRect rect;
+			 // matrices we'll use
+			 Mat M, rotated, cropped;
+			 // get angle and size from the bounding box
+			 float angle = minRect[i].angle;
+			 Size rect_size = minRect[i].size;
+			 // thanks to http://felix.abecassis.me/2011/10/opencv-rotation-deskewing/
+			 if (minRect[i].angle < -45.) {
+				 angle += 90.0;
+				 swap(rect_size.width, rect_size.height);
+			 }
+			 // get the rotation matrix
+			 M = getRotationMatrix2D(minRect[i].center, angle, 1.0);
+			 // perform the affine transformation
+			 warpAffine(m, rotated, M, m.size(), INTER_CUBIC);
+			 // crop the resulting image
+			 getRectSubPix(rotated, rect_size, minRect[i].center, cropped);
+
+	    	 namedWindow("cropped", WINDOW_AUTOSIZE);
+	    	 imshow("cropped", cropped);
+	     }*/
+	       /*Point2f rect_points[4];
 	       minRect[i].points( rect_points );
 	       //int iteration = 5;
 	       //float fac = 0.2;
@@ -669,18 +695,26 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, int thre
 	    	   vecCO[i].setRectPoints(rect_points);
 	    	   fVecCO.push_back(vecCO[i]);
 
-	       }
+	       }*/
 
 	       /*if (countNonZero(dst) >= countNonZero(mask)*thresh) {
 	    	   cout << "countNonZero(mask): " << countNonZero(mask) << endl;
 	    	   fVecCO.push_back(vecCO[i]);
 	       }*/
+
+			 if (filling(m, minRect[i]) >= thresh) {
+				   Point2f rect_points[4];
+				   minRect[i].points( rect_points );
+				   vecCO[i].setRectPoints(rect_points);
+				   fVecCO.push_back(vecCO[i]);
+			 }
 	     }
 
       /*namedWindow("bitwise_and", 1);
       imshow("bitwise_and", dst);*/
 	  return fVecCO;
 }
+
 void cluster_rect(Mat b, vector<ContourObject> vecCO){
 //	cvtColor(b, b, CV_BGR2);
 		draw_minRectangles(vecCO, b);
@@ -720,6 +754,7 @@ void cluster_rect(Mat b, vector<ContourObject> vecCO){
 		namedWindow("RectDilate", CV_WINDOW_AUTOSIZE);
 		imshow("RectDilate", b);
 }
+
 Point normalize (Point p, Mat m) {
 	if (p.x < 0) {
 		p.x = 0;
@@ -734,4 +769,31 @@ Point normalize (Point p, Mat m) {
 		p.y = m.cols;
 	}
 	return p;
+}
+
+double filling(Mat& img, RotatedRect& rect){
+
+    double non_zero = 0;
+    double total = 0;
+    Point2f rect_points[4];
+    rect.points( rect_points );
+
+//    for(Point2f i=rect_points[0]; norm(i-rect_points[1])>1; i+=(rect_points[1]-i)/norm((rect_points[1]-i)))  {
+      for(Point2f i=rect_points[0]; norm(i-rect_points[1])>1;
+    		  i+=Point2f((rect_points[1]-i).x/norm((rect_points[1]-i)),
+    				  (rect_points[1]-i).y/norm((rect_points[1]-i))))  {
+        Point2f destination = i+rect_points[2]-rect_points[1];
+//        for(Point2f j=i; norm(j-destination)>1; j+=(destination-j)/norm((destination-j))) {
+          for(Point2f j=i; norm(j-destination)>1;
+        		  j+=Point2f((destination.x-j.x)/norm((destination-j)),
+        				  (destination.y-j.y)/norm((destination-j)))) {
+//            if(img.at<uchar>(j) != 0){
+            if(wPxl_in_Area(j, img, 0)){
+                non_zero+=1;
+            }
+            total+=1;
+        }
+    }
+
+    return non_zero/total;
 }
