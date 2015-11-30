@@ -59,6 +59,7 @@ int main() {
 	//src = imread("G:/Gimp/DBV/sample.png", CV_LOAD_IMAGE_COLOR);
 	//src = imread("G:/Gimp/DBV/barcode_object3.png", CV_LOAD_IMAGE_COLOR);
 //	src = imread("G:/Gimp/DBV/bilder/kritisch/2015-10-07 13.18.46.jpg", CV_LOAD_IMAGE_COLOR);
+//		src = imread("G:/Gimp/DBV/bilder/gut/20151007_133654.jpg", CV_LOAD_IMAGE_COLOR);
 	//blank = imread("C:/Users/Suhay/Dropbox/BarCode/bilder/gut/blank.jpg", CV_LOAD_IMAGE_COLOR);
 
 	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
@@ -92,7 +93,7 @@ int main() {
 	//make_skelekton(skel3);
 	//cout << "pxl_Sum * 0.0005 = " << pxl_Sum * 0.00005 << endl;
 	//vector<Point2f> mc (find_moments( gray , pxl_Sum * 0.00005));
-	vector<ContourObject> vecCO(find_moments(gray, pxl_Sum * 0.0001, skel3));
+	vector<ContourObject> vecCO(find_moments(gray, pxl_Sum * 0.00004, skel3));
 	//vector<ContourObject> vecCO;
 	//vector<ContourObject> vecCO(find_moments(skel3, pxl_Sum * 0.00001, skel3));
 
@@ -135,7 +136,7 @@ int main() {
 
 	//resize(skel2, skel2, blank.size());
 	//resize(skel3, skel3, blank.size());
-	//resize(mfiltered, mfiltered, blank.size());
+//	resize(mfiltered, mfiltered, blank.size());
 
 	namedWindow("mFiltered", CV_WINDOW_AUTOSIZE);	//CV_WINDOW_NORMAL
 	imshow("mFiltered", mfiltered);
@@ -257,7 +258,7 @@ vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel) {
 	}
 
 	//resize(bw, bw, blank.size());
-	//resize(drawing, drawing, blank.size());
+//	resize(drawing, drawing, blank.size());
 	resize(canny_output, canny_output, blank.size());
 
 	//namedWindow("Black_White", CV_WINDOW_AUTOSIZE);
@@ -701,13 +702,26 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, double t
 	    	   cout << "countNonZero(mask): " << countNonZero(mask) << endl;
 	    	   fVecCO.push_back(vecCO[i]);
 	       }*/
+	     	 float width = minRect[i].size.width;
+	     	 float height = minRect[i].size.height;
+	     	 float ratio;
+	     	 if (width > height) {
+	     		 ratio = width / height;
+	     	 }
+	     	 else {
+	     		 ratio = height / width;
+	     	 }
+//	     	 cout << "ratio: " << ratio << endl;
 
-			 if (filling(m, minRect[i]) >= thresh) {
+			 if (filling(m, minRect[i]) >= thresh && ratio >= 10) {
 				   Point2f rect_points[4];
 				   minRect[i].points( rect_points );
 				   vecCO[i].setRectPoints(rect_points);
 				   fVecCO.push_back(vecCO[i]);
 			 }
+
+ 		   // cout << "aspectRatio:" << minRect[i].size.width / minRect[i].size.height << endl;
+
 	     }
 
       /*namedWindow("bitwise_and", 1);
