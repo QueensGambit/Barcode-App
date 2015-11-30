@@ -38,6 +38,7 @@ vector<ContourObject> filter_lines(vector<ContourObject>, Mat, int);
 vector<Point2f> island_filter(vector<Point2f>, Mat, int);
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
 vector<ContourObject> filter_by_rect(vector<ContourObject>, Mat, float, float);
+vector<ContourObject> filter_by_dst(vector<ContourObject>, int, float);
 void cluster_rect(Mat, vector<ContourObject>);
 //global variables
 Mat skel, skel2, skel3, gray, blank, hough;
@@ -66,6 +67,8 @@ int main() {
 	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/internet/Knorr fix Bolognese (3).JPG", CV_LOAD_IMAGE_COLOR);
+
 	//blank = imread("G:/Gimp/DBV/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 
@@ -119,8 +122,12 @@ int main() {
 
 //	cvtColor(skel3, skel3, CV_GRAY2BGR);
 
-	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .95, 7 ));
+	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .95, 7 )); //.95, 7
+	vector<ContourObject> fVecCO2(filter_by_dst(fVecCO, pxl_Sum, 0.00001 )); //0.0001
+
 	cout << "fVecCO.size(): " << fVecCO.size() << endl;
+	cout << "fVecCO2.size(): " << fVecCO2.size() << endl;
+
 	//draw_Lines(vecCOfiltered, mfiltered);
 	//draw_Circles(mc_island_filtered, mfiltered);
 	//draw_Circles(mc_filtered, mfiltered);
@@ -133,7 +140,7 @@ int main() {
 
 	//Mat mRotRect = Mat::zeros(mfiltered.size(), CV_8UC3);
 //	draw_minRectangles(vecCO, mfiltered);
-	draw_minRectangles(fVecCO, mfiltered);
+//	draw_minRectangles(fVecCO2, mfiltered);
 	//bitwise_and(mfiltered, mRotRect, mfiltered);
 
 	//resize(skel2, skel2, blank.size());
@@ -143,7 +150,7 @@ int main() {
 	namedWindow("mFiltered", CV_WINDOW_AUTOSIZE);	//CV_WINDOW_NORMAL
 	imshow("mFiltered", mfiltered);
 	Mat cluster = Mat::zeros(mfiltered.size(),CV_8UC1);
-	cluster_rect(cluster, fVecCO);
+	cluster_rect(cluster, fVecCO2);
 	/* namedWindow("Skel2 Adaptive Threshold", CV_WINDOW_AUTOSIZE);
 	 imshow("Skel2 Adaptiv Threshold", skel2);
 	 namedWindow("Skel3 Adaptive Threshold Gauss", CV_WINDOW_AUTOSIZE);
@@ -707,6 +714,7 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, float th
 	     	 float width = minRect[i].size.width;
 	     	 float height = minRect[i].size.height;
 	     	 float ratio;
+
 	     	 if (width > height) {
 	     		 ratio = width / height;
 	     	 }
@@ -719,8 +727,12 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, float th
 				   Point2f rect_points[4];
 				   minRect[i].points( rect_points );
 				   vecCO[i].setRectPoints(rect_points);
+				   vecCO[i].setMassCenter(minRect[i].center);
+
 				   fVecCO.push_back(vecCO[i]);
 			 }
+
+
 
  		   // cout << "aspectRatio:" << minRect[i].size.width / minRect[i].size.height << endl;
 
@@ -769,6 +781,15 @@ void cluster_rect(Mat b, vector<ContourObject> vecCO){
 //								rectangle(saveImg, bounding_rect, Scalar(0, 255, 0), 2, 8, 0);
 		namedWindow("RectDilate", CV_WINDOW_AUTOSIZE);
 		imshow("RectDilate", b);
+/*
+	    Mat dist;
+	    distanceTransform(b, dist, CV_DIST_L2, 3);
+		namedWindow("non-normalized", CV_WINDOW_AUTOSIZE);
+	    imshow("non-normalized", dist);
+
+	    normalize(dist, dist, 0.0, 1.0, NORM_MINMAX);
+		namedWindow("normalized", CV_WINDOW_AUTOSIZE);
+	    imshow("normalized", dist);*/
 }
 
 Point normalize (Point p, Mat m) {
@@ -846,4 +867,30 @@ vector<ContourObject> find_mser(Mat gray) {
 
     return vecCO;
 
+}
+
+vector<ContourObject> filter_by_dst(vector<ContourObject> vecCO, int pxlSum, float threshDst) {
+
+	vector<ContourObject> fVecCO;
+	Mat m = Mat::zeros(skel3.size(), CV_8UC1);
+
+	   float dist;
+	   for (int i = 0; i < vecCO.size(); i++) {
+		 for (int z = 0; z < vecCO.size(); z++) {
+			 if (z != i) {
+				 dist = norm(vecCO[z].getMassCenter() - vecCO[i].getMassCenter());
+				 if (dist <= threshDst*pxlSum) { //0.00008
+//								 cout << "dist: " << dist << endl;
+					 line( m, vecCO[z].getMassCenter(), vecCO[i].getMassCenter(), Scalar(255,255,255), 2, 8 );
+					fVecCO.push_back(vecCO[i]);
+					 break;
+				 }
+			 }
+		 }
+	   }
+
+	   namedWindow("dst", WINDOW_AUTOSIZE);
+	   imshow("dst", m);
+
+	   return fVecCO;
 }

@@ -28,6 +28,10 @@ ContourObject::~ContourObject() {
 }
 
 //getter setter
+void ContourObject::setMassCenter(Point2f p){
+	massCenter = p;
+}
+
 Point2f ContourObject::getMassCenter() {
 	return massCenter;
 }

@@ -36,6 +36,7 @@ public:
 	virtual ~ContourObject();
 
 	//getter setter
+	void setMassCenter(Point2f);
 	Point2f getMassCenter();
 
 	vector<Point> getContour();
