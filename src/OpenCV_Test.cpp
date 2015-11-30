@@ -15,6 +15,7 @@ using namespace std;
 RNG rng(12345);
 
 vector<ContourObject> find_moments(Mat, int, Mat);
+vector<ContourObject> find_mser(Mat);
 void bw_thresh_callback(int, void*);
 void make_skelekton(Mat);
 void probabilistic_hough();
@@ -36,7 +37,7 @@ double filling(Mat&, RotatedRect&);
 vector<ContourObject> filter_lines(vector<ContourObject>, Mat, int);
 vector<Point2f> island_filter(vector<Point2f>, Mat, int);
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
-vector<ContourObject> filter_by_rect(vector<ContourObject>, Mat, double);
+vector<ContourObject> filter_by_rect(vector<ContourObject>, Mat, float, float);
 void cluster_rect(Mat, vector<ContourObject>);
 //global variables
 Mat skel, skel2, skel3, gray, blank, hough;
@@ -55,7 +56,7 @@ int main() {
 	Mat src;	//, gray;
 	//src = imread("C:/Users/Suhay/Dropbox/BarCode/bilder/gut/2015-10-07 13.27.19.jpg", CV_LOAD_IMAGE_COLOR);
 	//src = imread("G:/Gimp/DBV/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
-	//src = imread("G:/Gimp/DBV/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("G:/Gimp/DBV/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
 	//src = imread("G:/Gimp/DBV/sample.png", CV_LOAD_IMAGE_COLOR);
 	//src = imread("G:/Gimp/DBV/barcode_object3.png", CV_LOAD_IMAGE_COLOR);
 //	src = imread("G:/Gimp/DBV/bilder/kritisch/2015-10-07 13.18.46.jpg", CV_LOAD_IMAGE_COLOR);
@@ -71,7 +72,7 @@ int main() {
 	int pxl_Sum = src.cols * src.rows;
 
 	cvtColor(src, gray, CV_BGR2GRAY);
-	blur(gray, gray, Size(3, 3));
+//	blur(gray, gray, Size(3, 3));
 
 	//invert the image !
 	gray = ~gray;
@@ -93,7 +94,8 @@ int main() {
 	//make_skelekton(skel3);
 	//cout << "pxl_Sum * 0.0005 = " << pxl_Sum * 0.00005 << endl;
 	//vector<Point2f> mc (find_moments( gray , pxl_Sum * 0.00005));
-	vector<ContourObject> vecCO(find_moments(gray, pxl_Sum * 0.00004, skel3));
+//	vector<ContourObject> vecCO(find_moments(gray, pxl_Sum * 0.00004, skel3));
+	vector<ContourObject> vecCO(find_mser(gray));
 	//vector<ContourObject> vecCO;
 	//vector<ContourObject> vecCO(find_moments(skel3, pxl_Sum * 0.00001, skel3));
 
@@ -117,7 +119,7 @@ int main() {
 
 //	cvtColor(skel3, skel3, CV_GRAY2BGR);
 
-	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .95 ));
+	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .95, 7 ));
 	cout << "fVecCO.size(): " << fVecCO.size() << endl;
 	//draw_Lines(vecCOfiltered, mfiltered);
 	//draw_Circles(mc_island_filtered, mfiltered);
@@ -620,7 +622,7 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 	     }
 }
 
-vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, double thresh) {
+vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, float threshWPxl, float threshAspect) {
 
 	  vector<RotatedRect> minRect( vecCO.size() );
 	  vector<ContourObject> fVecCO;
@@ -713,7 +715,7 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, double t
 	     	 }
 //	     	 cout << "ratio: " << ratio << endl;
 
-			 if (filling(m, minRect[i]) >= thresh && ratio >= 10) {
+			 if (filling(m, minRect[i]) >= threshWPxl && ratio >= threshAspect) {
 				   Point2f rect_points[4];
 				   minRect[i].points( rect_points );
 				   vecCO[i].setRectPoints(rect_points);
@@ -810,4 +812,38 @@ double filling(Mat& img, RotatedRect& rect){
     }
 
     return non_zero/total;
+}
+
+vector<ContourObject> find_mser(Mat gray) {
+
+    MSER ms;
+
+    ms.set("delta", 9); //default 5
+    ms.set("minArea", 30); //default 60
+    ms.set("maxArea", 3500 ); //default 14400
+    ms.set("minMargin", 0.001); //.003
+    ms.set("edgeBlurSize", 1); //5
+    ms.set("minDiversity", .3); //0.2
+    ms.set("maxVariation", .3); //0.25
+
+    vector<vector<Point> > regions;
+
+    ms(gray, regions, Mat());
+	vector<ContourObject> vecCO(regions.size());
+//	vector<Moments> mu(contours.size());
+    Mat mser = Mat::zeros(gray.size(), CV_8UC3);
+
+    for (int i = 0; i < regions.size(); i++) {
+	ContourObject temp(regions[i]);
+    Scalar color = Scalar(rng.uniform(0,255), rng.uniform(0,255), rng.uniform(0,255));
+    drawContours(mser,regions,i,color,1,8, vector<Vec4i>(), 0, Point());
+	vecCO[i] = temp;
+    }
+
+    namedWindow("mser", WINDOW_AUTOSIZE);
+    imshow("mser", mser);
+
+
+    return vecCO;
+
 }

@@ -15,6 +15,14 @@ ContourObject::ContourObject(Point2f mc, vector<Point>c) {
 			//lastPoint = contour[4];
 }
 
+ContourObject::ContourObject(vector<Point> c) {
+	contour.swap(c);
+}
+
+ContourObject::ContourObject() {
+
+}
+
 ContourObject::~ContourObject() {
 	// TODO Auto-generated destructor stub
 }

@@ -30,6 +30,8 @@ private:
 public:
 
 	ContourObject(Point2f, vector<Point>);
+	ContourObject(vector<Point>);
+	ContourObject();
 
 	virtual ~ContourObject();
 
