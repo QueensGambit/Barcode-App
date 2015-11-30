@@ -66,6 +66,7 @@ int main() {
 
 	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/Knorr fix Bolognese (3).JPG", CV_LOAD_IMAGE_COLOR);
 
@@ -84,16 +85,18 @@ int main() {
 	namedWindow("Source", CV_WINDOW_AUTOSIZE);
 	imshow("Source", src);
 
-	//namedWindow( "Gray", CV_WINDOW_AUTOSIZE );
-	//imshow( "Gray", gray );
-
 	namedWindow(skel_window, CV_WINDOW_AUTOSIZE);
 	//createTrackbar("Threshold: ", "Source", &thresh, max_thresh, bw_thresh_callback);
 	//15, -2
-	//adaptiveThreshold(gray, skel2, 255, CV_ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, -8);
+//	adaptiveThreshold(gray, skel2, 255, CV_ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, -8);
 	//make_skelekton(skel2);
 
 	adaptiveThreshold(gray, skel3, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, -8);
+
+	gray += skel3;
+	namedWindow( "Gray", CV_WINDOW_AUTOSIZE );
+	imshow( "Gray", gray );
+
 	//make_skelekton(skel3);
 	//cout << "pxl_Sum * 0.0005 = " << pxl_Sum * 0.00005 << endl;
 	//vector<Point2f> mc (find_moments( gray , pxl_Sum * 0.00005));
@@ -122,8 +125,8 @@ int main() {
 
 //	cvtColor(skel3, skel3, CV_GRAY2BGR);
 
-	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .95, 7 )); //.95, 7
-	vector<ContourObject> fVecCO2(filter_by_dst(fVecCO, pxl_Sum, 0.00001 )); //0.0001
+	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .8, 7 )); //.95, 7
+	vector<ContourObject> fVecCO2(filter_by_dst(fVecCO, pxl_Sum, 0.00001 )); //0.00001
 
 	cout << "fVecCO.size(): " << fVecCO.size() << endl;
 	cout << "fVecCO2.size(): " << fVecCO2.size() << endl;
@@ -140,7 +143,7 @@ int main() {
 
 	//Mat mRotRect = Mat::zeros(mfiltered.size(), CV_8UC3);
 //	draw_minRectangles(vecCO, mfiltered);
-//	draw_minRectangles(fVecCO2, mfiltered);
+	draw_minRectangles(fVecCO2, mfiltered);
 	//bitwise_and(mfiltered, mRotRect, mfiltered);
 
 	//resize(skel2, skel2, blank.size());
@@ -839,12 +842,12 @@ vector<ContourObject> find_mser(Mat gray) {
 
     MSER ms;
 
-    ms.set("delta", 9); //default 5
+    ms.set("delta", 3); //default 5
     ms.set("minArea", 30); //default 60
     ms.set("maxArea", 3500 ); //default 14400
     ms.set("minMargin", 0.001); //.003
     ms.set("edgeBlurSize", 1); //5
-    ms.set("minDiversity", .3); //0.2
+    ms.set("minDiversity", .9); //0.2
     ms.set("maxVariation", .3); //0.25
 
     vector<vector<Point> > regions;
