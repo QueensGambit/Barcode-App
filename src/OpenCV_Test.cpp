@@ -60,9 +60,9 @@ int main() {
 //		src = imread("G:/Gimp/DBV/bilder/gut/20151007_133654.jpg", CV_LOAD_IMAGE_COLOR);
 	//blank = imread("C:/Users/Suhay/Dropbox/BarCode/bilder/gut/blank.jpg", CV_LOAD_IMAGE_COLOR);
 
-//	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
+	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
-	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/Knorr fix Bolognese (3).JPG", CV_LOAD_IMAGE_COLOR);
 
@@ -74,7 +74,7 @@ int main() {
 	//	get source from camera by video capture
 	//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 		VideoCapture capture(0); 								// open default camera
 
 		if (!capture.isOpened()) {
@@ -97,10 +97,11 @@ int main() {
 			}
 		}
 
-		//	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 
-		blank = imread("C:/Users/Björn/Documents/Programme/eclipse c++/media/blank.jpg", CV_LOAD_IMAGE_COLOR);			//new blank image
 
+//		blank = imread("C:/Users/Björn/Documents/Programme/eclipse c++/media/blank.jpg", CV_LOAD_IMAGE_COLOR);			//new blank image
+*/
+	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	//	end of capturing
