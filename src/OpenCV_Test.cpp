@@ -99,7 +99,6 @@ int main() {
 
 
 
-//		blank = imread("C:/Users/Björn/Documents/Programme/eclipse c++/media/blank.jpg", CV_LOAD_IMAGE_COLOR);			//new blank image
 */
 	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -813,21 +812,21 @@ void crop(Mat src, Mat img) {
 		}
 	}
 
-//	Scalar color(255, 255, 255);
-//	drawContours(img, bc_contours, largest_contour_index, color, CV_FILLED, 8,	hierarchy);
-//	rectangle(img, roi, Scalar(0, 255, 0), 1, 8, 0);
+	Size s( roi.width * 0.3, roi.height * 0.3 );					//expanding rectangle by 30%
+	Point offset( s.width/2, s.height/2);							//shifting the rectangle
+	roi += s;
+	roi -= offset;
 
-		Scalar color(255, 255, 255);
-		drawContours(img, bc_contours, largest_contour_index, color, CV_FILLED, 8, hierarchy);
-		rectangle(src, roi, Scalar(0, 255, 0), 1, 8, 0);
-
+	Scalar color(255, 255, 255);
+	drawContours(img, bc_contours, largest_contour_index, color, CV_FILLED, 8, hierarchy);
+	rectangle(src, roi, Scalar(0, 255, 0), 1, 8, 0);
 
 
 
 	/////////////////////////////////////////////////////////////////get angle and rotate
 
 
-	Mat croppedRef(src, roi);											//crop and copy the region
+	Mat croppedRef(src, roi);										//crop and copy the region
 	croppedRef.copyTo(cropImage);
 
 
