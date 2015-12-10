@@ -16,6 +16,8 @@ using namespace std;
 
 RNG rng(12345);
 
+void crop(Mat, Mat);
+
 vector<ContourObject> find_moments(Mat, int, Mat);
 vector<ContourObject> find_mser(Mat);
 void bw_thresh_callback(int, void*);
@@ -65,7 +67,46 @@ int main() {
 //	src = imread("media/internet/Knorr fix Bolognese (3).JPG", CV_LOAD_IMAGE_COLOR);
 
 	//blank = imread("G:/Gimp/DBV/blank2.jpg", CV_LOAD_IMAGE_COLOR);
-	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
+	//blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+	//	get source from camera by video capture
+	//
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		VideoCapture capture(0); 								// open default camera
+
+		if (!capture.isOpened()) {
+			cout << "ERROR: Could not open Camera";
+			return -1;
+		}
+
+		namedWindow("Camera", CV_WINDOW_AUTOSIZE);
+
+		while (true) {
+
+			Mat frame;
+			capture >> frame; 									// get frames
+			imshow("Camera", frame);
+
+			if (waitKey(30) == 13) {// press enter to break loop and copy frame into source image
+				frame.copyTo(src);
+				destroyAllWindows();
+				break;
+			}
+		}
+
+		//	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
+
+		blank = imread("C:/Users/Björn/Documents/Programme/eclipse c++/media/blank.jpg", CV_LOAD_IMAGE_COLOR);			//new blank image
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+	//	end of capturing
+	//
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	int pxl_Sum = src.cols * src.rows;
 
@@ -75,7 +116,7 @@ int main() {
 	//invert the image !
 	gray = ~gray;
 
-	resize(src, src, blank.size());
+//	resize(src, src, blank.size());
 	namedWindow("Source", CV_WINDOW_AUTOSIZE);
 	imshow("Source", src);
 
@@ -155,6 +196,9 @@ int main() {
 
 	//probabilistic_hough( );
 	//cout << "wPixel 0,0 - 50,50" << count_whitePixel(Point2f(0,0), Point2f(50, 50), skel3) << endl;
+
+	crop(src, cluster);
+
 	waitKey(0);
 	return (0);
 }
@@ -730,3 +774,69 @@ vector<ContourObject> filter_by_dst(vector<ContourObject> vecCO, int pxlSum, flo
 
 	   return fVecCO;
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	find contours and crop region of interest
+//
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void crop(Mat src, Mat img) {
+
+
+
+	double largest_area = 0;
+	int largest_contour_index = 0;
+	Mat cropImage;
+	Rect roi;														//region of interest
+
+//	cvtColor(img, grey, CV_BGR2GRAY);
+//	threshold(grey, grey, 125, 255, THRESH_BINARY);
+
+	vector<vector<Point> > bc_contours; 							//contains potential barcode contour
+	vector<Vec4i> hierarchy;
+
+	findContours(img, bc_contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+
+
+	for (int i = 0; i < bc_contours.size(); i++) {
+
+		double area = contourArea(bc_contours[i], false);
+
+		if (area > largest_area) {
+
+			largest_area = area;
+			largest_contour_index = i;
+			roi = boundingRect(bc_contours[i]); 					//find rectangle with largest contour
+		}
+	}
+
+//	Scalar color(255, 255, 255);
+//	drawContours(img, bc_contours, largest_contour_index, color, CV_FILLED, 8,	hierarchy);
+//	rectangle(img, roi, Scalar(0, 255, 0), 1, 8, 0);
+
+		Scalar color(255, 255, 255);
+		drawContours(img, bc_contours, largest_contour_index, color, CV_FILLED, 8, hierarchy);
+		rectangle(src, roi, Scalar(0, 255, 0), 1, 8, 0);
+
+
+
+
+	/////////////////////////////////////////////////////////////////get angle and rotate
+
+
+	Mat croppedRef(src, roi);											//crop and copy the region
+	croppedRef.copyTo(cropImage);
+
+
+	namedWindow("cropped", 0);
+	imshow("cropped", cropImage);
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	end of crop
+//
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
