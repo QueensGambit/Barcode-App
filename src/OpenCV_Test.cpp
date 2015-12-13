@@ -24,8 +24,7 @@ void bw_thresh_callback(int, void*);
 void make_skelekton(Mat);
 void probabilistic_hough();
 vector<Point2f> filter_moments(vector<Point2f>, Mat);
-void draw_Circles(vector<Point2f>, Mat);
-void draw_Circles(vector<ContourObject>, Mat);
+
 void draw_Lines(vector<ContourObject>, Mat);
 
 
@@ -489,28 +488,6 @@ vector<ContourObject> filter_lines(vector<ContourObject> vecCO, Mat skel, int hi
 		}
 	}
 	return newVecCO;
-}
-
-void draw_Circles(vector<Point2f> mc, Mat m) {
-
-	cout << "mc.size() = " << mc.size() << endl;
-
-	for (int i = 0; i < mc.size(); i++) {
-		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
-				rng.uniform(0, 255));
-		circle(m, mc[i], 4, color, -1, 8, 0);
-	}
-}
-
-void draw_Circles(vector<ContourObject> vecCO, Mat m) {
-
-	cout << "vecCO.size() = " << vecCO.size() << endl;
-	for (int i = 0; i < vecCO.size(); i++) {
-		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
-				rng.uniform(0, 255));
-
-		circle(m, vecCO[i].getMassCenter(), 4, color, -1, 8, 0);
-	}
 }
 
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
