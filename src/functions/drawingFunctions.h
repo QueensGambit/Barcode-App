@@ -25,4 +25,7 @@ using namespace std;
 void draw_Circles(vector<Point2f>, Mat);
 void draw_Circles(vector<ContourObject>, Mat);
 
+void draw_Lines(vector<ContourObject>, Mat);
+void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
+
 #endif /* DRAWINGFUNCTIONS_H_ */
