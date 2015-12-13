@@ -173,3 +173,49 @@ double getfilledRatio(Mat& img, RotatedRect& rect){
 
     return non_zero/total;
 }
+
+//function with side-effects
+void make_skelekton(Mat img) {
+	//Mat img;
+	//gray.copyTo(img);
+
+	Mat skel(img.size(), CV_8UC1, cv::Scalar(0));
+	Mat temp;
+	Mat eroded;
+
+	Mat element = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
+
+	bool done;
+	do {
+		erode(img, eroded, element);
+		dilate(eroded, temp, element); // temp = open(img)
+		subtract(img, temp, temp);
+		bitwise_or(skel, temp, skel);
+		eroded.copyTo(img);
+
+		done = (countNonZero(img) == 0);
+	} while (!done);
+
+	skel.copyTo(img);
+}
+
+void probabilistic_hough(Mat m) {
+	vector<Vec4i> p_lines;
+	Mat hough;
+	cvtColor(m, hough, COLOR_GRAY2BGR);
+
+	/// 2. Use Probabilistic Hough Transform
+	HoughLinesP(m, p_lines, 1, CV_PI / 180, 50, 30, 10);
+
+	/// Show the result
+	for (size_t i = 0; i < p_lines.size(); i++) {
+		Vec4i l = p_lines[i];
+		line(hough, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(255, 0, 0), 3);
+
+		//  line( probabilistic_hough, Point(lines[i][0], lines[i][1]),        //8
+		//     Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 3, CV_AA );
+	}
+
+	namedWindow("hough Window", WINDOW_AUTOSIZE);
+	imshow("hough Window", hough);
+}

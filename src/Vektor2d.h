@@ -1,3 +1,11 @@
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/opencv.hpp>
+#include <iostream>
+
+using namespace cv;
+using namespace std;
+
 #ifndef VEKTOR2D_H_
 #define VEKTOR2D_H_
 
@@ -8,13 +16,6 @@
  *      Author: Suhay
  */
 
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include <opencv2/opencv.hpp>
-#include <iostream>
-
-using namespace cv;
-using namespace std;
 
 class Vektor2d {
 private:

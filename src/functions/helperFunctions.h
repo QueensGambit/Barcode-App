@@ -37,4 +37,8 @@ Point2f bottomRightPixel(Point2f, Mat);
 
 double getfilledRatio(Mat&, RotatedRect&);
 
+void make_skelekton(Mat);
+
+void probabilistic_hough();
+
 #endif /* HELPERFUNCTIONS_H_ */

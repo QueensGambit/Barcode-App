@@ -140,3 +140,133 @@ vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, float th
       imshow("bitwise_and", dst);*/
 	  return fVecCO;
 }
+
+vector<ContourObject> filter_lines(vector<ContourObject> vecCO, Mat skel, int hitThresh) {
+	Point last;
+	Point temp;
+	int hits = 0;
+	vector<ContourObject> newVecCO;
+
+	for (int i = 0; i < vecCO.size(); i++) {
+		temp = vecCO[i].getFirstPoint();
+		last = vecCO[i].getLastPoint();
+		Vektor2d vektor(temp, last);
+		//cout << "vecCO.size(): " << vecCO.size() << endl;
+		//cout << "vektor: " << vektor << endl;
+		float lambda = 0.0;
+		float schritt = 0.1;
+		while (lambda <= 1.0) {
+			//cout << "lambda" << lambda << endl;
+			if (skel.at<uchar>(temp) == 255) {
+				temp.x += lambda * vektor.getOrtsV().x;
+				temp.y += lambda * vektor.getOrtsV().y;
+				cout << "temp: " << temp << endl;
+				//temp=lambda*vektor.getOrtsV();
+				hits++;
+				cout << "hits: " << hits << endl;
+			}
+			lambda += schritt;
+		}
+
+		if (hits >= hitThresh) {
+			newVecCO.push_back(vecCO[i]);
+		}
+	}
+	return newVecCO;
+}
+
+vector<Point2f> island_filter(vector<Point2f> mc, Mat skel, int thresh) {
+
+	Point2f tL, bR;
+	vector<Point2f> temp;
+	for (unsigned int i = 0; i < mc.size(); i++) {
+		tL = topLeftPixel(mc[i], skel);
+		bR = bottomRightPixel(mc[i], skel);
+
+		/*cout << "tL.x" << tL.x << endl;
+		 cout << "tL.y" << tL.y << endl;
+		 cout << "bR.x" << bR.x << endl;
+		 cout << "bR.y" << bR.y << endl;*/
+
+		if (count_whitePixel(tL, bR, skel) >= thresh) {
+			temp.push_back(mc[i]);
+		}
+	}
+
+	return temp;
+}
+
+vector<ContourObject> filter_by_dst(vector<ContourObject> vecCO, int pxlSum, float threshDst, Size size) {
+
+	vector<ContourObject> fVecCO;
+	Mat m = Mat::zeros(size, CV_8UC1);
+
+	   float dist;
+	   for (int i = 0; i < vecCO.size(); i++) {
+		 for (int z = 0; z < vecCO.size(); z++) {
+			 if (z != i) {
+				 dist = norm(vecCO[z].getMassCenter() - vecCO[i].getMassCenter());
+				 if (dist <= threshDst*pxlSum) { //0.00008
+//								 cout << "dist: " << dist << endl;
+					 line( m, vecCO[z].getMassCenter(), vecCO[i].getMassCenter(), Scalar(255,255,255), 2, 8 );
+					fVecCO.push_back(vecCO[i]);
+					 break;
+				 }
+			 }
+		 }
+	   }
+
+	   namedWindow("dst", WINDOW_AUTOSIZE);
+	   imshow("dst", m);
+
+	   return fVecCO;
+}
+
+void cluster_rect(Mat b, vector<ContourObject> vecCO){
+//	cvtColor(b, b, CV_BGR2);
+		draw_minRectangles(vecCO, b);
+
+		namedWindow("Rect", CV_WINDOW_AUTOSIZE);
+		imshow("Rect", b);
+
+
+		Mat kernel = getStructuringElement(MORPH_RECT, Size(21, 7));
+		morphologyEx(b, b, MORPH_CLOSE, kernel);
+
+					//namedWindow("closedThresh", 1);
+					//imshow("closedThresh", closed);
+
+					erode(b, b, kernel);
+
+					//namedWindow("closedDilate", 1);
+					//imshow("closedErode", closed);
+					blur(b,b,Size(9,9));
+					dilate(b, b, kernel);
+//--------------------------------------------------------------------------------------
+//					Rect bounding_rect;
+//
+//					for (unsigned int i = 0; i < contours.size(); i++) {
+//									double a = contourArea(contours[i], false);
+//									if (a > largest_area) {
+//										largest_area = a;
+//										largest_cnt_index = i;
+//										bounding_rect = boundingRect(contours[i]);
+//									}
+//								}
+//
+//								Scalar color(255, 255, 255);
+//								drawContours(saveImg, contours, largest_cnt_index, color,
+//										CV_WARP_INVERSE_MAP, 8, hierarchy);
+//								rectangle(saveImg, bounding_rect, Scalar(0, 255, 0), 2, 8, 0);
+		namedWindow("RectDilate", CV_WINDOW_AUTOSIZE);
+		imshow("RectDilate", b);
+/*
+	    Mat dist;
+	    distanceTransform(b, dist, CV_DIST_L2, 3);
+		namedWindow("non-normalized", CV_WINDOW_AUTOSIZE);
+	    imshow("non-normalized", dist);
+
+	    normalize(dist, dist, 0.0, 1.0, NORM_MINMAX);
+		namedWindow("normalized", CV_WINDOW_AUTOSIZE);
+	    imshow("normalized", dist);*/
+}
