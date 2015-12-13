@@ -9,7 +9,7 @@
 #include "ContourObject.h"
 #include "Vektor2d.h"
 
-#include "helperFunctions.h"
+#include "functions/helperFunctions.h"
 
 using namespace cv;
 using namespace std;
