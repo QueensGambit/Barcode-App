@@ -154,16 +154,13 @@ double getfilledRatio(Mat& img, RotatedRect& rect){
     Point2f rect_points[4];
     rect.points( rect_points );
 
-//    for(Point2f i=rect_points[0]; norm(i-rect_points[1])>1; i+=(rect_points[1]-i)/norm((rect_points[1]-i)))  {
       for(Point2f i=rect_points[0]; norm(i-rect_points[1])>1;
     		  i+=Point2f((rect_points[1]-i).x/norm((rect_points[1]-i)),
     				  (rect_points[1]-i).y/norm((rect_points[1]-i))))  {
         Point2f destination = i+rect_points[2]-rect_points[1];
-//        for(Point2f j=i; norm(j-destination)>1; j+=(destination-j)/norm((destination-j))) {
           for(Point2f j=i; norm(j-destination)>1;
         		  j+=Point2f((destination.x-j.x)/norm((destination-j)),
         				  (destination.y-j.y)/norm((destination-j)))) {
-//            if(img.at<uchar>(j) != 0){
             if(wPxl_in_Area(j, img, 0)){
                 non_zero+=1;
             }
@@ -176,8 +173,6 @@ double getfilledRatio(Mat& img, RotatedRect& rect){
 
 //function with side-effects
 void make_skelekton(Mat img) {
-	//Mat img;
-	//gray.copyTo(img);
 
 	Mat skel(img.size(), CV_8UC1, cv::Scalar(0));
 	Mat temp;
@@ -212,8 +207,6 @@ void probabilistic_hough(Mat m) {
 		Vec4i l = p_lines[i];
 		line(hough, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(255, 0, 0), 3);
 
-		//  line( probabilistic_hough, Point(lines[i][0], lines[i][1]),        //8
-		//     Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 3, CV_AA );
 	}
 
 	namedWindow("hough Window", WINDOW_AUTOSIZE);
