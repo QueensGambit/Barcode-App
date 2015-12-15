@@ -39,6 +39,6 @@ double getfilledRatio(Mat&, RotatedRect&);
 
 void make_skelekton(Mat);
 
-void probabilistic_hough();
+void probabilistic_hough(Mat);
 
 #endif /* HELPERFUNCTIONS_H_ */

@@ -196,11 +196,14 @@ void make_skelekton(Mat img) {
 
 void probabilistic_hough(Mat m) {
 	vector<Vec4i> p_lines;
-	Mat hough;
+	Mat hough(m);
+	Mat dst;
+	 Canny(m, dst, 50, 200, 3);
 	cvtColor(m, hough, COLOR_GRAY2BGR);
+//	cvtColor(m, m, COLOR_BGR2GRAY);
 
 	/// 2. Use Probabilistic Hough Transform
-	HoughLinesP(m, p_lines, 1, CV_PI / 180, 50, 30, 10);
+	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 50, 30, 10);
 
 	/// Show the result
 	for (size_t i = 0; i < p_lines.size(); i++) {

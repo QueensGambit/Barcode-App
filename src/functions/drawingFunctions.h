@@ -15,6 +15,7 @@
 #include <math.h>
 #include <limits.h>
 #include "../ContourObject.h"
+#include "helperFunctions.h"
 
 using namespace cv;
 using namespace std;

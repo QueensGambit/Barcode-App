@@ -134,6 +134,7 @@ vector<ContourObject> filter_by_dst(vector<ContourObject> vecCO, int pxlSum, flo
 void cluster_rect(Mat b, vector<ContourObject> vecCO){
 
 		draw_minRectangles(vecCO, b);
+	  	probabilistic_hough(b);
 
 		namedWindow("Rect", CV_WINDOW_AUTOSIZE);
 		imshow("Rect", b);
