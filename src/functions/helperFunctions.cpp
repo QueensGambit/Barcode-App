@@ -203,12 +203,15 @@ void probabilistic_hough(Mat m) {
 //	cvtColor(m, m, COLOR_BGR2GRAY);
 
 	/// 2. Use Probabilistic Hough Transform
-	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 50, 30, 10);
-
+	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 30, 30, 80);
+	RNG rng(12345);
 	/// Show the result
 	for (size_t i = 0; i < p_lines.size(); i++) {
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
+						rng.uniform(0, 255));
 		Vec4i l = p_lines[i];
-		line(hough, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(255, 0, 0), 3);
+//		Vec4i l = p_lines[0];
+		line(hough, Point(l[0], l[1]), Point(l[2], l[3]), color, 3);
 
 	}
 
