@@ -211,7 +211,7 @@ void probabilistic_hough(Mat m) {
 						rng.uniform(0, 255));
 		Vec4i l = p_lines[i];
 //		Vec4i l = p_lines[0];
-		line(hough, Point(l[0], l[1]), Point(l[2], l[3]), color, 3);
+		line(hough, Point(l[0], l[1]), Point(l[2], l[3]), color, 1);
 
 	}
 
