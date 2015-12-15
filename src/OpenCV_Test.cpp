@@ -32,8 +32,8 @@ int main() {
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
-//	src = imread("media/internet/test.png");
-	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
+	src = imread("media/internet/test.png");
+//	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
@@ -178,7 +178,8 @@ void crop(Mat src, Mat img) {
 		}
 	}
 
-	Size s( roi.width * 0.3, roi.height * 0.3 );					//expanding rectangle by 30%
+//	Size s( roi.width * 0.3, roi.height * 0.3 );
+	Size s( roi.width * .1 , roi.height * .1);
 	Point offset( s.width/2, s.height/2);							//shifting the rectangle
 	roi += s;
 	roi -= offset;
