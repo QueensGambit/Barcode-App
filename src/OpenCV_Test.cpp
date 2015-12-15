@@ -34,10 +34,13 @@ int main() {
 
 //	src = imread("media/internet/test.png");
 //	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
+	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
-	src = imread("media/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/Knorr fix Bolognese (3).JPG", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/internet/Knorr fix Bolognes Tomaten-Mozarella (4).JPG", CV_LOAD_IMAGE_COLOR);
+
 
 	//blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 
@@ -96,7 +99,8 @@ int main() {
 
 	adaptiveThreshold(gray, skel3, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, -8);
 
-	gray += 0.4 * skel3;
+	gray += .4 * skel3;
+//	medianBlur ( gray, gray, 3 );
 	namedWindow( "Gray", CV_WINDOW_AUTOSIZE );
 	imshow( "Gray", gray );
 
