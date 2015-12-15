@@ -206,6 +206,7 @@ void probabilistic_hough(Mat m) {
 	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 30, 30, 80);
 	RNG rng(12345);
 	/// Show the result
+	cout << "p_line.size(): " <<  p_lines.size() << endl;
 	for (size_t i = 0; i < p_lines.size(); i++) {
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
 						rng.uniform(0, 255));
