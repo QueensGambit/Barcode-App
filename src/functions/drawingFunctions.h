@@ -4,6 +4,8 @@
  *  Created on: 13.12.2015
  *      Author: Standardbenutzer
  */
+#ifndef DRAWINGFUNCTIONS_H_
+#define DRAWINGFUNCTIONS_H_
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -19,9 +21,6 @@
 
 using namespace cv;
 using namespace std;
-
-#ifndef DRAWINGFUNCTIONS_H_
-#define DRAWINGFUNCTIONS_H_
 
 void draw_Circles(vector<Point2f>, Mat);
 void draw_Circles(vector<ContourObject>, Mat);

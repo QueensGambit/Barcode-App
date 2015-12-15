@@ -151,3 +151,85 @@ void cluster_rect(Mat b, vector<ContourObject> vecCO){
 		imshow("RectDilate", b);
 
 }
+
+//sideEffect for pLine
+void filter_hough_lines (vector<Vec4i>& pLine, float threshDst, int pxlSum) {
+
+	float dist;
+	Vector<int> delIndex;
+	for (int i = 0; i < pLine.size(); i++) {
+		 for (int z = 0; z < pLine.size(); z++) {
+			 if (z != i) {
+				 for (int j = 0; j < 2; j++) {
+					 for (int k = 0; k < 2; k++) {
+						 dist = norm(pLine[z].val[k] - pLine[i].val[j]);
+						 if (dist <= threshDst*pxlSum) {
+						 	if (norm(pLine[i]) < norm(pLine[z])) {
+						 		//delete z
+						 		bool ok = true;
+						 		for (int l = 0; l < delIndex.size(); l++) {
+									if (delIndex[l] == z) {
+										ok = false;
+									}
+						 		}
+									if (ok) {
+									delIndex.push_back(z);
+									}
+						 	}
+						 	else {
+						 		//delete i
+						 		bool ok = true;
+						 		for (int l = 0; l < delIndex.size(); l++) {
+									if (delIndex[l] == i) {
+										ok = false;
+									}
+						 		}
+									if (ok) {
+									delIndex.push_back(i);
+									}
+						 	}
+
+						 }
+					 }
+				 }
+			 }
+		 }
+	}
+
+	//delete Indexes
+	for (int i = 0; i < delIndex.size(); i++) {
+		cout << "delIndex[" << i << "]: " << delIndex[i] << endl;
+		pLine.erase(pLine.begin()+delIndex[i]-i);
+	}
+	cout << "pLine.size: " << pLine.size() << endl;
+
+}
+
+void probabilistic_hough(Mat m) {
+	vector<Vec4i> p_lines;
+	Mat hough(m);
+	Mat dst;
+	 Canny(m, dst, 50, 200, 3);
+	cvtColor(m, hough, COLOR_GRAY2BGR);
+//	cvtColor(m, m, COLOR_BGR2GRAY);
+
+	/// 2. Use Probabilistic Hough Transform
+	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 30, 30, 80);
+	RNG rng(12345);
+	/// Show the result
+	cout << "p_line.size(): " <<  p_lines.size() << endl;
+	filter_hough_lines(p_lines, 0.00002, m.cols*m.rows);
+	cout << "p_line.size(): " <<  p_lines.size() << endl;
+
+	for (size_t i = 0; i < p_lines.size(); i++) {
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
+						rng.uniform(0, 255));
+		Vec4i l = p_lines[i];
+//		Vec4i l = p_lines[0];
+		line(hough, Point(l[0], l[1]), Point(l[2], l[3]), color, 1);
+
+	}
+
+	namedWindow("hough Window", WINDOW_AUTOSIZE);
+	imshow("hough Window", hough);
+}

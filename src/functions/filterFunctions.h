@@ -5,6 +5,9 @@
  *      Author: Standardbenutzer
  */
 
+#ifndef FILTERFUNCTIONS_H_
+#define FILTERFUNCTIONS_H_
+
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/opencv.hpp>
@@ -21,10 +24,6 @@
 
 using namespace cv;
 using namespace std;
-
-#ifndef FILTERFUNCTIONS_H_
-#define FILTERFUNCTIONS_H_
-
 vector<Point2f> filter_moments(vector<Point2f>, Mat);
 vector<ContourObject> filter_by_rect(vector<ContourObject>, Mat, float, float);
 
@@ -34,4 +33,9 @@ vector<Point2f> island_filter(vector<Point2f>, Mat, int);
 
 vector<ContourObject> filter_by_dst(vector<ContourObject>, int, float, Size);
 void cluster_rect(Mat, vector<ContourObject>);
+
+void filter_hough_lines (vector<Vec4i>&, float, int);
+
+void probabilistic_hough(Mat);
+
 #endif /* FILTERFUNCTIONS_H_ */

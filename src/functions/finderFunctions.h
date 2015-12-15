@@ -5,6 +5,9 @@
  *      Author: Standardbenutzer
  */
 
+#ifndef FINDERFUNCTIONS_H_
+#define FINDERFUNCTIONS_H_
+
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/opencv.hpp>
@@ -21,10 +24,6 @@
 
 using namespace cv;
 using namespace std;
-
-#ifndef FINDERFUNCTIONS_H_
-#define FINDERFUNCTIONS_H_
-
 vector<ContourObject> find_moments(Mat, int, Mat, Size);
 vector<ContourObject> find_mser(Mat);
 

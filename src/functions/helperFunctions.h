@@ -4,6 +4,10 @@
  *  Created on: 10.12.2015
  *      Author: Standardbenutzer
  */
+
+#ifndef HELPERFUNCTIONS_H_
+#define HELPERFUNCTIONS_H_
+
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/opencv.hpp>
@@ -13,12 +17,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
+#include "filterFunctions.h"
 
 using namespace cv;
 using namespace std;
-
-#ifndef HELPERFUNCTIONS_H_
-#define HELPERFUNCTIONS_H_
 
 //helper fuctions
 Point normalize (Point, Mat);
@@ -38,7 +40,5 @@ Point2f bottomRightPixel(Point2f, Mat);
 double getfilledRatio(Mat&, RotatedRect&);
 
 void make_skelekton(Mat);
-
-void probabilistic_hough(Mat);
 
 #endif /* HELPERFUNCTIONS_H_ */
