@@ -33,6 +33,5 @@ vector<ContourObject> filter_lines(vector<ContourObject>, Mat, int);
 vector<Point2f> island_filter(vector<Point2f>, Mat, int);
 
 vector<ContourObject> filter_by_dst(vector<ContourObject>, int, float, Size);
-
 void cluster_rect(Mat, vector<ContourObject>);
 #endif /* FILTERFUNCTIONS_H_ */

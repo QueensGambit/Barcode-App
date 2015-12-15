@@ -38,12 +38,10 @@ public:
 	//getter setter
 	void setMassCenter(Point2f);
 	Point2f getMassCenter();
-
 	vector<Point> getContour();
 	Point getLastPoint();
 	Point getFirstPoint();
 	void setRectPoints(Point2f rectAngle[4]);
-
 	void getRectPoints(Point2f[4]);
 
 	friend ostream& operator<<(ostream& out, ContourObject& c) {

@@ -8,7 +8,15 @@
 #include "drawingFunctions.h"
 
 RNG rng(12345);
-
+void draw_massCenter(vector<ContourObject> vecCO, Size size){
+	Mat m = Mat::zeros(size, CV_8UC1);
+	for(int i = 0; i<vecCO.size(); i++){
+		m.at<uchar>(vecCO[i].getMassCenter())=255;
+	}
+	probabilistic_hough(m);
+	namedWindow("malen", CV_WINDOW_AUTOSIZE);
+	imshow("malen", m);
+}
 void draw_Circles(vector<Point2f> mc, Mat m) {
 
 	cout << "mc.size() = " << mc.size() << endl;
@@ -16,7 +24,7 @@ void draw_Circles(vector<Point2f> mc, Mat m) {
 	for (int i = 0; i < mc.size(); i++) {
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
 				rng.uniform(0, 255));
-		circle(m, mc[i], 4, color, -1, 8, 0);
+		circle(m, mc[i], 0, color, -1, 8, 0);
 	}
 }
 

@@ -121,6 +121,7 @@ int main() {
 	Mat cluster = Mat::zeros(mfiltered.size(),CV_8UC1);
 	cluster_rect(cluster, fVecCO2);
 
+	draw_massCenter(fVecCO2, mfiltered.size());
 //	crop(src, cluster);
 
 	waitKey(0);

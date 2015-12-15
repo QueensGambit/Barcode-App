@@ -100,7 +100,7 @@ vector<ContourObject> find_mser(Mat gray) {
     ms.set("minMargin", 0.001); //.003
     ms.set("edgeBlurSize", 1); //5
     ms.set("minDiversity", .9); //0.2
-    ms.set("maxVariation", .3); //0.25
+    ms.set("maxVariation", .3); //0.25g
 
     vector<vector<Point> > regions;
 
