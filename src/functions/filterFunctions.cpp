@@ -204,32 +204,3 @@ void filter_hough_lines (vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 	cout << "pLine.size: " << pLine.size() << endl;
 
 }
-
-void probabilistic_hough(Mat m) {
-	vector<Vec4i> p_lines;
-	Mat hough(m);
-	Mat dst;
-	 Canny(m, dst, 50, 200, 3);
-	cvtColor(m, hough, COLOR_GRAY2BGR);
-//	cvtColor(m, m, COLOR_BGR2GRAY);
-
-	/// 2. Use Probabilistic Hough Transform
-	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 30, 30, 80);
-	RNG rng(12345);
-	/// Show the result
-	cout << "p_line.size(): " <<  p_lines.size() << endl;
-	filter_hough_lines(p_lines, 0.00002, m.cols*m.rows);
-	cout << "p_line.size(): " <<  p_lines.size() << endl;
-
-	for (size_t i = 0; i < p_lines.size(); i++) {
-		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
-						rng.uniform(0, 255));
-		Vec4i l = p_lines[i];
-//		Vec4i l = p_lines[0];
-		line(hough, Point(l[0], l[1]), Point(l[2], l[3]), color, 1);
-
-	}
-
-	namedWindow("hough Window", WINDOW_AUTOSIZE);
-	imshow("hough Window", hough);
-}

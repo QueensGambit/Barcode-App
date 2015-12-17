@@ -28,4 +28,7 @@ void draw_Circles(vector<ContourObject>, Mat);
 void draw_Lines(vector<ContourObject>, Mat);
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
 void draw_massCenter(vector<ContourObject>, Size);
+
+void draw_probabilistic_hough(Mat);
+
 #endif /* DRAWINGFUNCTIONS_H_ */
