@@ -36,6 +36,4 @@ void cluster_rect(Mat, vector<ContourObject>);
 
 void filter_hough_lines (vector<Vec4i>&, float, int);
 
-void probabilistic_hough(Mat);
-
 #endif /* FILTERFUNCTIONS_H_ */
