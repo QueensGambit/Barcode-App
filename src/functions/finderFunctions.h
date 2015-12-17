@@ -21,10 +21,15 @@
 #include "helperFunctions.h"
 #include "../Vektor2d.h"
 #include "drawingFunctions.h"
+#include <map>
+#include <iomanip>
 
 using namespace cv;
 using namespace std;
+
+void find_Colour_for_Groups(Scalar, ContourObject);
 vector<ContourObject> find_moments(Mat, int, Mat, Size);
 vector<ContourObject> find_mser(Mat);
+vector<vector<ContourObject> >find_groups(vector<Vec4i>&);
 
 #endif /* FINDERFUNCTIONS_H_ */

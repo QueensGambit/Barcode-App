@@ -142,10 +142,10 @@ void cluster_rect(Mat b, vector<ContourObject> vecCO){
 		Mat kernel = getStructuringElement(MORPH_RECT, Size(21, 7));
 		morphologyEx(b, b, MORPH_CLOSE, kernel);
 
-					erode(b, b, kernel);
+		erode(b, b, kernel);
 
-					blur(b,b,Size(9,9));
-					dilate(b, b, kernel);
+		blur(b,b,Size(9,9));
+		dilate(b, b, kernel);
 
 		namedWindow("RectDilate", CV_WINDOW_AUTOSIZE);
 		imshow("RectDilate", b);
@@ -202,7 +202,6 @@ void filter_hough_lines (vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 		pLine.erase(pLine.begin()+delIndex[i]-i);
 	}
 	cout << "pLine.size: " << pLine.size() << endl;
-
 }
 
 void probabilistic_hough(Mat m) {

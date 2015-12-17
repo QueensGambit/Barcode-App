@@ -126,6 +126,8 @@ int main() {
 	cluster_rect(cluster, fVecCO2);
 
 	draw_massCenter(fVecCO2, mfiltered.size());
+
+	find_groups(mfiltered, vector<ContourObject> fVecCO2);
 	crop(src, cluster);
 
 	waitKey(0);
@@ -149,8 +151,6 @@ void bw_thresh_callback(int, void*) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void crop(Mat src, Mat img) {
-
-
 
 	double largest_area = 0;
 	int largest_contour_index = 0;
