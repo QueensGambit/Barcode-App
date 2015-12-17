@@ -27,9 +27,9 @@
 using namespace cv;
 using namespace std;
 
-void find_Colour_for_Groups(Scalar, ContourObject);
+
 vector<ContourObject> find_moments(Mat, int, Mat, Size);
 vector<ContourObject> find_mser(Mat);
-vector<vector<ContourObject> >find_groups(vector<Vec4i>&);
-
+//void find_Colour_for_Groups(map<Scalar, vector< vector< ContourObject> > >&,Scalar, ContourObject);
+//void find_groups(Mat, vector<ContourObject>);
 #endif /* FINDERFUNCTIONS_H_ */

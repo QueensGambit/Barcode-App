@@ -127,7 +127,7 @@ int main() {
 
 	draw_massCenter(fVecCO2, mfiltered.size());
 
-	find_groups(mfiltered, vector<ContourObject> fVecCO2);
+	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
 	crop(src, cluster);
 
 	waitKey(0);

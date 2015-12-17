@@ -11,43 +11,41 @@
  * Lines of Barcodes have to be grouped now
  */
 
-void find_Colour_for_Groups(map<Scalar, vector< vector< ContourObject> > >& scalarMap,Scalar scalar, ContourObject vecCO) {
-
-	map<Scalar, vector<vector<ContourObject> > >::iterator it;
-	vector<ContourObject> temp;
-
-	for (it = scalarMap.begin(); it != scalarMap.end(); it++) {
-		if (it == scalar) {
-			//get group of line
-			temp = scalarMap[scalar];
-			// extend the group with the contour
-			temp.push_back(vecCO);
-			//push it back
-			scalarMap[scalar].push_back(temp);
-		} else {
-			vector<vector<ContourObject> > group;
-			scalarMap.insert(pair<Scalar, vector<ContourObject>> (scalar, group));
-
-		}
-	}
-//	if (scalarMap.find(scalar)) {
-//		scalarMap[scalar].push_back(vecCO);
-//	} else {
-//		vector<ContourObject> group;
-//		scalarMap.insert(pair<Scalar, vector<ContourObject>> (scalar, group));
+//void find_Colour_for_Groups(map<Scalar, vector< vector< ContourObject> > >& scalarMap,Scalar scalar, ContourObject vecCO) {
 //
+//	map<Scalar, vector<vector<ContourObject> > >::iterator it;
+//	vector<ContourObject> temp;
+//
+//	for (it = scalarMap.begin(); it != scalarMap.end(); it++) {
+//		if (it == scalar) {
+//			//get group of line
+//			temp = scalarMap[scalar];
+//			// extend the group with the contour
+//			temp.push_back(vecCO);
+//			//push it back
+//			scalarMap[scalar].push_back(temp);
+//		} else {
+//			vector<vector<ContourObject> > group;
+//			scalarMap.insert(pair<Scalar, vector<ContourObject>> (scalar, group));
+//		}
 //	}
-}
-void find_groups(Mat m, vector<ContourObject> vecCO) {
-	vector<vector<ContourObject> > group;
-	for (int i = 0; i < vecCO.size(); i++) {
-		Scalar scalar = m.at<uchar>(vecCO[i].getMassCenter());
-		if ((m.at<uchar>(vecCO[i].getMassCenter())) != 0) {
-			find_Colour_for_Groups(scalar, vecCO[i]);
-		}
-	}
-	return group;
-}
+////	if (scalarMap.find(scalar)) {
+////		scalarMap[scalar].push_back(vecCO);
+////	} else {
+////		vector<ContourObject> group;
+////		scalarMap.insert(pair<Scalar, vector<ContourObject>> (scalar, group));
+////
+////	}
+//}
+//void find_groups(Mat m, vector<ContourObject> vecCO) {
+//	vector<vector<ContourObject> > group;
+//	for (int i = 0; i < vecCO.size(); i++) {
+//		Scalar scalar = m.at<uchar>(vecCO[i].getMassCenter());
+//		if ((m.at<uchar>(vecCO[i].getMassCenter())) != 0) {
+//			find_Colour_for_Groups(scalar, vecCO[i]);
+//		}
+//	}
+//}
 
 
 vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel, Size size) {
