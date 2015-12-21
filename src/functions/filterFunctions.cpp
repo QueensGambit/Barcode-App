@@ -203,3 +203,62 @@ void filter_hough_lines (vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 	}
 	cout << "pLine.size: " << pLine.size() << endl;
 }
+
+vector<Vec4i> filter_hough_lines2 (vector<Vec4i>& pLines) {
+
+//	cout << "pLine.size(): " << pLines.size() << endl;
+	vector<int> labels;
+
+	//partition sorts the line into similar equivalence classes
+	int numberOfLines = partition(pLines, labels, isEqual);
+/*	cout << "numberOfLines: " << numberOfLines << endl;
+	for (int i = 0; i < labels.size(); i++) {
+		cout << "label[" << i << "]: " << labels[i] << endl;
+	}
+//	cout << "labels.size(): " << labels.size() << endl;*/
+
+	//get the longest line out of the equivalence classes
+	vector<Vec4i> fLines(numberOfLines);
+	float maxLength;
+	int indexWithMaxLength;
+	for (int i = 0; i < numberOfLines; i++) {
+		maxLength = 0;
+		for (int z = 0; z < labels.size(); z++) {
+			if (labels[z] == i) {
+				if (norm(pLines[z]) > maxLength) {
+					indexWithMaxLength = z;
+					maxLength = norm(pLines[z]);
+				}
+			}
+		}
+		fLines[i] = pLines[indexWithMaxLength];
+	}
+
+	return fLines;
+}
+
+bool isEqual(const Vec4i& _l1, const Vec4i& _l2)
+{
+    Vec4i l1(_l1), l2(_l2);
+
+    float length1 = sqrtf((l1[2] - l1[0])*(l1[2] - l1[0]) + (l1[3] - l1[1])*(l1[3] - l1[1]));
+    float length2 = sqrtf((l2[2] - l2[0])*(l2[2] - l2[0]) + (l2[3] - l2[1])*(l2[3] - l2[1]));
+
+    float product = (l1[2] - l1[0])*(l2[2] - l2[0]) + (l1[3] - l1[1])*(l2[3] - l2[1]);
+
+    if (fabs(product / (length1 * length2)) < cos(CV_PI / 30))
+        return false;
+
+    float mx1 = (l1[0] + l1[2]) * 0.5f;
+    float mx2 = (l2[0] + l2[2]) * 0.5f;
+
+    float my1 = (l1[1] + l1[3]) * 0.5f;
+    float my2 = (l2[1] + l2[3]) * 0.5f;
+    float dist = sqrtf((mx1 - mx2)*(mx1 - mx2) + (my1 - my2)*(my1 - my2));
+
+//    cout << "dist: " << dist << endl;
+    if (dist > max(length1, length2) * 0.1f) //0.5f
+        return false;
+
+    return true;
+}

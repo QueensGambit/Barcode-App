@@ -32,8 +32,8 @@ int main() {
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
-//	src = imread("media/internet/test.png");
-	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
+	src = imread("media/internet/test.png");
+//	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
@@ -113,7 +113,8 @@ int main() {
 	cvtColor(mfiltered, mfiltered, CV_GRAY2BGR);
 
 	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .4, 5 )); //.95, 7
-	vector<ContourObject> fVecCO2(filter_by_dst(fVecCO, pxl_Sum, 0.0003, skel3.size() )); //0.00001
+	vector<ContourObject> fVecCO2(fVecCO);
+//	vector<ContourObject> fVecCO2(filter_by_dst(fVecCO, pxl_Sum, 0.0003, skel3.size() )); //0.00001
 
 	cout << "fVecCO.size(): " << fVecCO.size() << endl;
 	cout << "fVecCO2.size(): " << fVecCO2.size() << endl;
@@ -128,7 +129,7 @@ int main() {
 	draw_massCenter(fVecCO2, mfiltered.size());
 
 	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
-	crop(src, cluster);
+//	crop(src, cluster);
 
 	waitKey(0);
 	return (0);
