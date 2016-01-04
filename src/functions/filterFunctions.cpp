@@ -22,6 +22,59 @@ vector<Point2f> filter_moments(vector<Point2f> mc, Mat skel) {
 	return tempMC;
 }
 
+vector<vector<Point> >filter_detected_Lines(vector<Vec4i> lines){
+	//vector<Point> points;
+	//vector<Point[]> points;
+	 vector<vector<Point> > points;
+
+
+	 vector<Vec4i>::const_iterator it2 = lines.begin();
+	        while(it2!=lines.end()){
+	        	//Point temp[2];
+	        	vector<Point> temp;
+	        	//get the start/End points defined here
+	            Point start((*it2)[0], (*it2)[1]);
+	            Point end((*it2)[2], (*it2)[3]);
+
+	            //Points get paired
+	            temp.push_back(start);
+	            temp.push_back(end);
+
+	            points.push_back(temp);
+	           // temp[0] = start;
+	            //temp[1] = end;
+
+	            //points.push_back(temp);
+	            //points.push_back(start);
+	            //points.push_back(end);
+	            ++it2;
+	        }
+	        cout << "size Points: " << points.size() << endl;
+
+	        for(int i = 0; i<points.size(); i++){
+	        	for(int j = 0; j<2; j++){
+	        		cout <<"Punkt " << i << " x: " << points[i][j].x << " " << " y: " << points[i][j].y << endl;
+	        	}
+	        }
+	        	Size size;
+	        	size.height=244;
+	        	size.width=324;
+
+	        	Mat m = Mat::zeros(size, CV_8UC1);
+	        	RNG rng(12345);
+	        	cout << "neu" << endl;
+
+	        	for(int i = 0; i<points.size(); i++){
+	        		for(int j = 0; j<2; j++){
+	        			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
+	        							rng.uniform(0, 255));
+	        					circle(m, points[i][j], 2, color, 5, 8, 0);
+	        		}
+	        	}
+	        	imshow("LinePoints", m);
+	        return points;
+}
+
 vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, float threshWPxl, float threshAspect) {
 
 	  vector<RotatedRect> minRect( vecCO.size() );
@@ -233,7 +286,8 @@ vector<Vec4i> filter_hough_lines2 (vector<Vec4i>& pLines) {
 		}
 		fLines[i] = pLines[indexWithMaxLength];
 	}
-
+	//lkajsdfklajsflkj
+	filter_detected_Lines(fLines);
 	return fLines;
 }
 
