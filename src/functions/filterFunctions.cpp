@@ -274,6 +274,8 @@ vector<Vec4i> filter_hough_lines2 (vector<Vec4i>& pLines) {
 	vector<Vec4i> fLines(numberOfLines);
 	float maxLength;
 	int indexWithMaxLength;
+	cout << "--------- direktes Auslesen ---------------------" << endl;
+	cout << "single points:" << endl;
 	for (int i = 0; i < numberOfLines; i++) {
 		maxLength = 0;
 		for (int z = 0; z < labels.size(); z++) {
@@ -285,7 +287,13 @@ vector<Vec4i> filter_hough_lines2 (vector<Vec4i>& pLines) {
 			}
 		}
 		fLines[i] = pLines[indexWithMaxLength];
+		cout << "Line[" << i << "]:" << endl;
+		cout << "xStart: " << fLines[i][0] << " ";
+		cout << "yStart: " << fLines[i][1] << endl;
+		cout << "xEnd: " << fLines[i][2] << " ";
+		cout << "yEnd: " << fLines[i][3] << endl;
 	}
+	cout << "-------------------------------------------" << endl;
 	//lkajsdfklajsflkj
 	filter_detected_Lines(fLines);
 	return fLines;
