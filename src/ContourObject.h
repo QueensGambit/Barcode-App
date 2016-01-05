@@ -26,6 +26,8 @@ private:
 	vector<Point> contour;
 	Point firstPoint, lastPoint;
 	Point2f rect_point[4];
+	float angle;
+	int quadrant;
 
 public:
 
@@ -43,6 +45,10 @@ public:
 	Point getFirstPoint();
 	void setRectPoints(Point2f rectAngle[4]);
 	void getRectPoints(Point2f[4]);
+
+	void setAngle(float);
+	float getAngle();
+	int getQuadrant();
 
 	friend ostream& operator<<(ostream& out, ContourObject& c) {
 		out << "massCenter: [" << c.massCenter.x << ", " << c.massCenter.y << "]" << endl;

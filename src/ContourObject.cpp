@@ -68,3 +68,28 @@ void ContourObject::drawContourOnMat(Mat m) {
 		circle(m, contour[i], 4, Scalar(0,255,0), -1, 8, 0);
 	}
 }
+
+void ContourObject::setAngle(float a) {
+	angle = a;
+	if (a >= 0 && a < 90) {
+		quadrant = 1;
+	}
+	if (a >= 90 && a < 180) {
+		quadrant = 2;
+	}
+	if (a >= 180 && a < 270) {
+		quadrant = 3;
+	}
+	if (a >= 270 && a < 360) {
+		quadrant = 4;
+	}
+
+}
+
+float ContourObject::getAngle() {
+	return angle;
+}
+
+int ContourObject::getQuadrant() {
+	return quadrant;
+}

@@ -193,3 +193,64 @@ void make_skelekton(Mat img) {
 
 	skel.copyTo(img);
 }
+
+
+int get_Contour_Min_Dst (vector<ContourObject> vecCO, Point2f p) {
+	int minDst = INT_MAX;
+	int dst;
+	int index = -1;
+	for (int i = 0; i < vecCO.size(); i++) {
+		dst = norm(vecCO[i].getMassCenter() - p);
+		if (dst < minDst) {
+			minDst = dst;
+			index = i;
+		}
+	}
+
+	return index;
+}
+
+int get_min_Point_from_Rect (Point2f rect_point[4]) {
+
+	int minDst = INT_MAX;
+	int dst;
+	int index = -1;
+	for (int i = 1; i < 3; i++) {
+		dst = norm(rect_point[i] - rect_point[0]);
+		if (dst < minDst) {
+			minDst = dst;
+			index = i;
+		}
+	}
+
+	return index;
+}
+
+Vec4i get_Border_Points_from_Rect(Point2f rect_point[4], bool b) {
+
+	Point2f p = rect_point[0];
+	int partner = get_min_Point_from_Rect(rect_point);
+
+	int aPartner1, aPartner2;
+
+	if (partner == 1 ) {
+		aPartner1 = 2;
+		aPartner2 = 3;
+	}
+	if (partner == 2 ) {
+		aPartner1 = 1;
+		aPartner2 = 3;
+	}
+	if (partner == 3 ) {
+		aPartner1 = 1;
+		aPartner2 = 2;
+	}
+
+
+	Vec4i v;
+	v[0] = (p.x + rect_point[partner].x) / 2;
+	v[1] = (p.y + rect_point[partner].y) / 2;
+	v[2] = (rect_point[aPartner1].x + rect_point[aPartner2].x) / 2;
+	v[3] = (rect_point[aPartner1].y + rect_point[aPartner2].y) / 2;
+	return v;
+}

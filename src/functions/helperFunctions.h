@@ -41,4 +41,10 @@ double getfilledRatio(Mat&, RotatedRect&);
 
 void make_skelekton(Mat);
 
+int get_Contour_Min_Dst (vector<ContourObject>, Point2f);
+
+int get_min_Point_from_Rect (Point2f rect_point[4]);
+
+Vec4i get_Border_Points_from_Rect(Point2f rect_point[4], bool);
+
 #endif /* HELPERFUNCTIONS_H_ */

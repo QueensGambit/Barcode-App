@@ -23,6 +23,7 @@ vector<Point2f> filter_moments(vector<Point2f> mc, Mat skel) {
 }
 
 void filter_detected_Lines(vector<Vec4i> lines, vector<ContourObject> vecCO) {
+
 	cout << "size of vecCO in filter_detected: " << vecCO.size() << endl;
 
 	vector<Vec4i>::const_iterator it2 = lines.begin();
@@ -31,17 +32,17 @@ void filter_detected_Lines(vector<Vec4i> lines, vector<ContourObject> vecCO) {
 	ContourObject endContour;
 
 	vector<vector<Point2f> > cornerPoints;
+
 	int startH = 0;
 	int endH = 0;
 
 	while (it2 != lines.end()) {
 
-		Point start((*it2)[0], (*it2)[1]);
-		Point end((*it2)[2], (*it2)[3]);
+		Point2f start((*it2)[0], (*it2)[1]);
+		Point2f end((*it2)[2], (*it2)[3]);
 		cout << "startpoint: " << start << endl;
 		cout << "endpoint: " << end << endl;
 		cout << "entree" << endl;
-		for (int i = 0; i < vecCO.size(); i++) {
 
 			//startpoint inside countour?
 			/*
@@ -49,46 +50,75 @@ void filter_detected_Lines(vector<Vec4i> lines, vector<ContourObject> vecCO) {
 			 * correspondingly. When measureDist=false , the return value is +1, -1, and 0
 			 *
 			 */
-			Point2f p[4];
-			Point2f q[4];
+
 			//cout << "test: " << i << endl;
 			//cout << "start " << pointPolygonTest(vecCO[i].getContour(), start, false) << endl;
 			//cout << "ende " << pointPolygonTest(vecCO[i].getContour(), end, false) << endl;
-			if (pointPolygonTest(vecCO[i].getContour(), start, false) >= 0) {
+
+
+//			if (pointPolygonTest(vecCO[i].getContour(), start, false) >= 0) {
+			int sIndex = get_Contour_Min_Dst(vecCO, start);
+			int eIndex = get_Contour_Min_Dst(vecCO, end);
+
+			if (sIndex != -1 && eIndex != -1 ) {
+				startContour = vecCO[sIndex];
+				endContour = vecCO[eIndex];
 				startH++;
-				startContour = vecCO[i];
-				startContour.getRectPoints(p);
-			}
-
-			if (pointPolygonTest(vecCO[i].getContour(), end, false)
-					>= 0) {
 				endH++;
-				endContour = vecCO[i];
+				Point2f p[4];
+				Point2f q[4];
 
+				startContour.getRectPoints(p);
 				endContour.getRectPoints(q);
-				vector<Point2f> temp;
-				temp.push_back(p[1]);
-				temp.push_back(p[2]);
-				temp.push_back(q[3]);
-				temp.push_back(q[4]);
 
-				cornerPoints.push_back(temp);
-				//break;
+				Vec4i pointsStart;
+				pointsStart = get_Border_Points_from_Rect(p, true);
+
+				vector<Point2f> tmpCPoints(4);
+
+				tmpCPoints[0] = Point2f(pointsStart[0], pointsStart[1]);
+				tmpCPoints[1] = Point2f(pointsStart[2], pointsStart[3]);
+
+				Vec4i pointsEnd;
+				pointsEnd = get_Border_Points_from_Rect(q, false);
+
+				tmpCPoints[2] = Point2f(pointsEnd[0], pointsEnd[1]);
+				tmpCPoints[3] = Point2f(pointsEnd[2], pointsEnd[3]);
+
+				cout << "Angle: " << startContour.getAngle() << endl;
+
+				cornerPoints.push_back(tmpCPoints);
+
 			}
+//			}
+
+				//break;
+//			}
 
 
-
-
-		}
 		it2++;
 
 	}
-	cout << cornerPoints.size() << endl;
+	Size s = Size(324, 244);
+
+	Mat mBarcodePoints =  Mat::zeros(s, CV_8UC3);
+	RNG rng(12345);
+
+	cout << "cornerPoints:" << cornerPoints.size() << endl;
+	vector<Point2f> tmpCPoints(4);
 	for(int p = 0; p < cornerPoints.size(); p++){
-		for(int u = 0; u<cornerPoints.size();u++){
-			cout << "Punkt" << u << " " << cornerPoints[p][u] << endl;
+		tmpCPoints = cornerPoints[p];
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),rng.uniform(0, 255));
+		for(int z = 0; z<4; z++){
+			cout << "Punkt" << z << " " << tmpCPoints[z] << endl;
+
+			circle(mBarcodePoints, tmpCPoints[z], 3, color, -1, 8, 0);
 		}
 	}
+
+	namedWindow("Barocde Punkte", 1);
+	imshow("Barocde Punkte", mBarcodePoints);
+
 	cout << "hits start: " << startH << endl;
 	cout << "hits end: " << endH << endl;
 
@@ -106,6 +136,7 @@ vector<ContourObject> filter_by_rect(vector<ContourObject> vecCO, Mat m,
 
 		float width = minRect[i].size.width;
 		float height = minRect[i].size.height;
+
 		float ratio;
 
 		if (width > height) {
@@ -121,6 +152,11 @@ vector<ContourObject> filter_by_rect(vector<ContourObject> vecCO, Mat m,
 			vecCO[i].setRectPoints(rect_points);
 			vecCO[i].setMassCenter(minRect[i].center);
 
+			float angle = minRect[i].angle;
+			if (angle < 0) {
+				angle += 180;
+			}
+			vecCO[i].setAngle(angle);
 			fVecCO.push_back(vecCO[i]);
 		}
 
