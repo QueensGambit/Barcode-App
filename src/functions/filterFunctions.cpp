@@ -100,6 +100,7 @@ void filter_detected_Lines(vector<Vec4i> lines, vector<ContourObject> vecCO) {
 
 	}
 	Size s = Size(324, 244);
+//	Size s = Size(1138, 1600);
 
 	Mat mBarcodePoints =  Mat::zeros(s, CV_8UC3);
 	RNG rng(12345);
