@@ -49,35 +49,35 @@ void filter_detected_Lines(vector<Vec4i> lines, vector<ContourObject> vecCO) {
 			 * correspondingly. When measureDist=false , the return value is +1, -1, and 0
 			 *
 			 */
-
+			Point2f p[4];
+			Point2f q[4];
 			//cout << "test: " << i << endl;
 			//cout << "start " << pointPolygonTest(vecCO[i].getContour(), start, false) << endl;
 			//cout << "ende " << pointPolygonTest(vecCO[i].getContour(), end, false) << endl;
 			if (pointPolygonTest(vecCO[i].getContour(), start, false) >= 0) {
 				startH++;
 				startContour = vecCO[i];
-				Point2f p[4];
 				startContour.getRectPoints(p);
-
-				for (int k = 0; k < vecCO.size() && i != k; k++) {
-					if (pointPolygonTest(vecCO[k].getContour(), end, false)
-							>= 0) {
-						endH++;
-						endContour = vecCO[i];
-						Point2f q[4];
-						endContour.getRectPoints(q);
-						vector<Point2f> temp;
-						temp.push_back(p[1]);
-						temp.push_back(p[2]);
-						temp.push_back(q[3]);
-						temp.push_back(q[4]);
-
-						cornerPoints.push_back(temp);
-						//break;
-					}
-				}
-
 			}
+
+			if (pointPolygonTest(vecCO[i].getContour(), end, false)
+					>= 0) {
+				endH++;
+				endContour = vecCO[i];
+
+				endContour.getRectPoints(q);
+				vector<Point2f> temp;
+				temp.push_back(p[1]);
+				temp.push_back(p[2]);
+				temp.push_back(q[3]);
+				temp.push_back(q[4]);
+
+				cornerPoints.push_back(temp);
+				//break;
+			}
+
+
+
 
 		}
 		it2++;

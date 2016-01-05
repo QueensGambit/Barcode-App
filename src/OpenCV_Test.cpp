@@ -32,10 +32,10 @@ int main() {
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
-	src = imread("media/internet/test.png");
+//	src = imread("media/internet/test.png");
 //	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
-//	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
+	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/Gefro Pesto Verde (2).jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/Knorr fix Bolognese (3).JPG", CV_LOAD_IMAGE_COLOR);
