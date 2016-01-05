@@ -215,7 +215,7 @@ int get_min_Point_from_Rect (Point2f rect_point[4]) {
 	int minDst = INT_MAX;
 	int dst;
 	int index = -1;
-	for (int i = 1; i < 3; i++) {
+	for (int i = 1; i < 4; i++) {
 		dst = norm(rect_point[i] - rect_point[0]);
 		if (dst < minDst) {
 			minDst = dst;
@@ -230,7 +230,7 @@ Vec4i get_Border_Points_from_Rect(Point2f rect_point[4], bool b) {
 
 	Point2f p = rect_point[0];
 	int partner = get_min_Point_from_Rect(rect_point);
-
+	cout << "partner: " << partner << endl;
 	int aPartner1, aPartner2;
 
 	if (partner == 1 ) {
