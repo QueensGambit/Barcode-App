@@ -35,7 +35,8 @@ vector<ContourObject> filter_by_dst(vector<ContourObject>, int, float, Size);
 void cluster_rect(Mat, vector<ContourObject>);
 
 void filter_hough_lines (vector<Vec4i>&, float, int);
-vector<Vec4i> filter_hough_lines2 (vector<Vec4i>&);
+vector<Vec4i> filter_hough_lines2 (vector<Vec4i>&,vector<ContourObject> );
 bool isEqual(const Vec4i& _l1, const Vec4i& _l2);
-vector<vector<Point> > filter_detected_Lines(vector<Vec4i>);
+void filter_detected_Lines(vector<Vec4i>, vector<ContourObject>);
+
 #endif /* FILTERFUNCTIONS_H_ */

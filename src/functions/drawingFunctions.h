@@ -29,7 +29,7 @@ void draw_Lines(vector<ContourObject>, Mat);
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
 void draw_massCenter(vector<ContourObject>, Size);
 
-void draw_probabilistic_hough(Mat);
+void draw_probabilistic_hough(Mat,vector<ContourObject>);
 void draw_fit_line(vector<Point2f>, Mat);
 
 #endif /* DRAWINGFUNCTIONS_H_ */

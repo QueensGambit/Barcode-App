@@ -22,94 +22,115 @@ vector<Point2f> filter_moments(vector<Point2f> mc, Mat skel) {
 	return tempMC;
 }
 
-vector<vector<Point> >filter_detected_Lines(vector<Vec4i> lines){
-	//vector<Point> points;
-	//vector<Point[]> points;
-	 vector<vector<Point> > points;
+void filter_detected_Lines(vector<Vec4i> lines, vector<ContourObject> vecCO) {
+	cout << "size of vecCO in filter_detected: " << vecCO.size() << endl;
 
+	vector<Vec4i>::const_iterator it2 = lines.begin();
 
-	 vector<Vec4i>::const_iterator it2 = lines.begin();
-	        while(it2!=lines.end()){
-	        	//Point temp[2];
-	        	vector<Point> temp;
-	        	//get the start/End points defined here
-	            Point start((*it2)[0], (*it2)[1]);
-	            Point end((*it2)[2], (*it2)[3]);
+	ContourObject startContour;
+	ContourObject endContour;
 
-	            //Points get paired
-	            temp.push_back(start);
-	            temp.push_back(end);
+	vector<vector<Point2f> > cornerPoints;
+	int startH = 0;
+	int endH = 0;
 
-	            points.push_back(temp);
-	           // temp[0] = start;
-	            //temp[1] = end;
+	while (it2 != lines.end()) {
 
-	            //points.push_back(temp);
-	            //points.push_back(start);
-	            //points.push_back(end);
-	            ++it2;
-	        }
-	        cout << "size Points: " << points.size() << endl;
+		Point start((*it2)[0], (*it2)[1]);
+		Point end((*it2)[2], (*it2)[3]);
+		cout << "startpoint: " << start << endl;
+		cout << "endpoint: " << end << endl;
+		cout << "entree" << endl;
+		for (int i = 0; i < vecCO.size(); i++) {
 
-	        for(int i = 0; i<points.size(); i++){
-	        	for(int j = 0; j<2; j++){
-	        		cout <<"Punkt " << i << " x: " << points[i][j].x << " " << " y: " << points[i][j].y << endl;
-	        	}
-	        }
-	        	Size size;
-	        	size.height=244;
-	        	size.width=324;
+			//startpoint inside countour?
+			/*
+			 * It returns positive (inside), negative (outside), or zero (on an edge) value,
+			 * correspondingly. When measureDist=false , the return value is +1, -1, and 0
+			 *
+			 */
 
-	        	Mat m = Mat::zeros(size, CV_8UC1);
-	        	RNG rng(12345);
-	        	cout << "neu" << endl;
+			//cout << "test: " << i << endl;
+			//cout << "start " << pointPolygonTest(vecCO[i].getContour(), start, false) << endl;
+			//cout << "ende " << pointPolygonTest(vecCO[i].getContour(), end, false) << endl;
+			if (pointPolygonTest(vecCO[i].getContour(), start, false) >= 0) {
+				startH++;
+				startContour = vecCO[i];
+				Point2f p[4];
+				startContour.getRectPoints(p);
 
-	        	for(int i = 0; i<points.size(); i++){
-	        		for(int j = 0; j<2; j++){
-	        			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
-	        							rng.uniform(0, 255));
-	        					circle(m, points[i][j], 2, color, 5, 8, 0);
-	        		}
-	        	}
-	        	imshow("LinePoints", m);
-	        return points;
+				for (int k = 0; k < vecCO.size() && i != k; k++) {
+					if (pointPolygonTest(vecCO[k].getContour(), end, false)
+							>= 0) {
+						endH++;
+						endContour = vecCO[i];
+						Point2f q[4];
+						endContour.getRectPoints(q);
+						vector<Point2f> temp;
+						temp.push_back(p[1]);
+						temp.push_back(p[2]);
+						temp.push_back(q[3]);
+						temp.push_back(q[4]);
+
+						cornerPoints.push_back(temp);
+						//break;
+					}
+				}
+
+			}
+
+		}
+		it2++;
+
+	}
+	cout << cornerPoints.size() << endl;
+	for(int p = 0; p < cornerPoints.size(); p++){
+		for(int u = 0; u<cornerPoints.size();u++){
+			cout << "Punkt" << u << " " << cornerPoints[p][u] << endl;
+		}
+	}
+	cout << "hits start: " << startH << endl;
+	cout << "hits end: " << endH << endl;
+
 }
 
-vector<ContourObject> filter_by_rect(vector<ContourObject>vecCO, Mat m, float threshWPxl, float threshAspect) {
+vector<ContourObject> filter_by_rect(vector<ContourObject> vecCO, Mat m,
+		float threshWPxl, float threshAspect) {
 
-	  vector<RotatedRect> minRect( vecCO.size() );
-	  vector<ContourObject> fVecCO;
+	vector<RotatedRect> minRect(vecCO.size());
+	vector<ContourObject> fVecCO;
 
-	  for( int i = 0; i < vecCO.size(); i++ ) {
+	for (int i = 0; i < vecCO.size(); i++) {
 
-	     minRect[i] = minAreaRect( Mat(vecCO[i].getContour()) );
+		minRect[i] = minAreaRect(Mat(vecCO[i].getContour()));
 
-	     	 float width = minRect[i].size.width;
-	     	 float height = minRect[i].size.height;
-	     	 float ratio;
+		float width = minRect[i].size.width;
+		float height = minRect[i].size.height;
+		float ratio;
 
-	     	 if (width > height) {
-	     		 ratio = width / height;
-	     	 }
-	     	 else {
-	     		 ratio = height / width;
-	     	 }
+		if (width > height) {
+			ratio = width / height;
+		} else {
+			ratio = height / width;
+		}
 
-			 if (getfilledRatio(m, minRect[i]) >= threshWPxl && ratio >= threshAspect) {
-				   Point2f rect_points[4];
-				   minRect[i].points( rect_points );
-				   vecCO[i].setRectPoints(rect_points);
-				   vecCO[i].setMassCenter(minRect[i].center);
+		if (getfilledRatio(m, minRect[i]) >= threshWPxl
+				&& ratio >= threshAspect) {
+			Point2f rect_points[4];
+			minRect[i].points(rect_points);
+			vecCO[i].setRectPoints(rect_points);
+			vecCO[i].setMassCenter(minRect[i].center);
 
-				   fVecCO.push_back(vecCO[i]);
-			 }
+			fVecCO.push_back(vecCO[i]);
+		}
 
-	     }
+	}
 
-	  return fVecCO;
+	return fVecCO;
 }
 
-vector<ContourObject> filter_lines(vector<ContourObject> vecCO, Mat skel, int hitThresh) {
+vector<ContourObject> filter_lines(vector<ContourObject> vecCO, Mat skel,
+		int hitThresh) {
 	Point last;
 	Point temp;
 	int hits = 0;
@@ -158,117 +179,119 @@ vector<Point2f> island_filter(vector<Point2f> mc, Mat skel, int thresh) {
 	return temp;
 }
 
-vector<ContourObject> filter_by_dst(vector<ContourObject> vecCO, int pxlSum, float threshDst, Size size) {
+vector<ContourObject> filter_by_dst(vector<ContourObject> vecCO, int pxlSum,
+		float threshDst, Size size) {
 
 	vector<ContourObject> fVecCO;
 	Mat m = Mat::zeros(size, CV_8UC1);
 
-	   float dist;
-	   for (int i = 0; i < vecCO.size(); i++) {
-		 for (int z = 0; z < vecCO.size(); z++) {
-			 if (z != i) {
-				 dist = norm(vecCO[z].getMassCenter() - vecCO[i].getMassCenter());
-				 if (dist <= threshDst*pxlSum) { //0.00008
+	float dist;
+	for (int i = 0; i < vecCO.size(); i++) {
+		for (int z = 0; z < vecCO.size(); z++) {
+			if (z != i) {
+				dist = norm(
+						vecCO[z].getMassCenter() - vecCO[i].getMassCenter());
+				if (dist <= threshDst * pxlSum) { //0.00008
 //								 cout << "dist: " << dist << endl;
-					 line( m, vecCO[z].getMassCenter(), vecCO[i].getMassCenter(), Scalar(255,255,255), 2, 8 );
+					line(m, vecCO[z].getMassCenter(), vecCO[i].getMassCenter(),
+							Scalar(255, 255, 255), 2, 8);
 					fVecCO.push_back(vecCO[i]);
-					 break;
-				 }
-			 }
-		 }
-	   }
+					break;
+				}
+			}
+		}
+	}
 
-	   namedWindow("dst", WINDOW_AUTOSIZE);
-	   imshow("dst", m);
+	namedWindow("dst", WINDOW_AUTOSIZE);
+	imshow("dst", m);
 
-	   return fVecCO;
+	return fVecCO;
 }
 
-void cluster_rect(Mat b, vector<ContourObject> vecCO){
+void cluster_rect(Mat b, vector<ContourObject> vecCO) {
 
-		draw_minRectangles(vecCO, b);
+	draw_minRectangles(vecCO, b);
 
-		namedWindow("Rect", CV_WINDOW_AUTOSIZE);
-		imshow("Rect", b);
+	namedWindow("Rect", CV_WINDOW_AUTOSIZE);
+	imshow("Rect", b);
 
+	Mat kernel = getStructuringElement(MORPH_RECT, Size(21, 7));
+	morphologyEx(b, b, MORPH_CLOSE, kernel);
 
-		Mat kernel = getStructuringElement(MORPH_RECT, Size(21, 7));
-		morphologyEx(b, b, MORPH_CLOSE, kernel);
+	erode(b, b, kernel);
 
-		erode(b, b, kernel);
+	blur(b, b, Size(9, 9));
+	dilate(b, b, kernel);
 
-		blur(b,b,Size(9,9));
-		dilate(b, b, kernel);
-
-		namedWindow("RectDilate", CV_WINDOW_AUTOSIZE);
-		imshow("RectDilate", b);
+	namedWindow("RectDilate", CV_WINDOW_AUTOSIZE);
+	imshow("RectDilate", b);
 
 }
 
 //sideEffect for pLine
-void filter_hough_lines (vector<Vec4i>& pLine, float threshDst, int pxlSum) {
+void filter_hough_lines(vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 
 	float dist;
 	Vector<int> delIndex;
 	for (int i = 0; i < pLine.size(); i++) {
-		 for (int z = 0; z < pLine.size(); z++) {
-			 if (z != i) {
-				 for (int j = 0; j < 2; j++) {
-					 for (int k = 0; k < 2; k++) {
-						 dist = norm(pLine[z].val[k] - pLine[i].val[j]);
-						 if (dist <= threshDst*pxlSum) {
-						 	if (norm(pLine[i]) < norm(pLine[z])) {
-						 		//delete z
-						 		bool ok = true;
-						 		for (int l = 0; l < delIndex.size(); l++) {
+		for (int z = 0; z < pLine.size(); z++) {
+			if (z != i) {
+				for (int j = 0; j < 2; j++) {
+					for (int k = 0; k < 2; k++) {
+						dist = norm(pLine[z].val[k] - pLine[i].val[j]);
+						if (dist <= threshDst * pxlSum) {
+							if (norm(pLine[i]) < norm(pLine[z])) {
+								//delete z
+								bool ok = true;
+								for (int l = 0; l < delIndex.size(); l++) {
 									if (delIndex[l] == z) {
 										ok = false;
 									}
-						 		}
-									if (ok) {
+								}
+								if (ok) {
 									delIndex.push_back(z);
-									}
-						 	}
-						 	else {
-						 		//delete i
-						 		bool ok = true;
-						 		for (int l = 0; l < delIndex.size(); l++) {
+								}
+							} else {
+								//delete i
+								bool ok = true;
+								for (int l = 0; l < delIndex.size(); l++) {
 									if (delIndex[l] == i) {
 										ok = false;
 									}
-						 		}
-									if (ok) {
+								}
+								if (ok) {
 									delIndex.push_back(i);
-									}
-						 	}
+								}
+							}
 
-						 }
-					 }
-				 }
-			 }
-		 }
+						}
+					}
+				}
+			}
+		}
 	}
 
 	//delete Indexes
 	for (int i = 0; i < delIndex.size(); i++) {
 		cout << "delIndex[" << i << "]: " << delIndex[i] << endl;
-		pLine.erase(pLine.begin()+delIndex[i]-i);
+		pLine.erase(pLine.begin() + delIndex[i] - i);
 	}
 	cout << "pLine.size: " << pLine.size() << endl;
 }
 
-vector<Vec4i> filter_hough_lines2 (vector<Vec4i>& pLines) {
+vector<Vec4i> filter_hough_lines2(vector<Vec4i>& pLines,
+		vector<ContourObject> vecCO) {
 
 //	cout << "pLine.size(): " << pLines.size() << endl;
 	vector<int> labels;
 
 	//partition sorts the line into similar equivalence classes
 	int numberOfLines = partition(pLines, labels, isEqual);
-/*	cout << "numberOfLines: " << numberOfLines << endl;
-	for (int i = 0; i < labels.size(); i++) {
-		cout << "label[" << i << "]: " << labels[i] << endl;
-	}
-//	cout << "labels.size(): " << labels.size() << endl;*/
+	/*	cout << "numberOfLines: " << numberOfLines << endl;
+	 for (int i = 0; i < labels.size(); i++) {
+	 cout << "label[" << i << "]: " << labels[i] << endl;
+	 }
+	 //	cout << "labels.size(): " << labels.size() << endl;*/
 
 	//get the longest line out of the equivalence classes
 	vector<Vec4i> fLines(numberOfLines);
@@ -295,32 +318,36 @@ vector<Vec4i> filter_hough_lines2 (vector<Vec4i>& pLines) {
 	}
 	cout << "-------------------------------------------" << endl;
 	//lkajsdfklajsflkj
-	filter_detected_Lines(fLines);
+	filter_detected_Lines(fLines, vecCO);
 	return fLines;
 }
 
-bool isEqual(const Vec4i& _l1, const Vec4i& _l2)
-{
-    Vec4i l1(_l1), l2(_l2);
+bool isEqual(const Vec4i& _l1, const Vec4i& _l2) {
+	Vec4i l1(_l1), l2(_l2);
 
-    float length1 = sqrtf((l1[2] - l1[0])*(l1[2] - l1[0]) + (l1[3] - l1[1])*(l1[3] - l1[1]));
-    float length2 = sqrtf((l2[2] - l2[0])*(l2[2] - l2[0]) + (l2[3] - l2[1])*(l2[3] - l2[1]));
+	float length1 = sqrtf(
+			(l1[2] - l1[0]) * (l1[2] - l1[0])
+					+ (l1[3] - l1[1]) * (l1[3] - l1[1]));
+	float length2 = sqrtf(
+			(l2[2] - l2[0]) * (l2[2] - l2[0])
+					+ (l2[3] - l2[1]) * (l2[3] - l2[1]));
 
-    float product = (l1[2] - l1[0])*(l2[2] - l2[0]) + (l1[3] - l1[1])*(l2[3] - l2[1]);
+	float product = (l1[2] - l1[0]) * (l2[2] - l2[0])
+			+ (l1[3] - l1[1]) * (l2[3] - l2[1]);
 
-    if (fabs(product / (length1 * length2)) < cos(CV_PI / 30))
-        return false;
+	if (fabs(product / (length1 * length2)) < cos(CV_PI / 30))
+		return false;
 
-    float mx1 = (l1[0] + l1[2]) * 0.5f;
-    float mx2 = (l2[0] + l2[2]) * 0.5f;
+	float mx1 = (l1[0] + l1[2]) * 0.5f;
+	float mx2 = (l2[0] + l2[2]) * 0.5f;
 
-    float my1 = (l1[1] + l1[3]) * 0.5f;
-    float my2 = (l2[1] + l2[3]) * 0.5f;
-    float dist = sqrtf((mx1 - mx2)*(mx1 - mx2) + (my1 - my2)*(my1 - my2));
+	float my1 = (l1[1] + l1[3]) * 0.5f;
+	float my2 = (l2[1] + l2[3]) * 0.5f;
+	float dist = sqrtf((mx1 - mx2) * (mx1 - mx2) + (my1 - my2) * (my1 - my2));
 
 //    cout << "dist: " << dist << endl;
-    if (dist > max(length1, length2) * 0.1f) //0.5f
-        return false;
+	if (dist > max(length1, length2) * 0.1f) //0.5f
+		return false;
 
-    return true;
+	return true;
 }

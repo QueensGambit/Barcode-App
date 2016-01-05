@@ -11,11 +11,14 @@ RNG rng(12345);
 void draw_massCenter(vector<ContourObject> vecCO, Size size){
 	Mat m = Mat::zeros(size, CV_8UC1);
 	vector<Point2f> massPoints;
+
 	for(int i = 0; i<vecCO.size(); i++){
 		m.at<uchar>(vecCO[i].getMassCenter())=255;
 		massPoints.push_back(vecCO[i].getMassCenter());
+
 	}
-	draw_probabilistic_hough(m);
+
+	draw_probabilistic_hough(m,vecCO);
 //	draw_fit_line(massPoints, m);
 
 	namedWindow("malen", CV_WINDOW_AUTOSIZE);
@@ -74,7 +77,7 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 	     }
 }
 
-void draw_probabilistic_hough(Mat m) {
+void draw_probabilistic_hough(Mat m,vector<ContourObject> vecCO) {
 	vector<Vec4i> p_lines;
 	Mat hough(m);
 	Mat dst;
@@ -93,7 +96,7 @@ void draw_probabilistic_hough(Mat m) {
 	/// Show the result
 	cout << "p_line.size(): " <<  p_lines.size() << endl;
 //	filter_hough_lines(p_lines, 0.00002, m.cols*m.rows);
-	p_lines = filter_hough_lines2(p_lines);
+	p_lines = filter_hough_lines2(p_lines, vecCO);
 	cout << "p_line.size(): " <<  p_lines.size() << endl;
 
 	for (size_t i = 0; i < p_lines.size(); i++) {
