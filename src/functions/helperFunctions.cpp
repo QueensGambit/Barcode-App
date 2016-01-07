@@ -45,9 +45,9 @@ bool wPxl_in_Area(Point2f& center, Mat& m, float dst) {
 	return false;
 }
 
-double get_length(Point p1, Point p2) {
-	double x = p2.x - p1.x;
-	double y = p2.y - p1.y;
+float get_length(Point p1, Point p2) {
+	float x = p2.x - p1.x;
+	float y = p2.y - p1.y;
 	return sqrt(x * x + y * y);
 }
 
@@ -230,7 +230,7 @@ Vec4i get_Border_Points_from_Rect(Point2f rect_point[4], bool b) {
 
 	Point2f p = rect_point[0];
 	int partner = get_min_Point_from_Rect(rect_point);
-	cout << "partner: " << partner << endl;
+//	cout << "partner: " << partner << endl;
 	int aPartner1, aPartner2;
 
 	if (partner == 1 ) {
@@ -253,4 +253,10 @@ Vec4i get_Border_Points_from_Rect(Point2f rect_point[4], bool b) {
 	v[2] = (rect_point[aPartner1].x + rect_point[aPartner2].x) / 2;
 	v[3] = (rect_point[aPartner1].y + rect_point[aPartner2].y) / 2;
 	return v;
+}
+
+
+float get_length(Vec4i v) {
+
+	return norm(Point(v[0], v[1]) - Point(v[2], v[3]));
 }

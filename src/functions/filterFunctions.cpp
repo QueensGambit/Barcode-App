@@ -232,26 +232,36 @@ vector<Vec4i> filter_hough_lines2(vector<Vec4i>& pLines) {
 	vector<Vec4i> fLines(numberOfLines);
 	float maxLength;
 	int indexWithMaxLength;
-	cout << "--------- direktes Auslesen ---------------------" << endl;
-	cout << "single points:" << endl;
+//	cout << "--------- direktes Auslesen ---------------------" << endl;
+//	cout << "single points:" << endl;
+//	cout << "labels.size() " << labels.size() << endl;
+//	cout << "pLines.size() " << pLines.size() << endl;
 	for (int i = 0; i < numberOfLines; i++) {
 		maxLength = 0;
 		for (int z = 0; z < labels.size(); z++) {
 			if (labels[z] == i) {
-				if (norm(pLines[z]) > maxLength) {
+//				cout << "lenght[" << z << "]: " << norm(pLines[z]) << endl;
+//				cout << "lenght[" << z << "]: "
+//						<< norm(Point(pLines[z][0], pLines[z][1]) - Point(pLines[z][2], pLines[z][3])) << endl;
+//				cout << "lenght[" << z << "]: " << get_length(pLines[z]) << endl;
+//				if (norm(pLines[z]) > maxLength) {
+				if (get_length(pLines[z]) > maxLength) {
 					indexWithMaxLength = z;
-					maxLength = norm(pLines[z]);
+					maxLength = get_length(pLines[z]);
 				}
 			}
 		}
+//		cout << "indexWithMaxLength: " << indexWithMaxLength << endl;
+//		cout << "maxLength: " << get_length(pLines[indexWithMaxLength]) << endl;
 		fLines[i] = pLines[indexWithMaxLength];
-		cout << "Line[" << i << "]:" << endl;
+//		cout << "fLines[i]: " << fLines[i] << endl;
+		/*cout << "Line[" << i << "]:" << endl;
 		cout << "xStart: " << fLines[i][0] << " ";
 		cout << "yStart: " << fLines[i][1] << endl;
 		cout << "xEnd: " << fLines[i][2] << " ";
-		cout << "yEnd: " << fLines[i][3] << endl;
+		cout << "yEnd: " << fLines[i][3] << endl;*/
 	}
-	cout << "-------------------------------------------" << endl;
+//	cout << "-------------------------------------------" << endl;
 	//lkajsdfklajsflkj
 //	filter_detected_Lines(fLines, vecCO);
 	return fLines;
@@ -269,6 +279,19 @@ bool isEqual(const Vec4i& _l1, const Vec4i& _l2) {
 
 	float product = (l1[2] - l1[0]) * (l2[2] - l2[0])
 			+ (l1[3] - l1[1]) * (l2[3] - l2[1]);
+
+	//are endpoints too close?
+	float threshDst = length1 * 0.1;
+	Point2f l1endP1 = Point2f(l1[0], l1[1]);
+	Point2f l1endP2 = Point2f(l1[2], l1[3]);
+
+	Point2f l2endP1 = Point2f(l2[0], l2[1]);
+	Point2f l2endP2 = Point2f(l2[2], l2[3]);
+
+	if (norm(l1endP1-l2endP1) <= threshDst || norm(l1endP1-l2endP2) <= threshDst ||
+			norm(l1endP2-l2endP1) <= threshDst || norm(l1endP2-l2endP2) <= threshDst)
+		return true;
+//		return false;
 
 	if (fabs(product / (length1 * length2)) < cos(CV_PI / 30))
 		return false;

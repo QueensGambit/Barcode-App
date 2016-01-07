@@ -103,13 +103,21 @@ void draw_hough_lines(Mat m, vector<Vec4i> p_lines) {
 	cvtColor(m, hough, COLOR_GRAY2BGR);
 
 	RNG rng(12345);
+//	RNG rng(12335);
 
 	for (size_t i = 0; i < p_lines.size(); i++) {
 			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
 							rng.uniform(0, 255));
+//			cout << "length in draw:" << norm(p_lines[i]) << endl;
 			Vec4i l = p_lines[i];
+//			Vec4i l = Vec4i(p_lines[i]);
 	//		Vec4i l = p_lines[0];
+//			cout << "l: " << l << endl;
+//			cout << "l: " << l[0] << ", " << l[1] << ", " << l[2] << ", " << l[3] << endl;
+//			cout << "length in draw:" << norm(Point(p_lines[i][0], p_lines[i][1])-Point(p_lines[i][2], p_lines[i][3])) << endl;
+//			cout << "length in draw:" << norm(l) << endl;
 			line(hough, Point(l[0], l[1]), Point(l[2], l[3]), color, 1);
+//			line(hough, Point(0, 0), Point(l[0], l[1]), color, 1);
 
 		}
 

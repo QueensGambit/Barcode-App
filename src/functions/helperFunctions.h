@@ -27,7 +27,8 @@ Point normalize (Point, Mat);
 
 bool wPxl_in_Area(Point2f&, Mat&, float);
 
-double get_length(Point, Point);
+float get_length(Point, Point);
+float get_length(Vec4i);
 
 int chess_length(Point, Point);
 

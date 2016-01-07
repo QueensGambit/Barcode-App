@@ -184,7 +184,7 @@ vector<Vec4i> get_probabilistic_hough_lines(Mat m) {
 //	filter_hough_lines(p_lines, 0.00002, m.cols*m.rows);
 //	filter_hough_lines2(p_lines);
 
-	cout << "p_line.size(): " <<  p_lines.size() << endl;
+
 
 
 
@@ -193,7 +193,7 @@ vector<Vec4i> get_probabilistic_hough_lines(Mat m) {
 
 vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourObject> vecCO, Size size) {
 
-	cout << "size of vecCO in filter_detected: " << vecCO.size() << endl;
+//	cout << "size of vecCO in filter_detected: " << vecCO.size() << endl;
 
 	vector<Vec4i>::const_iterator it2 = lines.begin();
 
@@ -209,9 +209,9 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 
 		Point2f start((*it2)[0], (*it2)[1]);
 		Point2f end((*it2)[2], (*it2)[3]);
-		cout << "startpoint: " << start << endl;
-		cout << "endpoint: " << end << endl;
-		cout << "entree" << endl;
+//		cout << "startpoint: " << start << endl;
+//		cout << "endpoint: " << end << endl;
+//		cout << "entree" << endl;
 
 			//startpoint inside countour?
 			/*
@@ -254,7 +254,7 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 				tmpCPoints[2] = Point2f(pointsEnd[0], pointsEnd[1]);
 				tmpCPoints[3] = Point2f(pointsEnd[2], pointsEnd[3]);
 
-				cout << "Angle: " << startContour.getAngle() << endl;
+//				cout << "Angle: " << startContour.getAngle() << endl;
 
 				cornerPoints.push_back(tmpCPoints);
 
@@ -274,13 +274,13 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 	Mat mBarcodePoints =  Mat::zeros(size, CV_8UC3);
 	RNG rng(12345);
 
-	cout << "cornerPoints:" << cornerPoints.size() << endl;
+//	cout << "cornerPoints:" << cornerPoints.size() << endl;
 	vector<Point2f> tmpCPoints(4);
 	for(int p = 0; p < cornerPoints.size(); p++){
 		tmpCPoints = cornerPoints[p];
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),rng.uniform(0, 255));
 		for(int z = 0; z<4; z++){
-			cout << "Punkt" << z << " " << tmpCPoints[z] << endl;
+//			cout << "Punkt" << z << " " << tmpCPoints[z] << endl;
 
 			circle(mBarcodePoints, tmpCPoints[z], 3, color, -1, 8, 0);
 		}
@@ -289,8 +289,8 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 	namedWindow("Barocde Punkte", 1);
 	imshow("Barocde Punkte", mBarcodePoints);
 
-	cout << "hits start: " << startH << endl;
-	cout << "hits end: " << endH << endl;
+//	cout << "hits start: " << startH << endl;
+//	cout << "hits end: " << endH << endl;
 
 	return cornerPoints;
 

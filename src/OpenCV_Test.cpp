@@ -131,6 +131,8 @@ int main() {
 
 	vector<Vec4i> pLines = get_probabilistic_hough_lines(mCenter);
 	vector<Vec4i> fLines = filter_hough_lines2(pLines);
+	cout << "f_line.size(): " <<  fLines.size() << endl;
+//	cout << "length norm(fLines[0]): " << norm(fLines[0]) << endl;
 	draw_hough_lines(mCenter, fLines);
 	vector<vector<Point2f> > cornerPoints = get_corner_points(fLines, fVecCO2, mfiltered.size());
 
