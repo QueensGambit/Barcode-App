@@ -13,6 +13,7 @@
 #include "functions/drawingFunctions.h"
 #include "functions/filterFunctions.h"
 #include "functions/finderFunctions.h"
+#include "functions/loaderFunctions.h"
 
 using namespace cv;
 using namespace std;
@@ -32,8 +33,10 @@ int main() {
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
+	src = get_image_from_webcam();
+
 //	src = imread("media/internet/test.png");
-	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
@@ -44,43 +47,11 @@ int main() {
 
 	//blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//
-	//	get source from camera by video capture
-	//
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-		VideoCapture capture(0); 								// open default camera
+	if (src.empty()) {
+		return -1;
+	}
 
-		if (!capture.isOpened()) {
-			cout << "ERROR: Could not open Camera";
-			return -1;
-		}
-
-		namedWindow("Camera", CV_WINDOW_AUTOSIZE);
-
-		while (true) {
-
-			Mat frame;
-			capture >> frame; 									// get frames
-			imshow("Camera", frame);
-
-			if (waitKey(30) == 13) {// press enter to break loop and copy frame into source image
-				frame.copyTo(src);
-				destroyAllWindows();
-				break;
-			}
-		}
-
-
-
-*/
 	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//
-	//	end of capturing
-	//
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	int pxl_Sum = src.cols * src.rows;
