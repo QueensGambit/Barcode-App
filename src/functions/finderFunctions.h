@@ -32,4 +32,8 @@ vector<ContourObject> find_moments(Mat, int, Mat, Size);
 vector<ContourObject> find_mser(Mat);
 //void find_Colour_for_Groups(map<Scalar, vector< vector< ContourObject> > >&,Scalar, ContourObject);
 //void find_groups(Mat, vector<ContourObject>);
+
+vector<Vec4i> get_probabilistic_hough_lines(Mat);
+vector<vector<Point2f> > get_corner_points(vector<Vec4i>, vector<ContourObject>, Size);
+
 #endif /* FINDERFUNCTIONS_H_ */

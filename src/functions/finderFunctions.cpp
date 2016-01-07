@@ -162,3 +162,136 @@ vector<ContourObject> find_mser(Mat gray) {
 	return vecCO;
 
 }
+
+vector<Vec4i> get_probabilistic_hough_lines(Mat m) {
+	vector<Vec4i> p_lines;
+
+	Mat dst;
+//	blur(m, m, Size(3, 3));
+//	Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
+//	dilate( m, m, element );
+	 Canny(m, dst, 50, 200, 3);
+
+//	cvtColor(m, gray, COLOR_BGR2GRAY);
+
+//	Mat bw = m > 128;
+
+	/// 2. Use Probabilistic Hough Transform //30	//80
+	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 30, 30, 80);
+
+	/// Show the result
+	cout << "p_line.size(): " <<  p_lines.size() << endl;
+//	filter_hough_lines(p_lines, 0.00002, m.cols*m.rows);
+//	filter_hough_lines2(p_lines);
+
+	cout << "p_line.size(): " <<  p_lines.size() << endl;
+
+
+
+	return p_lines;
+}
+
+vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourObject> vecCO, Size size) {
+
+	cout << "size of vecCO in filter_detected: " << vecCO.size() << endl;
+
+	vector<Vec4i>::const_iterator it2 = lines.begin();
+
+	ContourObject startContour;
+	ContourObject endContour;
+
+	vector<vector<Point2f> > cornerPoints;
+
+	int startH = 0;
+	int endH = 0;
+
+	while (it2 != lines.end()) {
+
+		Point2f start((*it2)[0], (*it2)[1]);
+		Point2f end((*it2)[2], (*it2)[3]);
+		cout << "startpoint: " << start << endl;
+		cout << "endpoint: " << end << endl;
+		cout << "entree" << endl;
+
+			//startpoint inside countour?
+			/*
+			 * It returns positive (inside), negative (outside), or zero (on an edge) value,
+			 * correspondingly. When measureDist=false , the return value is +1, -1, and 0
+			 *
+			 */
+
+			//cout << "test: " << i << endl;
+			//cout << "start " << pointPolygonTest(vecCO[i].getContour(), start, false) << endl;
+			//cout << "ende " << pointPolygonTest(vecCO[i].getContour(), end, false) << endl;
+
+
+//			if (pointPolygonTest(vecCO[i].getContour(), start, false) >= 0) {
+			int sIndex = get_Contour_Min_Dst(vecCO, start);
+			int eIndex = get_Contour_Min_Dst(vecCO, end);
+
+			if (sIndex != -1 && eIndex != -1 ) {
+				startContour = vecCO[sIndex];
+				endContour = vecCO[eIndex];
+				startH++;
+				endH++;
+				Point2f p[4];
+				Point2f q[4];
+
+				startContour.getRectPoints(p);
+				endContour.getRectPoints(q);
+
+				Vec4i pointsStart;
+				pointsStart = get_Border_Points_from_Rect(p, true);
+
+				vector<Point2f> tmpCPoints(4);
+
+				tmpCPoints[0] = Point2f(pointsStart[0], pointsStart[1]);
+				tmpCPoints[1] = Point2f(pointsStart[2], pointsStart[3]);
+
+				Vec4i pointsEnd;
+				pointsEnd = get_Border_Points_from_Rect(q, false);
+
+				tmpCPoints[2] = Point2f(pointsEnd[0], pointsEnd[1]);
+				tmpCPoints[3] = Point2f(pointsEnd[2], pointsEnd[3]);
+
+				cout << "Angle: " << startContour.getAngle() << endl;
+
+				cornerPoints.push_back(tmpCPoints);
+
+			}
+//			}
+
+				//break;
+//			}
+
+
+		it2++;
+
+	}
+//	Size s = Size(324, 244);
+//	Size s = Size(1138, 1600);
+
+	Mat mBarcodePoints =  Mat::zeros(size, CV_8UC3);
+	RNG rng(12345);
+
+	cout << "cornerPoints:" << cornerPoints.size() << endl;
+	vector<Point2f> tmpCPoints(4);
+	for(int p = 0; p < cornerPoints.size(); p++){
+		tmpCPoints = cornerPoints[p];
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),rng.uniform(0, 255));
+		for(int z = 0; z<4; z++){
+			cout << "Punkt" << z << " " << tmpCPoints[z] << endl;
+
+			circle(mBarcodePoints, tmpCPoints[z], 3, color, -1, 8, 0);
+		}
+	}
+
+	namedWindow("Barocde Punkte", 1);
+	imshow("Barocde Punkte", mBarcodePoints);
+
+	cout << "hits start: " << startH << endl;
+	cout << "hits end: " << endH << endl;
+
+	return cornerPoints;
+
+}

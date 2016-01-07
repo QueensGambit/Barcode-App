@@ -32,8 +32,8 @@ int main() {
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
-	src = imread("media/internet/test.png");
-//	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/internet/test.png");
+	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
@@ -95,7 +95,7 @@ int main() {
 	namedWindow("Source", CV_WINDOW_AUTOSIZE);
 	imshow("Source", src);
 
-	namedWindow(skel_window, CV_WINDOW_AUTOSIZE);
+//	namedWindow(skel_window, CV_WINDOW_AUTOSIZE);
 
 	adaptiveThreshold(gray, skel3, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, -8);
 
@@ -127,7 +127,12 @@ int main() {
 	//cout << "mfilteed size: " << mfiltered.size();
 	cluster_rect(cluster, fVecCO2);
 
-	draw_massCenter(fVecCO2, mfiltered.size());
+	Mat mCenter = draw_massCenter(fVecCO2, mfiltered.size());
+
+	vector<Vec4i> pLines = get_probabilistic_hough_lines(mCenter);
+	vector<Vec4i> fLines = filter_hough_lines2(pLines);
+	draw_hough_lines(mCenter, fLines);
+	vector<vector<Point2f> > cornerPoints = get_corner_points(fLines, fVecCO2, mfiltered.size());
 
 	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
 //	crop(src, cluster);

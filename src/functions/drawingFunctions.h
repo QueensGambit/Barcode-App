@@ -18,6 +18,7 @@
 #include <limits.h>
 #include "../ContourObject.h"
 #include "helperFunctions.h"
+#include "filterFunctions.h"
 
 using namespace cv;
 using namespace std;
@@ -27,9 +28,8 @@ void draw_Circles(vector<ContourObject>, Mat);
 
 void draw_Lines(vector<ContourObject>, Mat);
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
-void draw_massCenter(vector<ContourObject>, Size);
-
-void draw_probabilistic_hough(Mat,vector<ContourObject>);
+Mat draw_massCenter(vector<ContourObject>, Size);
+void draw_hough_lines(Mat , vector<Vec4i>);
 void draw_fit_line(vector<Point2f>, Mat);
 
 #endif /* DRAWINGFUNCTIONS_H_ */
