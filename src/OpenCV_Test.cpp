@@ -21,6 +21,7 @@ using namespace std;
 void crop(Mat, Mat);
 
 void bw_thresh_callback(int, void*);
+void p_transform(Mat, vector<vector<Point2f> >);
 
 //global variables
 Mat skel, skel2, skel3, gray;//, //blank;
@@ -138,7 +139,8 @@ int main() {
 	vector<vector<Point2f> > cornerPoints = get_corner_points(fLines, fVecCO2, src);
 
 	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
-//	crop(src, cluster);
+
+	p_transform(src, cornerPoints);
 
 	waitKey(0);
 	return (0);
@@ -154,66 +156,75 @@ void bw_thresh_callback(int, void*) {
 	imshow(skel_window, skel);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
+
+
+	Mat transform = Mat::zeros(300, 500, CV_8UC3);
+
+
+//	Mat cropImage;
+//	Rect roi;
+//	for (int i = 0; i < cornerPoints.size(); i++) {
+//		roi = boundingRect(cornerPoints[i]);
+//	}
 //
-//	find contours and crop region of interest
+//	Size s(roi.width * .1, roi.height * .1);
+//	Point offset(s.width / 2, s.height / 2);			//shifting the rectangle
+//	roi += s;
+//	roi -= offset;
 //
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void crop(Mat src, Mat img) {
-
-	double largest_area = 0;
-	int largest_contour_index = 0;
-	Mat cropImage;
-	Rect roi;														//region of interest
-
-//	cvtColor(img, grey, CV_BGR2GRAY);
-//	threshold(grey, grey, 125, 255, THRESH_BINARY);
-
-	vector<vector<Point> > bc_contours; 							//contains potential barcode contour
-	vector<Vec4i> hierarchy;
-
-	findContours(img, bc_contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+//	Mat croppedRef(src, roi);						//crop and copy the region
+//	croppedRef.copyTo(cropImage);
+//	namedWindow("cropped", 0);
+//	imshow("cropped", cropImage);
 
 
-	for (int i = 0; i < bc_contours.size(); i++) {
+	Mat dst = src.clone();
 
-		double area = contourArea(bc_contours[i], false);
+	///zoom out
+	for (int i = 0; i < cornerPoints.size(); i++) {
+		cornerPoints[i][0].x -= 30;
+		cornerPoints[i][0].y -= 30;
 
-		if (area > largest_area) {
+		cornerPoints[i][1].x -= 30;
+		cornerPoints[i][1].y += 30;
 
-			largest_area = area;
-			largest_contour_index = i;
-			roi = boundingRect(bc_contours[i]); 					//find rectangle with largest contour
-		}
+		cornerPoints[i][2].x += 30;
+		cornerPoints[i][2].y -= 30;
+
+		cornerPoints[i][3].x += 30;
+		cornerPoints[i][3].y += 30;
 	}
 
-//	Size s( roi.width * 0.3, roi.height * 0.3 );
-	Size s( roi.width * .1 , roi.height * .1);
-	Point offset( s.width/2, s.height/2);							//shifting the rectangle
-	roi += s;
-	roi -= offset;
+	///sort corners to correct order
+	for (int i = 0; i < cornerPoints.size(); i++) {
 
-	Scalar color(255, 255, 255);
-	drawContours(img, bc_contours, largest_contour_index, color, CV_FILLED, 8, hierarchy);
-	rectangle(src, roi, Scalar(0, 255, 0), 1, 8, 0);
+		Point2f tmpP2, tmpP3, tmpP4;
+
+		tmpP4 = cornerPoints[i][1];
+		tmpP3 = cornerPoints[i][3];
+		tmpP2 = cornerPoints[i][2];
+
+		cornerPoints[i][1] = tmpP2;
+		cornerPoints[i][2] = tmpP3;
+		cornerPoints[i][3] = tmpP4;
+	}
+
+	vector<Point2f> quad_pts;
+	quad_pts.push_back(Point2f(0, 0));
+	quad_pts.push_back(Point2f(transform.cols, 0));
+	quad_pts.push_back(Point2f(transform.cols, transform.rows));
+	quad_pts.push_back(Point2f(0, transform.rows));
 
 
 
-	/////////////////////////////////////////////////////////////////get angle and rotate
-
-
-	Mat croppedRef(src, roi);										//crop and copy the region
-	croppedRef.copyTo(cropImage);
-
-
-	namedWindow("cropped", 0);
-	imshow("cropped", cropImage);
+	for (int i = 0; i < cornerPoints.size(); i++) {
+		Mat transmtx = getPerspectiveTransform(cornerPoints[i], quad_pts);
+		warpPerspective(src, transform, transmtx, transform.size());
+		imshow("transform", transform);
+	}
 
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	end of crop
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
