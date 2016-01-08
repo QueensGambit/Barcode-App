@@ -21,8 +21,8 @@ Mat draw_massCenter(vector<ContourObject> vecCO, Size size){
 //	draw_probabilistic_hough(m,vecCO);
 //	draw_fit_line(massPoints, m);
 
-	namedWindow("malen", CV_WINDOW_AUTOSIZE);
-	imshow("malen", m);
+//	namedWindow("malen", CV_WINDOW_AUTOSIZE);
+//	imshow("malen", m);
 
 	return m;
 }
@@ -106,8 +106,9 @@ void draw_hough_lines(Mat m, vector<Vec4i> p_lines) {
 //	RNG rng(12335);
 
 	for (size_t i = 0; i < p_lines.size(); i++) {
-			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
-							rng.uniform(0, 255));
+//			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),rng.uniform(0, 255));
+			Scalar color = Scalar(rng.uniform(0, 2) * 255, rng.uniform(0, 2)* 255,rng.uniform(0, 2) * 255);
+
 //			cout << "length in draw:" << norm(p_lines[i]) << endl;
 			Vec4i l = p_lines[i];
 //			Vec4i l = Vec4i(p_lines[i]);

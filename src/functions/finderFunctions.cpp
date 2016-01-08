@@ -191,7 +191,7 @@ vector<Vec4i> get_probabilistic_hough_lines(Mat m) {
 	return p_lines;
 }
 
-vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourObject> vecCO, Size size) {
+vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourObject> vecCO, Mat mBarcodePoints) {
 
 //	cout << "size of vecCO in filter_detected: " << vecCO.size() << endl;
 
@@ -271,19 +271,26 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 //	Size s = Size(324, 244);
 //	Size s = Size(1138, 1600);
 
-	Mat mBarcodePoints =  Mat::zeros(size, CV_8UC3);
+//	Mat mBarcodePoints =  Mat::zeros(size, CV_8UC3);
 	RNG rng(12345);
 
 //	cout << "cornerPoints:" << cornerPoints.size() << endl;
 	vector<Point2f> tmpCPoints(4);
+
+	mBarcodePoints -= .5 * mBarcodePoints;
 	for(int p = 0; p < cornerPoints.size(); p++){
 		tmpCPoints = cornerPoints[p];
-		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),rng.uniform(0, 255));
+		Scalar color = Scalar(rng.uniform(0, 2) * 255, rng.uniform(0, 2)* 255,rng.uniform(0, 2) * 255);
+//		Scalar color = Scalar(255, 255, 0);
+//	    Point intRect_points[4];
 		for(int z = 0; z<4; z++){
 //			cout << "Punkt" << z << " " << tmpCPoints[z] << endl;
 
 			circle(mBarcodePoints, tmpCPoints[z], 3, color, -1, 8, 0);
+//			intRect_points[z] = tmpCPoints[z];
+
 		}
+//		fillConvexPoly( mBarcodePoints, intRect_points, 4, Scalar(255,255,255), 8, 0);
 	}
 
 	namedWindow("Barocde Punkte", 1);

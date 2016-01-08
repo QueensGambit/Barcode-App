@@ -45,8 +45,8 @@ vector<ContourObject> filter_by_rect(vector<ContourObject> vecCO, Mat m,
 			ratio = height / width;
 		}
 
-		if (getfilledRatio(m, minRect[i]) >= threshWPxl
-				&& ratio >= threshAspect) {
+		if (//getfilledRatio(m, minRect[i]) >= threshWPxl &&
+				 ratio >= threshAspect) {
 			Point2f rect_points[4];
 			minRect[i].points(rect_points);
 			vecCO[i].setRectPoints(rect_points);

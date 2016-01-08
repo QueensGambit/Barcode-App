@@ -23,7 +23,7 @@ void crop(Mat, Mat);
 void bw_thresh_callback(int, void*);
 
 //global variables
-Mat skel, skel2, skel3, gray, blank;
+Mat skel, skel2, skel3, gray;//, //blank;
 int thresh = 127;
 int max_thresh = 255;
 
@@ -33,8 +33,12 @@ int main() {
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
-	src = get_image_from_webcam();
+//	src = get_image_from_webcam();
 
+//	src = imread("media/gut/highQu_scaled.jpg");
+	src = imread("media/gut/toffifee_scaled.jpg");
+//	src = imread("media/gut/mandarine_scaled.jpg");
+//	src = imread("media/gut/bottle_scaled.jpg");
 //	src = imread("media/internet/test.png");
 //	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
@@ -48,19 +52,27 @@ int main() {
 	//blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 
 	if (src.empty()) {
+		cout << "src is empty!" << endl;
 		return -1;
 	}
 
-	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
+//	blank = imread("media/blank2.jpg", CV_LOAD_IMAGE_COLOR);
 
 
 	int pxl_Sum = src.cols * src.rows;
+	cout << "pxl_Sum: " << pxl_Sum << endl;
+
+	Mat canny_output;
 
 	cvtColor(src, gray, CV_BGR2GRAY);
-//	blur(gray, gray, Size(3, 3));
+	blur(gray, canny_output, Size(3, 3));
 
 	//invert the image !
 	gray = ~gray;
+
+	Canny(gray, canny_output, 50, 150, 3);
+	namedWindow("Canny", CV_WINDOW_AUTOSIZE);
+	imshow("Canny", canny_output);
 
 //	resize(src, src, blank.size());
 	namedWindow("Source", CV_WINDOW_AUTOSIZE);
@@ -70,10 +82,16 @@ int main() {
 
 	adaptiveThreshold(gray, skel3, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, -8);
 
-	gray += .4 * skel3;
+//	gray += ~gray;
+//	gray /= 2;
+	gray += .4 * skel3; //*.4
+//	gray += .4 * canny_output;
+
 //	medianBlur ( gray, gray, 3 );
 	namedWindow( "Gray", CV_WINDOW_AUTOSIZE );
 	imshow( "Gray", gray );
+
+//	find_moments(canny_output, 3, skel3, gray.size());
 
 	vector<ContourObject> vecCO(find_mser(gray));
 
@@ -83,7 +101,18 @@ int main() {
 	skel3.copyTo(mfiltered);
 	cvtColor(mfiltered, mfiltered, CV_GRAY2BGR);
 
+
 	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .4, 5 )); //.95, 7
+
+	/*while (true) {
+
+			if (waitKey(30) == 13) {// press enter to break loop and copy frame into source image
+//				frame.copyTo(src);
+//				destroyAllWindows();
+				break;
+			}
+		}*/
+
 	vector<ContourObject> fVecCO2(fVecCO);
 //	vector<ContourObject> fVecCO2(filter_by_dst(fVecCO, pxl_Sum, 0.0003, skel3.size() )); //0.00001
 
@@ -94,6 +123,7 @@ int main() {
 
 	namedWindow("mFiltered", CV_WINDOW_AUTOSIZE);	//CV_WINDOW_NORMAL
 	imshow("mFiltered", mfiltered);
+
 	Mat cluster = Mat::zeros(mfiltered.size(),CV_8UC1);
 	//cout << "mfilteed size: " << mfiltered.size();
 	cluster_rect(cluster, fVecCO2);
@@ -105,7 +135,7 @@ int main() {
 	cout << "f_line.size(): " <<  fLines.size() << endl;
 //	cout << "length norm(fLines[0]): " << norm(fLines[0]) << endl;
 	draw_hough_lines(mCenter, fLines);
-	vector<vector<Point2f> > cornerPoints = get_corner_points(fLines, fVecCO2, mfiltered.size());
+	vector<vector<Point2f> > cornerPoints = get_corner_points(fLines, fVecCO2, src);
 
 	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
 //	crop(src, cluster);
@@ -120,7 +150,7 @@ void bw_thresh_callback(int, void*) {
 
 	threshold(gray, skel, thresh, max_thresh, cv::THRESH_BINARY);
 	make_skelekton(skel);
-	resize(skel, skel, blank.size());
+//	resize(skel, skel, blank.size());
 	imshow(skel_window, skel);
 }
 
