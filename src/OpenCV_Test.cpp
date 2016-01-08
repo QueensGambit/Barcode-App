@@ -181,21 +181,20 @@ void p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 //	imshow("cropped", cropImage);
 
 
-	Mat dst = src.clone();
 
 	///zoom out
 	for (int i = 0; i < cornerPoints.size(); i++) {
-		cornerPoints[i][0].x -= 30;
-		cornerPoints[i][0].y -= 30;
+		cornerPoints[i][0].x -= 50;
+		cornerPoints[i][0].y -= 50;
 
-		cornerPoints[i][1].x -= 30;
-		cornerPoints[i][1].y += 30;
+		cornerPoints[i][1].x -= 50;
+		cornerPoints[i][1].y += 50;
 
-		cornerPoints[i][2].x += 30;
-		cornerPoints[i][2].y -= 30;
+		cornerPoints[i][2].x += 50;
+		cornerPoints[i][2].y -= 50;
 
-		cornerPoints[i][3].x += 30;
-		cornerPoints[i][3].y += 30;
+		cornerPoints[i][3].x += 50;
+		cornerPoints[i][3].y += 50;
 	}
 
 	///sort corners to correct order
