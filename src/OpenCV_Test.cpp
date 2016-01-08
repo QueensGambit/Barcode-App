@@ -136,7 +136,7 @@ int main() {
 	cout << "f_line.size(): " <<  fLines.size() << endl;
 //	cout << "length norm(fLines[0]): " << norm(fLines[0]) << endl;
 	draw_hough_lines(mCenter, fLines);
-	vector<vector<Point2f> > cornerPoints = get_corner_points(fLines, fVecCO2, src);
+	vector<vector<Point2f> > cornerPoints = get_corner_points(fLines, fVecCO2, src.clone());
 
 	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
 
