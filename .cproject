@@ -31,6 +31,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\opencv249\opencv\release\install\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\opencv249\opencv\release\install\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/ZBar/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Network/curl-7.34.0-win32/include}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.files.1884185829" name="Include files (-include)" superClass="gnu.cpp.compiler.option.include.files"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.181947432" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -43,6 +44,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.77555971" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug.616364376" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug">
 								<option id="gnu.cpp.link.option.libs.1405632098" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="libcurl"/>
 									<listOptionValue builtIn="false" value="libzbar-0"/>
 									<listOptionValue builtIn="false" value="opencv_calib3d249"/>
 									<listOptionValue builtIn="false" value="opencv_contrib249"/>
@@ -68,6 +70,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\opencv249\opencv\release\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\opencv249\opencv\release\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/ZBar/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Network/curl-7.34.0-win32/lib}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1068023569" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

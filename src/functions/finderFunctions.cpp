@@ -395,3 +395,112 @@ int n = scanner.scan(image);
 	 }
 	 return false;
 }
+
+
+bool get_article_description(string& barcode) {
+
+	//	const char* url = "http://www.example.com";
+
+	//	string barcode = "8430631154438";
+	//	string barcode = "3423621672";
+	//	string barcode = "42103684";
+	//	string barcode = "4311501359105";
+	//	string barcode = "4018077711770";
+	//	string barcode = "8430631216549";
+	//	string barcode = "4018077711770";
+//	string barcode = "4250589702215";
+
+	if (barcode.size() == 0) {
+		return false;
+	}
+
+	//	string barcode = "4014400400007";
+	string url = "http://www.codecheck.info/product.search?q=" + barcode;
+	string result = curl_httpget(url);
+
+	string title = "<title>";
+
+	size_t titlefound = result.find(title);
+	titlefound += title.size();
+	size_t barcodefound = result.find(barcode);
+
+	//	cout << "titlefound-Index: " << titlefound << endl;
+	//	cout << "barcodefound-Index2: " << barcodefound << endl;
+
+	size_t diff = barcodefound - titlefound - 3;
+	string artikel = result.substr(titlefound, diff);
+	cout << "artikel: " << artikel << endl;
+
+	string description = "description\" content=\'";
+	string descriptionend = " - Test";
+	string descriptionend2 = "✓";
+	size_t descriptionfound = result.find(description);
+	descriptionfound += description.size();
+	size_t descriptionendfound = result.find(descriptionend);
+	size_t descriptionendfound2 = result.find(descriptionend2);
+	//	cout << "descriptionfound-Index: " << descriptionfound << endl;
+	//	cout << "descriptionendfound-Index: " << descriptionendfound << endl;
+	if (descriptionendfound2 < descriptionendfound) {
+		descriptionendfound = descriptionendfound2;
+	}
+	size_t diff2 = descriptionendfound - descriptionfound;
+	string beschreibung = result.substr(descriptionfound, diff2);
+
+	cout << "beschreibung: " << beschreibung << endl;
+
+	/*cout << "result:" << endl;
+
+	 int stop = 900;
+	 for (int i = 0; i < stop; i++) {
+	 cout << result[i];
+	 }*/
+
+	return true;
+}
+
+string curl_httpget(const string &url)
+{
+    string buffer;
+
+    CURL *curl;
+    CURLcode result;
+
+    curl = curl_easy_init();
+
+    if (curl)
+    {
+      curl_easy_setopt(curl, CURLOPT_URL, url.c_str()  );
+      curl_easy_setopt(curl, CURLOPT_HEADER, 0);
+      curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
+      curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+
+      //-----------------------------------------------------
+      curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+      //-----------------------------------------------------
+
+      result = curl_easy_perform(curl);//http get performed
+
+      curl_easy_cleanup(curl);//must cleanup
+
+      //error codes: http://curl.haxx.se/libcurl/c/libcurl-errors.html
+      if (result == CURLE_OK)
+          return buffer;
+      //curl_easy_strerror was added in libcurl 7.12.0
+      cerr << "error: " << result << " " << curl_easy_strerror(result) <<endl;
+      return "";
+    }
+
+    cerr << "error: could not initalize curl" << endl;
+    return "";
+}
+
+int writer(char *data, size_t size, size_t nmemb, string *buffer)
+{
+  int result = 0;
+  if (buffer != NULL)
+  {
+      buffer->append(data, size * nmemb);
+      result = size * nmemb;
+  }
+  return result;
+}
