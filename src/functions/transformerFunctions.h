@@ -16,6 +16,6 @@
 using namespace cv;
 using namespace std;
 
-void p_transform(Mat, vector<vector<Point2f> > );
+vector<Mat> p_transform(Mat, vector<vector<Point2f> > );
 
 #endif /* TRANSFORMERFUNCTIONS_H_ */

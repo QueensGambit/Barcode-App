@@ -8,9 +8,9 @@
 #include "transformerFunctions.h"
 
 
-void p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
+vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 
-
+	vector<Mat> mBarcode;
 	Mat transform = Mat::zeros(300, 1200, CV_8UC3);
 
 
@@ -154,6 +154,9 @@ void p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 //		cout << "0:" << int('0') << endl;
 //		cout << "strTransform" << endl;
 		imshow((strTransform + char(i+48)).c_str(), transform);
+		mBarcode.push_back(transform);
 	}
+
+	return mBarcode;
 }
 

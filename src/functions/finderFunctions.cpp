@@ -302,3 +302,96 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 	return cornerPoints;
 
 }
+
+bool get_barcode_string(Mat& img, string& code, string& type, float& angle) {
+
+    ImageScanner scanner;
+    scanner.set_config(ZBAR_NONE, ZBAR_CFG_ENABLE, 1);
+     // obtain image data
+    //char file[256];
+    //cin>>file;
+    //Mat img = imread(file,0);
+//      Mat img = imread("D:/Gimp/DBV/media/gut/mandarine_scaled.jpg", CV_LOAD_IMAGE_COLOR);
+//       Mat img = imread("D:/Gimp/DBV/media/gut/auschnitt_himbeere.jpg", CV_LOAD_IMAGE_COLOR);
+//       Mat img = imread("D:/Gimp/DBV/media/gut/auschnitt_joghurt2.jpg", CV_LOAD_IMAGE_COLOR);
+//       Mat img = imread("D:/Gimp/DBV/barcode_schnitt2_mirrored.png", CV_LOAD_IMAGE_COLOR);
+//     Mat img = imread("D:/Gimp/DBV/barcode_schnitt4.jpg", CV_LOAD_IMAGE_COLOR);
+//      Mat img = imread("D:/Gimp/DBV/media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
+    //Mat img = imread("D:/Program Files (x86)/ZBar/examples/barcode.png", CV_LOAD_IMAGE_COLOR);
+
+
+
+    //Mat img = imread("D:/Gimp/DBV/Lenna.png", CV_LOAD_IMAGE_COLOR);
+
+    //cvtColor(img,imgout,CV_GRAY2RGB);
+
+    Mat imgout;
+    cvtColor(img,imgout,CV_RGB2GRAY);
+    int width = img.cols;
+    int height = img.rows;
+//    cout << "cols: " << width << endl;
+//    cout << "height: " << height << endl;
+
+    uchar *raw = (uchar *)imgout.data;
+ // wrap image data
+ Image image(width, height, "Y800", raw, width * height);
+ // scan the image for barcodes
+int n = scanner.scan(image);
+ // extract results
+ for(Image::SymbolIterator symbol = image.symbol_begin();
+   symbol != image.symbol_end();
+   ++symbol)
+ {
+              vector<Point> vp;
+   // do something useful with results
+   /*cout << "decoded " << symbol->get_type_name()
+      << " symbol \"" << symbol->get_data() << '"' <<" "<< endl;*/
+
+   code = symbol->get_data();
+   type = symbol->get_type_name();
+
+         int n = symbol->get_location_size();
+
+         for(int i=0;i<n;i++){
+              vp.push_back(Point(symbol->get_location_x(i),symbol->get_location_y(i)));
+         }
+
+         RotatedRect r = minAreaRect(vp);
+         Point2f pts[4];
+         r.points(pts);
+
+         for(int i=0;i<4;i++){
+              line(img,pts[i],pts[(i+1)%4],Scalar(255,0,0),3);
+         }
+//         cout<<"Angle: "<<r.angle<<endl;
+
+         angle = r.angle;
+ }
+
+///addition
+/*
+     // extract results
+  for(Image::SymbolIterator symbol = image.symbol_begin();
+      symbol != image.symbol_end();
+      ++symbol) {
+  	cout << "Test" << endl;
+      // do something useful with results
+      cout << "decoded " << symbol->get_type_name()
+           << " symbol \"" << symbol->get_data() << '"' << endl;
+  }
+ //////*/
+
+//cout << "The Barcode is: " << n << endl;
+   // imshow("imgout.jpg",imgout);
+    namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
+    imshow("MyWindow", img);
+    namedWindow("Result",1);
+    imshow("Result", imgout);
+ // clean up
+ image.set_data(NULL, 0);
+
+	 if (n == 1) {
+		return true;
+	 }
+	 return false;
+}

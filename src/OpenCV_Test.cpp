@@ -39,9 +39,9 @@ int main() {
 //	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
 //	src = imread("media/gut/toffifee_scaled.jpg");
-//	src = imread("media/gut/mandarine_scaled.jpg");
+	src = imread("media/gut/mandarine_scaled.jpg");
 //	src = imread("media/gut/bottle_scaled.jpg");
-	src = imread("media/internet/test.png");
+//	src = imread("media/internet/test.png");
 //	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
@@ -141,7 +141,30 @@ int main() {
 
 	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
 
-	p_transform(src, cornerPoints);
+	vector<Mat> mBarcodes;
+	mBarcodes = p_transform(src, cornerPoints);
+
+	/*vector<string> barcode;
+	vector<string> type;
+	vector<float> angle;*/
+
+	string barcode;
+	string type;
+	float angle;
+
+	if (mBarcodes.size() > 0) {
+		bool readSuccess = get_barcode_string(mBarcodes[0], barcode, type, angle);
+
+		if (readSuccess) {
+			cout << "Barcode was successfully decoded." << endl;
+			cout << "type: " << type << endl;
+			cout << "barcode-symbol: "  << barcode << endl;
+			cout << "angle: " << angle << endl;
+		}
+		else {
+			cout << "no barcode could be read." << endl;
+		}
+	}
 
 	waitKey(0);
 	return (0);

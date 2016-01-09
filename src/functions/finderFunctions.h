@@ -24,6 +24,9 @@
 #include <map>
 #include <iomanip>
 
+#include "../ZBar/include/zbar.h"
+
+using namespace zbar;
 using namespace cv;
 using namespace std;
 
@@ -35,5 +38,7 @@ vector<ContourObject> find_mser(Mat);
 
 vector<Vec4i> get_probabilistic_hough_lines(Mat);
 vector<vector<Point2f> > get_corner_points(vector<Vec4i>, vector<ContourObject>, Mat);
+
+bool get_barcode_string(Mat&, string&, string&, float&);
 
 #endif /* FINDERFUNCTIONS_H_ */
