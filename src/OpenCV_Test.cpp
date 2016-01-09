@@ -14,14 +14,15 @@
 #include "functions/filterFunctions.h"
 #include "functions/finderFunctions.h"
 #include "functions/loaderFunctions.h"
+#include "functions/transformerFunctions.h"
 
 using namespace cv;
 using namespace std;
 
 void crop(Mat, Mat);
 
-void bw_thresh_callback(int, void*);
-void p_transform(Mat, vector<vector<Point2f> >);
+//void bw_thresh_callback(int, void*);
+//void p_transform(Mat, vector<vector<Point2f> >);
 
 //global variables
 Mat skel, skel2, skel3, gray;//, //blank;
@@ -37,10 +38,10 @@ int main() {
 //	src = get_image_from_webcam();
 //	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
-	src = imread("media/gut/toffifee_scaled.jpg");
+//	src = imread("media/gut/toffifee_scaled.jpg");
 //	src = imread("media/gut/mandarine_scaled.jpg");
 //	src = imread("media/gut/bottle_scaled.jpg");
-//	src = imread("media/internet/test.png");
+	src = imread("media/internet/test.png");
 //	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
@@ -140,13 +141,14 @@ int main() {
 
 	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
 
-	p_transform(gray, cornerPoints);
+	p_transform(src, cornerPoints);
 
 	waitKey(0);
 	return (0);
 }
 
 
+/*
 //callback function for trackbar
 void bw_thresh_callback(int, void*) {
 
@@ -155,104 +157,4 @@ void bw_thresh_callback(int, void*) {
 //	resize(skel, skel, blank.size());
 	imshow(skel_window, skel);
 }
-
-
-
-void p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
-
-
-	Mat transform = Mat::zeros(300, 500, CV_8UC3);
-
-
-//	Mat cropImage;
-//	Rect roi;
-//	for (int i = 0; i < cornerPoints.size(); i++) {
-//		roi = boundingRect(cornerPoints[i]);
-//	}
-//
-//	Size s(roi.width * .1, roi.height * .1);
-//	Point offset(s.width / 2, s.height / 2);			//shifting the rectangle
-//	roi += s;
-//	roi -= offset;
-//
-//	Mat croppedRef(src, roi);						//crop and copy the region
-//	croppedRef.copyTo(cropImage);
-//	namedWindow("cropped", 0);
-//	imshow("cropped", cropImage);
-
-
-
-	///sort corners to correct order
-	for (int i = 0; i < cornerPoints.size(); i++) {
-/*
-		Point2f tmpP2, tmpP3, tmpP4;
-
-		tmpP4 = cornerPoints[i][1];
-		tmpP3 = cornerPoints[i][3];
-		tmpP2 = cornerPoints[i][2];
-
-		cornerPoints[i][1] = tmpP2;
-		cornerPoints[i][2] = tmpP3;
-		cornerPoints[i][3] = tmpP4;
-		*/
-
-
-
-		Point2f tmpP[4];
-
-		tmpP[0] = cornerPoints[i][1];
-		tmpP[1] = cornerPoints[i][0];
-		tmpP[2] = cornerPoints[i][2];
-		tmpP[3] = cornerPoints[i][3];
-
-		cornerPoints[i][0] = tmpP[0];
-		cornerPoints[i][1] = tmpP[1];
-		cornerPoints[i][2] = tmpP[2];
-		cornerPoints[i][3] = tmpP[3];
-
-		/*for (int z = 0; z < 4; z++) {
-			cout << "cornerPoints[" << z << "]:" << cornerPoints[i][z] << endl;
-		}*/
-	}
-
-
-	int scaleVal = 5;
-		///zoom out
-		for (int i = 0; i < cornerPoints.size(); i++) {
-
-			/*for (int z = 0; z < 4; z++) {
-				cout << "cornerPoints[" << z << "]:" << cornerPoints[i][z] << endl;
-			}*/
-
-			cornerPoints[i][0].x -= scaleVal;
-			cornerPoints[i][0].y -= scaleVal;
-
-			cornerPoints[i][1].x -= scaleVal;
-			cornerPoints[i][1].y += scaleVal;
-
-			cornerPoints[i][2].x += scaleVal;
-			cornerPoints[i][2].y += scaleVal;
-
-			cornerPoints[i][3].x += scaleVal;
-			cornerPoints[i][3].y -= scaleVal;
-
-		}
-
-	vector<Point2f> quad_pts;
-	quad_pts.push_back(Point2f(0, 0));
-	quad_pts.push_back(Point2f(0, transform.rows));
-	quad_pts.push_back(Point2f(transform.cols, transform.rows));
-	quad_pts.push_back(Point2f(transform.cols, 0));
-
-	String strTransform = "transform ";
-
-	for (int i = 0; i < cornerPoints.size(); i++) {
-		Mat transmtx = getPerspectiveTransform(cornerPoints[i], quad_pts);
-		warpPerspective(~src, transform, transmtx, transform.size());
-//		cout << "0:" << int('0') << endl;
-//		cout << "strTransform" << endl;
-		imshow((strTransform + char(i+48)).c_str(), transform);
-	}
-
-}
-
+*/
