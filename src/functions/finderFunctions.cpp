@@ -177,7 +177,7 @@ vector<Vec4i> get_probabilistic_hough_lines(Mat m) {
 //	Mat bw = m > 128;
 
 	/// 2. Use Probabilistic Hough Transform //30	//80
-	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 30, 30, 80);
+	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 30, 30, 60);
 
 	/// Show the result
 	cout << "p_line.size(): " <<  p_lines.size() << endl;

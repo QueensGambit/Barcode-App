@@ -11,9 +11,11 @@ RNG rng(12345);
 Mat draw_massCenter(vector<ContourObject> vecCO, Size size){
 	Mat m = Mat::zeros(size, CV_8UC1);
 	vector<Point2f> massPoints;
+	Scalar white = Scalar(255,255,255);
 
 	for(int i = 0; i<vecCO.size(); i++){
 		m.at<uchar>(vecCO[i].getMassCenter())=255;
+		circle(m, vecCO[i].getMassCenter(), 2, white, -1, 8, 0);
 		massPoints.push_back(vecCO[i].getMassCenter());
 
 	}

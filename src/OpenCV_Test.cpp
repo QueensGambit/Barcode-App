@@ -35,7 +35,7 @@ int main() {
 	Mat src;	//, gray;
 
 //	src = get_image_from_webcam();
-
+//	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
 	src = imread("media/gut/toffifee_scaled.jpg");
 //	src = imread("media/gut/mandarine_scaled.jpg");
@@ -63,17 +63,17 @@ int main() {
 	int pxl_Sum = src.cols * src.rows;
 	cout << "pxl_Sum: " << pxl_Sum << endl;
 
-	Mat canny_output;
+//	Mat canny_output;
 
 	cvtColor(src, gray, CV_BGR2GRAY);
-	blur(gray, canny_output, Size(3, 3));
+//	blur(gray, canny_output, Size(3, 3));
 
 	//invert the image !
 	gray = ~gray;
 
-	Canny(gray, canny_output, 50, 150, 3);
-	namedWindow("Canny", CV_WINDOW_AUTOSIZE);
-	imshow("Canny", canny_output);
+//	Canny(gray, canny_output, 50, 150, 3);
+//	namedWindow("Canny", CV_WINDOW_AUTOSIZE);
+//	imshow("Canny", canny_output);
 
 //	resize(src, src, blank.size());
 	namedWindow("Source", CV_WINDOW_AUTOSIZE);
@@ -140,7 +140,7 @@ int main() {
 
 	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
 
-	p_transform(src, cornerPoints);
+	p_transform(gray, cornerPoints);
 
 	waitKey(0);
 	return (0);
@@ -182,24 +182,9 @@ void p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 
 
 
-	///zoom out
-	for (int i = 0; i < cornerPoints.size(); i++) {
-		cornerPoints[i][0].x -= 50;
-		cornerPoints[i][0].y -= 50;
-
-		cornerPoints[i][1].x -= 50;
-		cornerPoints[i][1].y += 50;
-
-		cornerPoints[i][2].x += 50;
-		cornerPoints[i][2].y -= 50;
-
-		cornerPoints[i][3].x += 50;
-		cornerPoints[i][3].y += 50;
-	}
-
 	///sort corners to correct order
 	for (int i = 0; i < cornerPoints.size(); i++) {
-
+/*
 		Point2f tmpP2, tmpP3, tmpP4;
 
 		tmpP4 = cornerPoints[i][1];
@@ -209,20 +194,64 @@ void p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 		cornerPoints[i][1] = tmpP2;
 		cornerPoints[i][2] = tmpP3;
 		cornerPoints[i][3] = tmpP4;
+		*/
+
+
+
+		Point2f tmpP[4];
+
+		tmpP[0] = cornerPoints[i][1];
+		tmpP[1] = cornerPoints[i][0];
+		tmpP[2] = cornerPoints[i][2];
+		tmpP[3] = cornerPoints[i][3];
+
+		cornerPoints[i][0] = tmpP[0];
+		cornerPoints[i][1] = tmpP[1];
+		cornerPoints[i][2] = tmpP[2];
+		cornerPoints[i][3] = tmpP[3];
+
+		/*for (int z = 0; z < 4; z++) {
+			cout << "cornerPoints[" << z << "]:" << cornerPoints[i][z] << endl;
+		}*/
 	}
+
+
+	int scaleVal = 5;
+		///zoom out
+		for (int i = 0; i < cornerPoints.size(); i++) {
+
+			/*for (int z = 0; z < 4; z++) {
+				cout << "cornerPoints[" << z << "]:" << cornerPoints[i][z] << endl;
+			}*/
+
+			cornerPoints[i][0].x -= scaleVal;
+			cornerPoints[i][0].y -= scaleVal;
+
+			cornerPoints[i][1].x -= scaleVal;
+			cornerPoints[i][1].y += scaleVal;
+
+			cornerPoints[i][2].x += scaleVal;
+			cornerPoints[i][2].y += scaleVal;
+
+			cornerPoints[i][3].x += scaleVal;
+			cornerPoints[i][3].y -= scaleVal;
+
+		}
 
 	vector<Point2f> quad_pts;
 	quad_pts.push_back(Point2f(0, 0));
-	quad_pts.push_back(Point2f(transform.cols, 0));
-	quad_pts.push_back(Point2f(transform.cols, transform.rows));
 	quad_pts.push_back(Point2f(0, transform.rows));
+	quad_pts.push_back(Point2f(transform.cols, transform.rows));
+	quad_pts.push_back(Point2f(transform.cols, 0));
 
-
+	String strTransform = "transform ";
 
 	for (int i = 0; i < cornerPoints.size(); i++) {
 		Mat transmtx = getPerspectiveTransform(cornerPoints[i], quad_pts);
-		warpPerspective(src, transform, transmtx, transform.size());
-		imshow("transform", transform);
+		warpPerspective(~src, transform, transmtx, transform.size());
+//		cout << "0:" << int('0') << endl;
+//		cout << "strTransform" << endl;
+		imshow((strTransform + char(i+48)).c_str(), transform);
 	}
 
 }
