@@ -11,8 +11,8 @@
 vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 
 	vector<Mat> mBarcode;
-	Mat transform = Mat::zeros(300, 1200, CV_8UC3);
 
+	String strTransform = "transform ";
 
 //	Mat cropImage;
 //	Rect roi;
@@ -102,6 +102,39 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 			v[3][1] = cornerPoints[i][0] - cornerPoints[i][3];
 			v[3][2] = cornerPoints[i][2] - cornerPoints[i][3];
 
+			float width1 = max(norm(v[0][1]), norm(v[0][2]));
+			float height1 = min(norm(v[0][1]), norm(v[0][2]));
+			float width2= max(norm(v[2][1]), norm(v[2][2]));
+			float height2 = min(norm(v[2][1]), norm(v[2][2]));
+
+			float width = min(width1, width2);
+			float height = max(height1, height2);
+/*
+			cout << "width1: " << width1 << endl;
+			cout << "height1: " << height1 << endl;
+			cout << "width2: " << width2 << endl;
+			cout << "height2: " << height2 << endl;*/
+
+
+			//2 Variants for each Barcode
+			//1 is Original Size, the other is half the size
+
+		Mat transform;
+		float newWidth = width * ((300 / height));
+		if (newWidth > 1400) {
+			newWidth = 1400;
+		}
+		if (width / height < 3) {
+
+			transform = Mat::zeros(300, newWidth, CV_8UC3);
+		}
+		else {
+			transform = Mat::zeros(300, newWidth * 0.5, CV_8UC3);
+		}
+
+
+//			Mat transform = Mat::zeros(300, 800, CV_8UC3);
+
 			//(The computation is componentwise for the x and y coordinates respectively).
 //			In the shrunk polygon the vertex p is moved to p' along the line which halves the angle a between the vectors v1 and v2.
 //			The vector w in this direction is
@@ -121,42 +154,68 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 	//			p_y' = p_y + k * v_y
 			}
 
-		}
 
-	vector<Point2f> quad_pts;
-	quad_pts.push_back(Point2f(0, 0));
-	quad_pts.push_back(Point2f(0, transform.rows));
-	quad_pts.push_back(Point2f(transform.cols, transform.rows));
-	quad_pts.push_back(Point2f(transform.cols, 0));
+		vector<Point2f> quad_pts;
+		quad_pts.push_back(Point2f(0, 0));
+		quad_pts.push_back(Point2f(0, transform.rows));
+		quad_pts.push_back(Point2f(transform.cols, transform.rows));
+		quad_pts.push_back(Point2f(transform.cols, 0));
 
-	String strTransform = "transform ";
+//		cout << "transform.rows" << transform.rows << endl;
+//		cout << "transform.cols" << transform.cols << endl;
 
-	for (int i = 0; i < cornerPoints.size(); i++) {
-		Mat transmtx = getPerspectiveTransform(cornerPoints[i], quad_pts);
-		warpPerspective(src, transform, transmtx, transform.size());
-		/*Mat src_bw;
-		cvtColor(transform, src_bw, CV_BGR2GRAY);
-		blur(src_bw, src_bw, Size(3, 3));
-		adaptiveThreshold(src_bw, src_bw, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);*/
+	//	for (int i = 0; i < cornerPoints.size(); i++) {
+			Mat transmtx = getPerspectiveTransform(cornerPoints[i], quad_pts);
+			warpPerspective(src, transform, transmtx, transform.size());
+			Mat src_bw;
+			cvtColor(transform, transform, CV_BGR2GRAY);
+//			cvtColor(transform, src_bw, CV_BGR2GRAY);
+			transform.copyTo(src_bw);
+//			equalizeHist(src_bw, src_bw);
+//			blur(src_bw, src_bw, Size(3, 3));
+//			adaptiveThreshold(src_bw, src_bw, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
+			blur(src_bw, src_bw, Size(5, 5));
+			adaptiveThreshold(src_bw, src_bw, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
+			~transform += .6 * ~src_bw;
+//			transform = ~transform;
+			cvtColor(src_bw, src_bw, CV_GRAY2BGR);
+			cvtColor(transform, transform, CV_GRAY2BGR);
+	//		blur(src_bw, src_bw, Size(3, 3));
 
-//		blur(src_bw, src_bw, Size(3, 3));
 
-		/*
-		Mat kernel = getStructuringElement(MORPH_RECT, Size(4, 4));
-//		morphologyEx(b, b, MORPH_CLOSE, kernel);
+	//		Mat kernel = getStructuringElement(MORPH_RECT, Size(2, 8));
+	//		morphologyEx(b, b, MORPH_CLOSE, kernel);
 
-		dilate(src_bw, src_bw, kernel);
-		dilate(src_bw, src_bw, kernel);
-		erode(src_bw, src_bw, kernel);
-		erode(src_bw, src_bw, kernel);
-		erode(src_bw, src_bw, kernel);
-		erode(src_bw, src_bw, kernel);*/
-//		cout << "0:" << int('0') << endl;
-//		cout << "strTransform" << endl;
-		imshow((strTransform + char(i+48)).c_str(), transform);
-		mBarcode.push_back(transform);
+	//		dilate(src_bw, src_bw, kernel);
+			/*dilate(src_bw, src_bw, kernel);
+			erode(src_bw, src_bw, kernel);
+			erode(src_bw, src_bw, kernel);
+			erode(src_bw, src_bw, kernel);
+			erode(src_bw, src_bw, kernel);*/
+	//		cout << "0:" << int('0') << endl;
+	//		cout << "strTransform" << endl;
+			//char(i+48) -> conversion to char
+
+			imshow(strTransform + char(i+48), src_bw); //+ "." + char(u+48)).c_str()
+			imshow(strTransform + char(i+48) + ".2", transform);
+			mBarcode.push_back(src_bw);
+			mBarcode.push_back(transform);
+
+
 	}
+		//add the source image to the list
+		Mat src_enhance, src_bw;
+		src.copyTo(src_enhance);
+		cvtColor(src_enhance, src_enhance, CV_BGR2GRAY);
+		blur(src_enhance, src_bw, Size(5, 5));
+		adaptiveThreshold(src_bw, src_bw, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
+		~src_enhance += .6 * ~src_bw;
+		cvtColor(src_bw, src_bw, CV_GRAY2BGR);
+		cvtColor(src_enhance, src_enhance, CV_GRAY2BGR);
 
+		mBarcode.push_back(src_enhance);
+		mBarcode.push_back(src_bw);
 	return mBarcode;
+
 }
 

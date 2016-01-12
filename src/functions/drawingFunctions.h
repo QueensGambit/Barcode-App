@@ -31,5 +31,6 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
 Mat draw_massCenter(vector<ContourObject>, Size);
 void draw_hough_lines(Mat , vector<Vec4i>);
 void draw_fit_line(vector<Point2f>, Mat);
+void draw_article_description(const string&, const string&);
 
 #endif /* DRAWINGFUNCTIONS_H_ */

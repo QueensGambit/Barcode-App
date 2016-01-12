@@ -41,9 +41,9 @@ vector<ContourObject> find_mser(Mat);
 vector<Vec4i> get_probabilistic_hough_lines(Mat);
 vector<vector<Point2f> > get_corner_points(vector<Vec4i>, vector<ContourObject>, Mat);
 
-bool get_barcode_string(Mat&, string&, string&, float&);
+bool get_barcode_string(Mat&, string&, string&, float&, int&);
 int writer(char *data, size_t size, size_t nmemb, string *buffer);
 string curl_httpget(const string &url);
-bool get_article_description(string&);
+bool get_article_description(const string&, string&, string&);
 
 #endif /* FINDERFUNCTIONS_H_ */

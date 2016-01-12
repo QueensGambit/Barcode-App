@@ -36,13 +36,13 @@ int main() {
 	Mat src;	//, gray;
 
 //	src = get_image_from_webcam();
-//	src = imread("media/gut/joghurt_scaled.jpg");
+	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
 //	src = imread("media/gut/toffifee_scaled.jpg");
 //	src = imread("media/gut/mandarine_scaled.jpg");
 //	src = imread("media/gut/bottle_scaled.jpg");
 //	src = imread("media/internet/test.png");
-	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
+//	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/per_verzerrt.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/internet/chips.jpg", CV_LOAD_IMAGE_COLOR);
 //	src = imread("media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
@@ -153,20 +153,30 @@ int main() {
 	float angle;
 
 	if (mBarcodes.size() > 0) {
-		bool readSuccess = get_barcode_string(mBarcodes[0], barcode, type, angle);
+		for (int i = 0; i < mBarcodes.size(); i++) {
+			bool readSuccess = get_barcode_string(mBarcodes[i], barcode, type, angle, i);
 
-		if (readSuccess) {
-			cout << "Barcode was successfully decoded." << endl;
-			cout << "type: " << type << endl;
-			cout << "barcode-symbol: "  << barcode << endl;
-			cout << "angle: " << angle << endl;
-		}
-		else {
-			cout << "no barcode could be read." << endl;
+			if (readSuccess) {
+				cout << "Barcode was successfully decoded." << endl;
+				cout << "type: " << type << endl;
+				cout << "barcode-symbol: "  << barcode << endl;
+				cout << "angle: " << angle << endl;
+			}
+			else {
+				cout << "no barcode could be read." << endl;
+			}
 		}
 	}
 
-	get_article_description(barcode);
+	String article, descr;
+	bool searchSuccess = get_article_description(barcode, article, descr);
+	if (searchSuccess) {
+		cout << "article: " << article << endl;
+		draw_article_description(article, descr);
+	}
+	else {
+		cout << "no article description was found." << endl;
+	}
 
 	waitKey(0);
 	return (0);

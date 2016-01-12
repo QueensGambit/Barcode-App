@@ -303,7 +303,7 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 
 }
 
-bool get_barcode_string(Mat& img, string& code, string& type, float& angle) {
+bool get_barcode_string(Mat& img, string& code, string& type, float& angle, int& number) {
 
     ImageScanner scanner;
     scanner.set_config(ZBAR_NONE, ZBAR_CFG_ENABLE, 1);
@@ -369,7 +369,7 @@ int n = scanner.scan(image);
  }
 
 ///addition
-/*
+
      // extract results
   for(Image::SymbolIterator symbol = image.symbol_begin();
       symbol != image.symbol_end();
@@ -379,25 +379,55 @@ int n = scanner.scan(image);
       cout << "decoded " << symbol->get_type_name()
            << " symbol \"" << symbol->get_data() << '"' << endl;
   }
- //////*/
+ //////
 
 //cout << "The Barcode is: " << n << endl;
-   // imshow("imgout.jpg",imgout);
-    namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
-    imshow("MyWindow", img);
-    namedWindow("Result",1);
-    imshow("Result", imgout);
+
  // clean up
  image.set_data(NULL, 0);
 
-	 if (n == 1) {
+	if (n >= 1) {
+		// imshow("imgout.jpg",imgout);
+		//    namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
+		//    imshow("MyWindow", imgout);
+
+//		int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
+//		int fontFace = FONT_HERSHEY_SIMPLEX;
+//		int fontFace = FONT_HERSHEY_DUPLEX;
+		int fontFace = FONT_HERSHEY_TRIPLEX;
+		double fontScale = 2;
+		int thickness = 3;
+
+		int baseline=0;
+		Size textSize = getTextSize(code, fontFace,
+		                            fontScale, thickness, &baseline);
+		baseline += thickness;
+
+		// center the text
+		Point textOrg((img.cols - textSize.width)/2,
+		              (img.rows + textSize.height)/2);
+
+		textOrg.y -= 20;
+
+		putText(img, type, textOrg, fontFace, fontScale, //Scalar::all(255) = white
+		        Scalar(255, 128, 0), thickness, 8);
+
+		// then put the text itself
+		putText(img, code, Point(textOrg.x, textOrg.y+60), fontFace, fontScale, //Scalar::all(255) = white
+		        Scalar(255, 128, 0), thickness, 8);
+
+
+
+		string result = "Result ";
+		namedWindow(result + char(number + 48), 1);
+		imshow(result + char(number + 48), img);
 		return true;
-	 }
-	 return false;
+	}
+	return false;
 }
 
 
-bool get_article_description(string& barcode) {
+bool get_article_description(const string& barcode, string& article, string& description) {
 
 	//	const char* url = "http://www.example.com";
 
@@ -427,15 +457,30 @@ bool get_article_description(string& barcode) {
 	//	cout << "titlefound-Index: " << titlefound << endl;
 	//	cout << "barcodefound-Index2: " << barcodefound << endl;
 
-	size_t diff = barcodefound - titlefound - 3;
-	string artikel = result.substr(titlefound, diff);
-	cout << "artikel: " << artikel << endl;
+	size_t diff = barcodefound - titlefound - 3; //-3 because of " - "
+	article = result.substr(titlefound, diff);
 
-	string description = "description\" content=\'";
+	//if the barcode couldn't be found in the databasa:
+	if (article.find("Produkt erfassen (Schritt 1 von 2)") != -1) {
+		return false;
+	}
+	//delete String of "&amp" if it exists
+	int ampLenght = 4;
+	size_t ampPos = article.find("&amp");
+
+	if (ampPos != -1) { //is -1 if &amp wasn't found (npos)
+		string articleEnd = article.substr(ampPos+ampLenght);
+		cout << "articleEnd: " << articleEnd << endl;
+		article = article.substr(0, ampPos) + articleEnd;
+	}
+
+	cout << "article: " << article << endl;
+
+	string descriptionstart = "description\" content=\'";
 	string descriptionend = " - Test";
 	string descriptionend2 = "✓";
-	size_t descriptionfound = result.find(description);
-	descriptionfound += description.size();
+	size_t descriptionfound = result.find(descriptionstart);
+	descriptionfound += descriptionstart.size();
 	size_t descriptionendfound = result.find(descriptionend);
 	size_t descriptionendfound2 = result.find(descriptionend2);
 	//	cout << "descriptionfound-Index: " << descriptionfound << endl;
@@ -444,9 +489,9 @@ bool get_article_description(string& barcode) {
 		descriptionendfound = descriptionendfound2;
 	}
 	size_t diff2 = descriptionendfound - descriptionfound;
-	string beschreibung = result.substr(descriptionfound, diff2);
+	description = result.substr(descriptionfound, diff2);
 
-	cout << "beschreibung: " << beschreibung << endl;
+	cout << "beschreibung: " << description << endl;
 
 	/*cout << "result:" << endl;
 

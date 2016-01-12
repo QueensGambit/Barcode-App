@@ -127,3 +127,47 @@ void draw_hough_lines(Mat m, vector<Vec4i> p_lines) {
 		namedWindow("hough Window", WINDOW_AUTOSIZE);
 		imshow("hough Window", hough); //hough
 }
+
+void draw_article_description(const string& article, const string& descr) {
+
+	Mat canvas = Mat::zeros(300, 1200, CV_8UC3);
+	canvas = Scalar(255,255,255);
+//	int fontFace = FONT_HERSHEY_DUPLEX;
+	int fontFace = FONT_HERSHEY_TRIPLEX;
+	double fontScale = 0.8;
+	int thickness = 1;
+
+	int baseline=0;
+	Size textSize = getTextSize(article, fontFace,
+	                            fontScale, thickness, &baseline);
+	baseline += thickness;
+
+
+	// center the text
+	Point textOrg((canvas.cols - textSize.width)/2,
+	              (canvas.rows + textSize.height)/2);
+
+	Point leftCorner = Point(20, 70);
+	Point leftCornerLine2 = leftCorner;
+	leftCornerLine2.y += 50;
+	/*
+	text = "This is \n some text"
+	y0, dy = 50, 4
+	for i, line in enumerate(text.split('\n')):
+	    y = y0 + i*dy
+	    cv2.putText(img, line, (50, y ), cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
+	    */
+	// then put the text itself
+	putText(canvas, "article: " + article, //"article: " + article + "\n" + "description: " + descr
+			leftCorner, fontFace, fontScale, //Scalar::all(255) = white
+	        Scalar(0, 0, 0), thickness, 8);
+
+	putText(canvas, "description: " + descr , //"article: " + article + "\n" + "description: " + descr
+			leftCornerLine2, fontFace, fontScale, //Scalar::all(255) = white
+		        Scalar(0, 0, 0), thickness, 8);
+
+
+	namedWindow("Article Description", WINDOW_AUTOSIZE);
+
+	imshow("Article Description", canvas);
+}
