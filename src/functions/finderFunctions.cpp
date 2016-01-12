@@ -374,7 +374,6 @@ int n = scanner.scan(image);
   for(Image::SymbolIterator symbol = image.symbol_begin();
       symbol != image.symbol_end();
       ++symbol) {
-  	cout << "Test" << endl;
       // do something useful with results
       cout << "decoded " << symbol->get_type_name()
            << " symbol \"" << symbol->get_data() << '"' << endl;
@@ -448,6 +447,9 @@ bool get_article_description(const string& barcode, string& article, string& des
 	string url = "http://www.codecheck.info/product.search?q=" + barcode;
 	string result = curl_httpget(url);
 
+	if (result == "") {
+		return false;
+	}
 	string title = "<title>";
 
 	size_t titlefound = result.find(title);

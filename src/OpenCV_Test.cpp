@@ -19,10 +19,7 @@
 using namespace cv;
 using namespace std;
 
-void crop(Mat, Mat);
-
-//void bw_thresh_callback(int, void*);
-//void p_transform(Mat, vector<vector<Point2f> >);
+//void crop(Mat, Mat);
 
 //global variables
 Mat skel, skel2, skel3, gray;//, //blank;
@@ -36,10 +33,10 @@ int main() {
 	Mat src;	//, gray;
 
 //	src = get_image_from_webcam();
-	src = imread("media/gut/joghurt_scaled.jpg");
+//	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
 //	src = imread("media/gut/toffifee_scaled.jpg");
-//	src = imread("media/gut/mandarine_scaled.jpg");
+	src = imread("media/gut/mandarine_scaled.jpg");
 //	src = imread("media/gut/bottle_scaled.jpg");
 //	src = imread("media/internet/test.png");
 //	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
@@ -105,15 +102,6 @@ int main() {
 
 
 	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .4, 5 )); //.95, 7
-
-	/*while (true) {
-
-			if (waitKey(30) == 13) {// press enter to break loop and copy frame into source image
-//				frame.copyTo(src);
-//				destroyAllWindows();
-				break;
-			}
-		}*/
 
 	vector<ContourObject> fVecCO2(fVecCO);
 //	vector<ContourObject> fVecCO2(filter_by_dst(fVecCO, pxl_Sum, 0.0003, skel3.size() )); //0.00001
@@ -181,15 +169,3 @@ int main() {
 	waitKey(0);
 	return (0);
 }
-
-
-/*
-//callback function for trackbar
-void bw_thresh_callback(int, void*) {
-
-	threshold(gray, skel, thresh, max_thresh, cv::THRESH_BINARY);
-	make_skelekton(skel);
-//	resize(skel, skel, blank.size());
-	imshow(skel_window, skel);
-}
-*/

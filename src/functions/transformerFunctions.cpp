@@ -66,7 +66,6 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 	}
 
 
-	int scaleVal = 20;
 		///zoom out
 		for (int i = 0; i < cornerPoints.size(); i++) {
 
@@ -132,9 +131,12 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 			transform = Mat::zeros(300, newWidth * 0.5, CV_8UC3);
 		}
 
-
+//		int scaleVal = 20;
+		cout << "width * height = " << width * height << endl;
+		int scaleVal = width * height * 0.003;
 //			Mat transform = Mat::zeros(300, 800, CV_8UC3);
-
+		//see more on:
+		//http://stackoverflow.com/questions/7995547/enlarge-and-restrict-a-quadrilateral-polygon-in-opencv-2-3-with-c
 			//(The computation is componentwise for the x and y coordinates respectively).
 //			In the shrunk polygon the vertex p is moved to p' along the line which halves the angle a between the vectors v1 and v2.
 //			The vector w in this direction is

@@ -142,7 +142,6 @@ void draw_article_description(const string& article, const string& descr) {
 	                            fontScale, thickness, &baseline);
 	baseline += thickness;
 
-
 	// center the text
 	Point textOrg((canvas.cols - textSize.width)/2,
 	              (canvas.rows + textSize.height)/2);
@@ -150,6 +149,8 @@ void draw_article_description(const string& article, const string& descr) {
 	Point leftCorner = Point(20, 70);
 	Point leftCornerLine2 = leftCorner;
 	leftCornerLine2.y += 50;
+	Point leftCornerLine3 = leftCornerLine2;
+	leftCornerLine3.y += 50;
 	/*
 	text = "This is \n some text"
 	y0, dy = 50, 4
@@ -166,6 +167,9 @@ void draw_article_description(const string& article, const string& descr) {
 			leftCornerLine2, fontFace, fontScale, //Scalar::all(255) = white
 		        Scalar(0, 0, 0), thickness, 8);
 
+	putText(canvas, "information retrieved via codecheck.info ", //"article: " + article + "\n" + "description: " + descr
+			leftCornerLine3, fontFace, fontScale/2, //Scalar::all(255) = white
+		        Scalar(0, 0, 0), thickness, 8);
 
 	namedWindow("Article Description", WINDOW_AUTOSIZE);
 
