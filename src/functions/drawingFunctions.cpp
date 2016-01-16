@@ -175,3 +175,37 @@ void draw_article_description(const string& article, const string& descr) {
 
 	imshow("Article Description", canvas);
 }
+
+
+void draw_barcode(Mat& img, const string& barcode, const string& type, int& number) {
+	// imshow("imgout.jpg",imgout);
+	//    namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
+	//    imshow("MyWindow", imgout);
+
+//		int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
+//		int fontFace = FONT_HERSHEY_SIMPLEX;
+//		int fontFace = FONT_HERSHEY_DUPLEX;
+	int fontFace = FONT_HERSHEY_TRIPLEX;
+	double fontScale = 2;
+	int thickness = 3;
+
+	int baseline=0;
+	Size textSize = getTextSize(barcode, fontFace,
+	                            fontScale, thickness, &baseline);
+	baseline += thickness;
+
+	// center the text
+	Point textOrg((img.cols - textSize.width)/2,
+	              (img.rows + textSize.height)/2);
+
+	textOrg.y -= 20;
+
+	putText(img, type, textOrg, fontFace, fontScale, //Scalar::all(255) = white
+	        Scalar(255, 128, 0), thickness, 8);
+
+	// then put the text itself
+	putText(img, barcode, Point(textOrg.x, textOrg.y+60), fontFace, fontScale, //Scalar::all(255) = white
+	        Scalar(255, 128, 0), thickness, 8);
+
+}
+

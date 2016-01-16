@@ -33,4 +33,5 @@ void draw_hough_lines(Mat , vector<Vec4i>);
 void draw_fit_line(vector<Point2f>, Mat);
 void draw_article_description(const string&, const string&);
 
+void draw_barcode(Mat&, const string&, const string&, int&);
 #endif /* DRAWINGFUNCTIONS_H_ */

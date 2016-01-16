@@ -17,5 +17,5 @@ using namespace cv;
 using namespace std;
 
 vector<Mat> p_transform(Mat, vector<vector<Point2f> > );
-
+bool speak_article_descr(const string&, const string&);
 #endif /* TRANSFORMERFUNCTIONS_H_ */

@@ -123,7 +123,7 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 		if (newWidth > 1400) {
 			newWidth = 1400;
 		}
-		if (width / height < 3) {
+		if (width / height < 4) {
 
 			transform = Mat::zeros(300, newWidth, CV_8UC3);
 		}
@@ -132,6 +132,7 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 		}
 
 //		int scaleVal = 20;
+		cout << "new Width" << newWidth << endl;
 		cout << "width * height = " << width * height << endl;
 		int scaleVal = width * height * 0.003;
 //			Mat transform = Mat::zeros(300, 800, CV_8UC3);
@@ -176,7 +177,13 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 //			equalizeHist(src_bw, src_bw);
 //			blur(src_bw, src_bw, Size(3, 3));
 //			adaptiveThreshold(src_bw, src_bw, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
-			blur(src_bw, src_bw, Size(5, 5));
+
+			//blur is not useful
+			int blurFac = newWidth / 200;
+			if (blurFac == 0) {
+			blurFac = 2;
+			}
+			blur(src_bw, src_bw, Size(blurFac, blurFac)); //def: 5, 5
 			adaptiveThreshold(src_bw, src_bw, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
 			~transform += .6 * ~src_bw;
 //			transform = ~transform;
@@ -215,9 +222,23 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 		cvtColor(src_bw, src_bw, CV_GRAY2BGR);
 		cvtColor(src_enhance, src_enhance, CV_GRAY2BGR);
 
-		mBarcode.push_back(src_enhance);
+//		mBarcode.push_back(src_enhance);
 		mBarcode.push_back(src_bw);
+		mBarcode.push_back(src);
 	return mBarcode;
 
 }
 
+
+bool speak_article_descr(const string& article, const string& descr) {
+
+	// -p: Pitch default: 50
+	// -s: words per Minut: def: 175 (80 - 450)
+	// -g: Word gap. Pause between words: def 10ms of def speed
+	// -m: Enables SSML for adding a pause/break time
+
+	string speak = string("espeak.exe -v de -p 30 -s 135 -g 4 -m \"") + string("artikel: ")
+			+ article + string("<break time = \'1000\'/> beschreibung: ") + descr + string("\"");
+	waitKey(100);
+	system(speak.c_str());
+}

@@ -32,11 +32,11 @@ int main() {
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
-//	src = get_image_from_webcam();
+	src = get_image_from_webcam();
 //	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
 //	src = imread("media/gut/toffifee_scaled.jpg");
-	src = imread("media/gut/mandarine_scaled.jpg");
+//	src = imread("media/gut/mandarine_scaled.jpg");
 //	src = imread("media/gut/bottle_scaled.jpg");
 //	src = imread("media/internet/test.png");
 //	src = imread("media/internet/Chips_rotated.jpg", CV_LOAD_IMAGE_COLOR);
@@ -149,6 +149,9 @@ int main() {
 				cout << "type: " << type << endl;
 				cout << "barcode-symbol: "  << barcode << endl;
 				cout << "angle: " << angle << endl;
+
+//				string speak = string("espeak.exe -v de \"") + string("Typ: ") + type + string("barcode: ") + barcode + string("\"");
+//				int retCode = system(speak.c_str());
 			}
 			else {
 				cout << "no barcode could be read." << endl;
@@ -157,15 +160,28 @@ int main() {
 	}
 
 	String article, descr;
+	article = "Dontodent - Fresh White Zahnpflegekaugummis";
+	descr = "Zuckerfreie Kaugummi-Dragées mit Süßungsmitteln und Aroma glutenfrei laktosefrei ";
+
+//	speak_article_descr(article, descr);
+
+
 	bool searchSuccess = get_article_description(barcode, article, descr);
 	if (searchSuccess) {
-		cout << "article: " << article << endl;
+//		cout << "article: " << article << endl;
 		draw_article_description(article, descr);
+//		string speak = string("espeak.exe -v de \"") + string("Typ: ") + type + string("barcode: ") + barcode + string("\"");
+//		string speak = string("espeak.exe -v de -p 30 -s 135 -g 4 -m \"") + string("artikel: ")
+//				+ article + string("<break time = \'1000\'/> beschreibung: ") + descr + string("\"");
+//		waitKey(100);
+//		system(speak.c_str());
+		speak_article_descr(article, descr);
 	}
 	else {
 		cout << "no article description was found." << endl;
 	}
 
 	waitKey(0);
+
 	return (0);
 }

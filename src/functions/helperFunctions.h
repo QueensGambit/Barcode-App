@@ -42,6 +42,8 @@ double getfilledRatio(Mat&, RotatedRect&);
 
 void make_skelekton(Mat);
 
+void make_adaptiv_bw(Mat&);
+
 int get_Contour_Min_Dst (vector<ContourObject>, Point2f);
 
 int get_min_Point_from_Rect (Point2f rect_point[4]);

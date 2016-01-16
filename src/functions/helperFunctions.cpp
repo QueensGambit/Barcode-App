@@ -260,3 +260,10 @@ float get_length(Vec4i v) {
 
 	return norm(Point(v[0], v[1]) - Point(v[2], v[3]));
 }
+
+void make_adaptiv_bw(Mat& m) {
+	cvtColor(m, m, CV_BGR2GRAY);
+//	blur(m, m, Size(5, 5));
+	adaptiveThreshold(m, m, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
+	cvtColor(m, m, CV_GRAY2BGR);
+}

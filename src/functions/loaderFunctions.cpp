@@ -23,10 +23,12 @@ Mat get_image_from_webcam() {
 		}
 
 		namedWindow("Camera", CV_WINDOW_AUTOSIZE);
+		bool readSuccess = false;
+		Mat frame;
+//		while (true) {
+		while (!readSuccess && waitKey(30) != 13) {
 
-		while (true) {
-
-			Mat frame;
+//			Mat frame;
 //			capture >> frame; 									// get frames
 
 			bool bSuccess = capture.read(frame); // read a new frame from video
@@ -34,13 +36,24 @@ Mat get_image_from_webcam() {
 			if (bSuccess)
 			imshow("Camera", frame);
 
-			if (waitKey(30) == 13) {// press enter to break loop and copy frame into source image
+			/*if (waitKey(30) == 13 || readSuccess) {// press enter to break loop and copy frame into source image
 				frame.copyTo(src);
 				destroyAllWindows();
 				break;
+			}*/
+			String barcode, type;
+			float angle = 0;
+			int i;
+			readSuccess = get_barcode_string(frame, barcode, type, angle, i);
+			if (!readSuccess) {
+				Mat bw_frame;
+				frame.copyTo(bw_frame);
+				make_adaptiv_bw(bw_frame);
+				readSuccess = get_barcode_string(bw_frame, barcode, type, angle, i);
 			}
 		}
-
+		frame.copyTo(src);
+		destroyAllWindows();
 		return src;
 
 
