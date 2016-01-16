@@ -163,7 +163,7 @@ int main() {
 	article = "Dontodent - Fresh White Zahnpflegekaugummis";
 	descr = "Zuckerfreie Kaugummi-Dragées mit Süßungsmitteln und Aroma glutenfrei laktosefrei ";
 
-//	speak_article_descr(article, descr);
+	speak_article_descr(article, descr);
 
 
 	bool searchSuccess = get_article_description(barcode, article, descr);
