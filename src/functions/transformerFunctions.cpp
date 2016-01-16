@@ -241,7 +241,7 @@ bool speak_article_descr(const string& article, const string& descr) {
 	// -g: Word gap. Pause between words: def 10ms of def speed
 	// -m: Enables SSML for adding a pause/break time
 
-	string speak = string(".\\src\\eSpeak\\command_line\\espeak.exe -v de -p 30 -s 135 -g 4 -m \"") + string("artikel: ")
+	string speak = string(".\\src\\eSpeak\\command_line\\espeak.exe --path=\".\\src\\eSpeak\" -v de -p 30 -s 135 -g 4 -m \"") + string("artikel: ")
 			+ article + string("<break time = \'1000\'/> beschreibung: ") + descr + string("\"");
 	waitKey(100);
 	system(speak.c_str());

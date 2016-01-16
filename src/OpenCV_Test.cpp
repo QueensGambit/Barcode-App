@@ -32,8 +32,8 @@ int main() {
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
-	src = get_image_from_webcam();
-//	src = imread("media/gut/joghurt_scaled.jpg");
+//	src = get_image_from_webcam();
+	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
 //	src = imread("media/gut/toffifee_scaled.jpg");
 //	src = imread("media/gut/mandarine_scaled.jpg");
@@ -163,7 +163,7 @@ int main() {
 	article = "Dontodent - Fresh White Zahnpflegekaugummis";
 	descr = "Zuckerfreie Kaugummi-Dragées mit Süßungsmitteln und Aroma glutenfrei laktosefrei ";
 
-	speak_article_descr(article, descr);
+//	speak_article_descr(article, descr);
 
 
 	bool searchSuccess = get_article_description(barcode, article, descr);
