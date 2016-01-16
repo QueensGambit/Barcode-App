@@ -13,6 +13,8 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
+#include "helperFunctions.h"
+
 using namespace cv;
 using namespace std;
 

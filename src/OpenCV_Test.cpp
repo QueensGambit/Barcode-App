@@ -170,11 +170,6 @@ int main() {
 	if (searchSuccess) {
 //		cout << "article: " << article << endl;
 		draw_article_description(article, descr);
-//		string speak = string("espeak.exe -v de \"") + string("Typ: ") + type + string("barcode: ") + barcode + string("\"");
-//		string speak = string("espeak.exe -v de -p 30 -s 135 -g 4 -m \"") + string("artikel: ")
-//				+ article + string("<break time = \'1000\'/> beschreibung: ") + descr + string("\"");
-//		waitKey(100);
-//		system(speak.c_str());
 		speak_article_descr(article, descr);
 	}
 	else {

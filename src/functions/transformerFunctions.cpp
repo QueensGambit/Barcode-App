@@ -214,13 +214,17 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 	}
 		//add the source image to the list
 		Mat src_enhance, src_bw;
-		src.copyTo(src_enhance);
+		/*src.copyTo(src_enhance);
+
 		cvtColor(src_enhance, src_enhance, CV_BGR2GRAY);
 		blur(src_enhance, src_bw, Size(5, 5));
 		adaptiveThreshold(src_bw, src_bw, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
 		~src_enhance += .6 * ~src_bw;
 		cvtColor(src_bw, src_bw, CV_GRAY2BGR);
-		cvtColor(src_enhance, src_enhance, CV_GRAY2BGR);
+		cvtColor(src_enhance, src_enhance, CV_GRAY2BGR);*/
+
+		src.copyTo(src_bw);
+		make_adaptiv_bw(src_bw);
 
 //		mBarcode.push_back(src_enhance);
 		mBarcode.push_back(src_bw);
@@ -237,7 +241,7 @@ bool speak_article_descr(const string& article, const string& descr) {
 	// -g: Word gap. Pause between words: def 10ms of def speed
 	// -m: Enables SSML for adding a pause/break time
 
-	string speak = string("espeak.exe -v de -p 30 -s 135 -g 4 -m \"") + string("artikel: ")
+	string speak = string(".\\src\\eSpeak\\espeak.exe -v de -p 30 -s 135 -g 4 -m \"") + string("artikel: ")
 			+ article + string("<break time = \'1000\'/> beschreibung: ") + descr + string("\"");
 	waitKey(100);
 	system(speak.c_str());
