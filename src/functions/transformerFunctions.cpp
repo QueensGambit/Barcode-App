@@ -132,10 +132,11 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 		}
 
 //		int scaleVal = 20;
-		cout << "new Width" << newWidth << endl;
-		cout << "width * height = " << width * height << endl;
+//		cout << "new Width" << newWidth << endl;
+//		cout << "width * height = " << width * height << endl;
 		int scaleVal = width * height * 0.003;
 //			Mat transform = Mat::zeros(300, 800, CV_8UC3);
+
 		//see more on:
 		//http://stackoverflow.com/questions/7995547/enlarge-and-restrict-a-quadrilateral-polygon-in-opencv-2-3-with-c
 			//(The computation is componentwise for the x and y coordinates respectively).
@@ -240,8 +241,8 @@ bool speak_article_descr(const string& article, const string& descr) {
 	// -s: words per Minut: def: 175 (80 - 450)
 	// -g: Word gap. Pause between words: def 10ms of def speed
 	// -m: Enables SSML for adding a pause/break time
-
-	string speak = string(".\\src\\eSpeak\\command_line\\espeak.exe --path=\".\\src\\eSpeak\" -v de -p 30 -s 135 -g 4 -m \"") + string("artikel: ")
+																									//30	//135 //4
+	string speak = string(".\\src\\eSpeak\\command_line\\espeak.exe --path=\".\\src\\eSpeak\" -v de -p 30 -s 145 -g 3 -m \"") + string("artikel: ")
 			+ article + string("<break time = \'1000\'/> beschreibung: ") + descr + string("\"");
 	waitKey(100);
 	system(speak.c_str());

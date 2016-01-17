@@ -388,7 +388,7 @@ bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
 	// clean up
 	image.set_data(NULL, 0);
 
-	if (n >= 1 && code != "" && type != "I2/5" && code.length() > 3) {
+	if (n >= 1 && code != "" && type != "I2/5" && code.length() > 2) {
 
 		string result = "Result ";
 
@@ -401,7 +401,7 @@ bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
 }
 
 
-bool get_article_description(const string& barcode, string& article, string& description) {
+bool get_article_description_internet(const string& barcode, string& article, string& description) {
 
 	//	const char* url = "http://www.example.com";
 
@@ -439,6 +439,9 @@ bool get_article_description(const string& barcode, string& article, string& des
 
 	//if the barcode couldn't be found in the databasa:
 	if (article.find("Produkt erfassen (Schritt 1 von 2)") != -1) {
+		return false;
+	}
+	if (article.length() > 300) {
 		return false;
 	}
 	//delete String of "&amp" if it exists
@@ -526,3 +529,101 @@ int writer(char *data, size_t size, size_t nmemb, string *buffer)
   }
   return result;
 }
+
+
+//http://www.cplusplus.com/forum/general/17771/
+bool get_article_descr_csv(const char* path, string& code, string& article,
+		string& descr) {
+	vector<vector<string> > data;
+	ifstream infile(path);
+
+	//checks if the file is empty
+	if (infile.peek() == ifstream::traits_type::eof()) {
+		cout << "file is empty" << endl;
+		infile.close();
+		return false;
+	}
+
+	while (infile) {
+		string s;
+
+		if (!getline(infile, s)) {
+			break;
+		}
+
+
+		istringstream ss(s);
+		vector<string> record;
+
+		while (ss) {
+			string s;
+
+			if (!getline(ss, s, '\t')) {
+				break;
+			}
+			record.push_back(s);
+		}
+
+		data.push_back(record);
+	}
+
+	if (!infile.eof()) {
+		cerr << "Haven't found csv\n";
+	}
+	infile.close();
+	/*
+	 for (int i = 0;  i < data.size(); i++) {
+	 for (int z = 0; z < data[i].size(); z++) {
+	 cout << "data [" << i << "][" << z << "]: " << data[i][z] << endl;
+	 }
+	 }
+	 */
+	cout << "data.size(): " << data.size() << endl;
+
+	for (size_t i = 0; i < data.size(); i++) {
+//	  cout << "data 0:" << data[i][0] << endl;
+		if (data[i][0] == code) {
+			cout << "successfully found in csv" << endl;
+
+			article = data[i][1];
+			descr = data[i][2];
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+bool add_article_descr_to_csv(const char* path, string& code, string& article, string& descr) {
+
+	ofstream out;
+
+	if (article.length() == 0) {
+		article = "-";
+	}
+	if (descr.length() == 0) {
+		descr = "-";
+	}
+	// std::ios::app is the open mode "append" meaning
+	// new data will be written tostr the end of the file.
+	out.open(path, ios::app);
+
+	/*
+	if (!out.eof()) {
+		//add Header if file doesn't exist yet
+		cout << "barcode-EAN\tarticle\tdescr" << endl;
+	}*/
+
+//	string newLine  = code; //+ "," + article + "," + descr;
+//	cout << "newLine: " << newLine << endl;
+	cout << "code: " << code << endl;
+	cout << "article: " << article << endl;
+	out << code << "\t" << article << "\t" << descr << endl;
+
+	out.close();
+	cout << "succefully added to database" << endl;
+
+	return true;
+}
+

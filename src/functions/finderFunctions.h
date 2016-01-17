@@ -23,6 +23,8 @@
 #include "drawingFunctions.h"
 #include <map>
 #include <iomanip>
+#include <sstream>
+#include <fstream>
 
 #include "../ZBar/include/zbar.h"
 #include "../Network/curl-7.34.0-win32/include/curl/curl.h"
@@ -44,6 +46,9 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i>, vector<ContourObject>,
 bool get_barcode_string(Mat&, string&, string&, float&, int&);
 int writer(char *data, size_t size, size_t nmemb, string *buffer);
 string curl_httpget(const string &url);
-bool get_article_description(const string&, string&, string&);
+
+bool get_article_description_internet(const string&, string&, string&);
+bool get_article_descr_csv(const char*, string&, string& article, string& descr);
+bool add_article_descr_to_csv(const char*, string&, string&, string&);
 
 #endif /* FINDERFUNCTIONS_H_ */

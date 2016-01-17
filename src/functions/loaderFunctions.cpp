@@ -28,8 +28,14 @@ Mat get_image_from_webcam() {
 		String barcode, type;
 		float angle = 0;
 		int i;
+		int wKey = 0;
 //		while (true) {
-		while (!readSuccess && waitKey(30) != 13) {
+		while (!readSuccess && wKey != 13) {
+
+			//if esc is pressed return
+			if (wKey == 27) {
+				return src;
+			}
 
 //			Mat frame;
 //			capture >> frame; 									// get frames
@@ -51,9 +57,11 @@ Mat get_image_from_webcam() {
 				frame.copyTo(bw_frame);
 				make_adaptiv_bw(bw_frame);
 				readSuccess = get_barcode_string(bw_frame, barcode, type, angle, i);
-				if (readSuccess)
-				cout << "success bw" << endl;
+//				if (readSuccess)
+//				cout << "success bw" << endl;
 			}
+
+			wKey = waitKey(30);
 		}
 		frame.copyTo(src);
 		destroyAllWindows();

@@ -32,8 +32,8 @@ int main() {
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
-//	src = get_image_from_webcam();
-	src = imread("media/gut/joghurt_scaled.jpg");
+	src = get_image_from_webcam();
+//	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
 //	src = imread("media/gut/toffifee_scaled.jpg");
 //	src = imread("media/gut/mandarine_scaled.jpg");
@@ -165,14 +165,32 @@ int main() {
 
 //	speak_article_descr(article, descr);
 
+	const char* pathProductCSV = "media/database/product_database.csv";
+	const char* pathAdderCSV = "media/database/adder_database.csv";
 
-	bool searchSuccess = get_article_description(barcode, article, descr);
+	bool searchSuccess = false;
+//	cout << "type.: " << type << endl;
+	if (type.find("EAN") != unsigned(-1)) {
+		searchSuccess = get_article_descr_csv(pathProductCSV, barcode, article, descr) ||
+			get_article_descr_csv(pathAdderCSV, barcode, article, descr);
+		if (searchSuccess) {
+			cout << "article:" << article << endl;
+			cout << "beschr: " << descr << endl;
+		} else {
+			cout << "look-up at codecheck.info..." << endl;
+			searchSuccess = get_article_description_internet(barcode, article, descr);
+			if (searchSuccess) {
+				add_article_descr_to_csv(pathAdderCSV, barcode, article, descr);
+			}
+		}
+	}
+
 	if (searchSuccess) {
 //		cout << "article: " << article << endl;
 		draw_article_description(article, descr);
+
 		speak_article_descr(article, descr);
-	}
-	else {
+	} else {
 		cout << "no article description was found." << endl;
 	}
 
