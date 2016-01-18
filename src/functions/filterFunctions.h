@@ -17,9 +17,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
-#include "../ContourObject.h"
+#include "../objects/ContourObject.h"
 #include "helperFunctions.h"
-#include "../Vektor2d.h"
+#include "../objects/Vektor2d.h"
 #include "drawingFunctions.h"
 
 using namespace cv;

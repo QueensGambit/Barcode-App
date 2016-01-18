@@ -267,3 +267,10 @@ void make_adaptiv_bw(Mat& m) {
 	adaptiveThreshold(m, m, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
 	cvtColor(m, m, CV_GRAY2BGR);
 }
+
+bool getBoolValue(const char* arg) {
+	if (arg == "true") {
+		return true;
+	}
+	return false;
+}

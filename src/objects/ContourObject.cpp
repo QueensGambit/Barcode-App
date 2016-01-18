@@ -12,15 +12,20 @@ ContourObject::ContourObject(Point2f mc, vector<Point>c) {
 			contour.swap(c);
 			firstPoint = contour[0];
 			lastPoint = contour[contour.size()-1];
+			angle = 0;
+			quadrant = 0;
 			//lastPoint = contour[4];
 }
 
 ContourObject::ContourObject(vector<Point> c) {
 	contour.swap(c);
+	angle = 0;
+	quadrant = 0;
 }
 
 ContourObject::ContourObject() {
-
+	angle = 0;
+	quadrant = 0;
 }
 
 ContourObject::~ContourObject() {
@@ -64,7 +69,7 @@ void ContourObject::getRectPoints(Point2f p[4]){
 }*/
 
 void ContourObject::drawContourOnMat(Mat m) {
-	for (int i = 0; i < contour.size(); i++) {
+	for (size_t i = 0; i < contour.size(); i++) {
 		circle(m, contour[i], 4, Scalar(0,255,0), -1, 8, 0);
 	}
 }

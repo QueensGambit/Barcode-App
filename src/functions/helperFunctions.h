@@ -50,4 +50,6 @@ int get_min_Point_from_Rect (Point2f rect_point[4]);
 
 Vec4i get_Border_Points_from_Rect(Point2f rect_point[4], bool);
 
+bool getBoolValue(const char*);
+
 #endif /* HELPERFUNCTIONS_H_ */

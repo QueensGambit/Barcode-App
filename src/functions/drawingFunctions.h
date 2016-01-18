@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
-#include "../ContourObject.h"
+#include "../objects/ContourObject.h"
 #include "helperFunctions.h"
 #include "filterFunctions.h"
 
@@ -33,5 +33,5 @@ void draw_hough_lines(Mat , vector<Vec4i>);
 void draw_fit_line(vector<Point2f>, Mat);
 void draw_article_description(const string&, const string&);
 
-void draw_barcode(Mat&, const string&, const string&, int&);
+void draw_barcode(Mat&, const string&, const string&, size_t&);
 #endif /* DRAWINGFUNCTIONS_H_ */

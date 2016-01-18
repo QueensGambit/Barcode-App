@@ -23,8 +23,8 @@ Mat draw_massCenter(vector<ContourObject> vecCO, Size size){
 //	draw_probabilistic_hough(m,vecCO);
 //	draw_fit_line(massPoints, m);
 
-//	namedWindow("malen", CV_WINDOW_AUTOSIZE);
-//	imshow("malen", m);
+	namedWindow("malen", CV_WINDOW_AUTOSIZE);
+	imshow("malen", m);
 
 	return m;
 }
@@ -54,8 +54,6 @@ void draw_Lines(vector<ContourObject> vecCO, Mat m) {
 
 	cout << "mc.size() lines = " << vecCO.size() << endl;
 	for (int i = 0; i < vecCO.size(); i++) {
-		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
-				rng.uniform(0, 255));
 
 		vecCO[i].drawContourOnMat(m);
 
@@ -66,7 +64,7 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 
 	  for( int i = 0; i< vecCO.size(); i++ )
 	     {
-	       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+//	       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
 
 	       Point2f rect_points[4];
 	       vecCO[i].getRectPoints(rect_points);
@@ -177,7 +175,7 @@ void draw_article_description(const string& article, const string& descr) {
 }
 
 
-void draw_barcode(Mat& img, const string& barcode, const string& type, int& number) {
+void draw_barcode(Mat& img, const string& barcode, const string& type, size_t& number) {
 	// imshow("imgout.jpg",imgout);
 	//    namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
 	//    imshow("MyWindow", imgout);

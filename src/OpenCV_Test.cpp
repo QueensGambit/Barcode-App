@@ -6,8 +6,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
-#include "ContourObject.h"
-#include "Vektor2d.h"
+#include "objects/ContourObject.h"
+#include "objects/Vektor2d.h"
+#include "objects/SettingObject.h"
 
 #include "functions/helperFunctions.h"
 #include "functions/drawingFunctions.h"
@@ -26,13 +27,49 @@ Mat skel, skel2, skel3, gray;//, //blank;
 int thresh = 127;
 int max_thresh = 255;
 
-char* skel_window = "Skel Window";
+const char* skel_window = "Skel Window";
 
-int main() {
+int main(int argc, const char** argv ) {
+
+
+	//example input: Barcode-App.exe false false false false media/internet/chips.jpg
+	const char* execute;
+	bool stepByStep, showAllSteps, search, webcam;
+	const char* file;
+	char webcamVersion, webcamStyle;
+
+	SettingObject* s;
+	execute = argv[0];
+	//SettingObject s2();
+	if (argc >= 6) { //6 is the least number of paramters
+		stepByStep = getBoolValue(argv[1]);
+		showAllSteps = getBoolValue(argv[2]);
+		search = getBoolValue(argv[3]);
+		webcam = getBoolValue(argv[4]);
+		file = argv[5];
+		if (webcam) {
+		webcamVersion = argv[6][0];
+		webcamStyle = argv[7][0];
+		}
+		else {
+		webcamVersion = '0';
+		webcamStyle = '0';
+		}
+
+		s = new SettingObject(execute, stepByStep, showAllSteps, search, webcam, file, webcamVersion, webcamStyle);
+		//s = s2;
+	}
+	else {
+		s = new SettingObject(execute);
+	}
+
+	s->printSettings();
+
 	/// Load source image, convert it to gray and blur it
 	Mat src;	//, gray;
 
-	src = get_image_from_webcam();
+	src = imread(s->getFile(), CV_LOAD_IMAGE_COLOR);
+//	src = get_image_from_webcam();
 //	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
 //	src = imread("media/gut/toffifee_scaled.jpg");
@@ -141,7 +178,7 @@ int main() {
 	float angle;
 
 	if (mBarcodes.size() > 0) {
-		for (int i = 0; i < mBarcodes.size(); i++) {
+		for (size_t i = 0; i < mBarcodes.size(); i++) {
 			bool readSuccess = get_barcode_string(mBarcodes[i], barcode, type, angle, i);
 
 			if (readSuccess) {
@@ -189,7 +226,7 @@ int main() {
 //		cout << "article: " << article << endl;
 		draw_article_description(article, descr);
 
-		speak_article_descr(article, descr);
+//		speak_article_descr(article, descr);
 	} else {
 		cout << "no article description was found." << endl;
 	}

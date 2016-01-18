@@ -17,9 +17,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
-#include "../ContourObject.h"
+#include "../objects/ContourObject.h"
 #include "helperFunctions.h"
-#include "../Vektor2d.h"
+#include "../objects/Vektor2d.h"
 #include "drawingFunctions.h"
 #include <map>
 #include <iomanip>
@@ -43,7 +43,7 @@ vector<ContourObject> find_mser(Mat);
 vector<Vec4i> get_probabilistic_hough_lines(Mat);
 vector<vector<Point2f> > get_corner_points(vector<Vec4i>, vector<ContourObject>, Mat);
 
-bool get_barcode_string(Mat&, string&, string&, float&, int&);
+bool get_barcode_string(Mat&, string&, string&, float&, size_t&);
 int writer(char *data, size_t size, size_t nmemb, string *buffer);
 string curl_httpget(const string &url);
 

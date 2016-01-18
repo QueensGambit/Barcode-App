@@ -73,7 +73,7 @@ vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel, Size size) {
 	///  Get the mass centers:
 	vector<Point2f> mc(mu.size());
 
-	for (int i = 0; i < contours.size(); i++) {
+	for (size_t i = 0; i < contours.size(); i++) {
 
 		if (contourArea(contours[i]) > thresh) {
 
@@ -87,7 +87,7 @@ vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel, Size size) {
 						mu[i].m01 / mu[i].m00);
 				//mc.push_back(Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ));
 
-				int maxDst = 1;
+//				int maxDst = 1;
 
 				Matx33f mask(0, 255, 0, 255, 255, 0, 0, 255, 0);
 
@@ -104,7 +104,7 @@ vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel, Size size) {
 
 	/// Draw contours
 	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
-	for (int i = 0; i < contours.size(); i++) {
+	for (size_t i = 0; i < contours.size(); i++) {
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
 				rng.uniform(0, 255));
 
@@ -147,7 +147,7 @@ vector<ContourObject> find_mser(Mat gray) {
 
 	Mat mser = Mat::zeros(gray.size(), CV_8UC3);
 
-	for (int i = 0; i < regions.size(); i++) {
+	for (size_t i = 0; i < regions.size(); i++) {
 		ContourObject temp(regions[i]);
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
 				rng.uniform(0, 255));
@@ -278,7 +278,7 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 	vector<Point2f> tmpCPoints(4);
 
 	mBarcodePoints -= .5 * mBarcodePoints;
-	for(int p = 0; p < cornerPoints.size(); p++){
+	for(size_t p = 0; p < cornerPoints.size(); p++){
 		tmpCPoints = cornerPoints[p];
 		Scalar color = Scalar(rng.uniform(0, 2) * 255, rng.uniform(0, 2)* 255,rng.uniform(0, 2) * 255);
 //		Scalar color = Scalar(255, 255, 0);
@@ -304,7 +304,7 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 }
 
 bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
-		int& number) {
+		size_t& number) {
 
 	ImageScanner scanner;
 	scanner.set_config(ZBAR_NONE, ZBAR_CFG_ENABLE, 1);

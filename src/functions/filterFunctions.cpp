@@ -9,7 +9,7 @@
 
 vector<Point2f> filter_moments(vector<Point2f> mc, Mat skel) {
 
-	int dst = 2, xDst = 0, yDst = 0;
+	int xDst = 0, yDst = 0;
 	cout << "mc.size() = " << mc.size() << endl;
 	vector<Point2f> tempMC;
 	for (unsigned int i = 0; i < mc.size(); i++) {
@@ -30,7 +30,7 @@ vector<ContourObject> filter_by_rect(vector<ContourObject> vecCO, Mat m,
 	vector<RotatedRect> minRect(vecCO.size());
 	vector<ContourObject> fVecCO;
 
-	for (int i = 0; i < vecCO.size(); i++) {
+	for (size_t i = 0; i < vecCO.size(); i++) {
 
 		minRect[i] = minAreaRect(Mat(vecCO[i].getContour()));
 
@@ -72,7 +72,7 @@ vector<ContourObject> filter_lines(vector<ContourObject> vecCO, Mat skel,
 	int hits = 0;
 	vector<ContourObject> newVecCO;
 
-	for (int i = 0; i < vecCO.size(); i++) {
+	for (size_t i = 0; i < vecCO.size(); i++) {
 		temp = vecCO[i].getFirstPoint();
 		last = vecCO[i].getLastPoint();
 		Vektor2d vektor(temp, last);
@@ -122,8 +122,8 @@ vector<ContourObject> filter_by_dst(vector<ContourObject> vecCO, int pxlSum,
 	Mat m = Mat::zeros(size, CV_8UC1);
 
 	float dist;
-	for (int i = 0; i < vecCO.size(); i++) {
-		for (int z = 0; z < vecCO.size(); z++) {
+	for (size_t i = 0; i < vecCO.size(); i++) {
+		for (size_t z = 0; z < vecCO.size(); z++) {
 			if (z != i) {
 				dist = norm(
 						vecCO[z].getMassCenter() - vecCO[i].getMassCenter());
@@ -168,9 +168,9 @@ void cluster_rect(Mat b, vector<ContourObject> vecCO) {
 void filter_hough_lines(vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 
 	float dist;
-	Vector<int> delIndex;
-	for (int i = 0; i < pLine.size(); i++) {
-		for (int z = 0; z < pLine.size(); z++) {
+	Vector<size_t> delIndex;
+	for (size_t i = 0; i < pLine.size(); i++) {
+		for (size_t z = 0; z < pLine.size(); z++) {
 			if (z != i) {
 				for (int j = 0; j < 2; j++) {
 					for (int k = 0; k < 2; k++) {
@@ -179,7 +179,7 @@ void filter_hough_lines(vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 							if (norm(pLine[i]) < norm(pLine[z])) {
 								//delete z
 								bool ok = true;
-								for (int l = 0; l < delIndex.size(); l++) {
+								for (size_t l = 0; l < delIndex.size(); l++) {
 									if (delIndex[l] == z) {
 										ok = false;
 									}
@@ -190,7 +190,7 @@ void filter_hough_lines(vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 							} else {
 								//delete i
 								bool ok = true;
-								for (int l = 0; l < delIndex.size(); l++) {
+								for (size_t l = 0; l < delIndex.size(); l++) {
 									if (delIndex[l] == i) {
 										ok = false;
 									}
@@ -208,7 +208,7 @@ void filter_hough_lines(vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 	}
 
 	//delete Indexes
-	for (int i = 0; i < delIndex.size(); i++) {
+	for (size_t i = 0; i < delIndex.size(); i++) {
 		cout << "delIndex[" << i << "]: " << delIndex[i] << endl;
 		pLine.erase(pLine.begin() + delIndex[i] - i);
 	}
@@ -238,7 +238,7 @@ vector<Vec4i> filter_hough_lines2(vector<Vec4i>& pLines) {
 //	cout << "pLines.size() " << pLines.size() << endl;
 	for (int i = 0; i < numberOfLines; i++) {
 		maxLength = 0;
-		for (int z = 0; z < labels.size(); z++) {
+		for (size_t z = 0; z < labels.size(); z++) {
 			if (labels[z] == i) {
 //				cout << "lenght[" << z << "]: " << norm(pLines[z]) << endl;
 //				cout << "lenght[" << z << "]: "

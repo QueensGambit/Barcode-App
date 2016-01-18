@@ -27,7 +27,7 @@ Mat get_image_from_webcam() {
 		Mat frame;
 		String barcode, type;
 		float angle = 0;
-		int i;
+		size_t i;
 		int wKey = 0;
 //		while (true) {
 		while (!readSuccess && wKey != 13) {
