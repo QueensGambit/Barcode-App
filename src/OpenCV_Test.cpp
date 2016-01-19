@@ -28,7 +28,7 @@ int get_Barcode(const Mat&, SettingObject& s);
 
 int main(int argc, const char** argv ) {
 
-	//example input: Barcode-App.exe false false false false false media/internet/chips.jpg
+	//example input: Barcode-App.exe false false false true false media/internet/chips.jpg i s
 	const char* execute;
 	bool stepByStep, showAllSteps, search, webcam, speach;
 	const char* file;
