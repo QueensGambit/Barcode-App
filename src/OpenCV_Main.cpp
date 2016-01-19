@@ -37,7 +37,7 @@ int main(int argc, const char** argv ) {
 		webcamVersion = '0';
 		webcamStyle = '0';
 		}
-
+		cout << "search: " << search << endl;
 		s.setValues(stepByStep, showAllSteps, search, webcam, speach, file, webcamVersion, webcamStyle);
 		//s = s2;
 	}
@@ -50,9 +50,9 @@ int main(int argc, const char** argv ) {
 	else {
 //		cout << "load image from file" << endl;
 		src = imread(s.getFile(), CV_LOAD_IMAGE_COLOR);
-		cout << "get_Barcode(src, s): " << get_Barcode(src, s) << endl;
 	}
 
+	cout << "get_Barcode(src, s): " << get_Barcode(src, s) << endl;
 	return 0;
 }
 
@@ -255,7 +255,7 @@ int get_Barcode( Mat& src, SettingObject& s) {
 	if ( !s.isBasic() && type.find("EAN") != unsigned(-1) ) {
 		const char* pathProductCSV = "media/database/product_database.csv";
 		const char* pathAdderCSV = "media/database/adder_database.csv";
-
+		cout << "i want to search!" << s.isSearch() << endl;
 		waitAnyKey(s);
 		searchSuccess = get_article_descr_csv(pathProductCSV, barcode, article, descr) ||
 			get_article_descr_csv(pathAdderCSV, barcode, article, descr);
@@ -277,7 +277,7 @@ int get_Barcode( Mat& src, SettingObject& s) {
 		if (s.isSpeach()) {
 		speak_article_descr(article, descr);
 		}
-	} else {
+	} else if (!s.isBasic()){
 		cout << "no article description was found." << endl;
 	}
 
