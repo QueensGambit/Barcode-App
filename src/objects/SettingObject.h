@@ -18,6 +18,8 @@ private:
 	const char* file;
 	char webcamVersion; //i(ntern) | e(xter)
 	char webcamStyle; //s(ingle frame) | m(any frames (loop))
+	bool basic = 0; //get_barcode() shows nothing, only returns 1 if a barcode was successfully read
+				//and 0 otherwise, -1 for an exception/error
 
 public:
 	SettingObject(const char* execute, bool stepByStep=0, bool showAllSteps=0,
@@ -38,6 +40,8 @@ public:
 			char, char);
 	void printSettings();
 	bool isSpeach() const;
+	bool isBasic() const;
+	void setBasic(bool basic);
 };
 
 #endif /* SETTINGOBJECT_H_ */

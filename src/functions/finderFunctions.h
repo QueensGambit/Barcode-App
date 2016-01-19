@@ -46,7 +46,7 @@ vector<ContourObject> find_mser(Mat, const SettingObject&);
 vector<Vec4i> get_probabilistic_hough_lines(Mat);
 vector<vector<Point2f> > get_corner_points(vector<Vec4i>, vector<ContourObject>, Mat, const SettingObject&);
 
-bool get_barcode_string(Mat&, string&, string&, float&, size_t&);
+bool get_barcode_string(Mat&, string&, string&, float&, size_t&, const SettingObject&);
 int writer(char *data, size_t size, size_t nmemb, string *buffer);
 string curl_httpget(const string &url);
 

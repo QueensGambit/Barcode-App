@@ -14,6 +14,7 @@
 #include <iostream>
 
 #include "finderFunctions.h"
+#include "../OpenCV_Main.h"
 
 using namespace cv;
 using namespace std;

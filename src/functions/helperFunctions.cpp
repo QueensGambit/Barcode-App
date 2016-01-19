@@ -275,12 +275,13 @@ bool getBoolValue(const char* arg) {
 	return false;
 }
 
-void waitArrowKey(const SettingObject& s) {
+void waitAnyKey(const SettingObject& s) {
 	if (s.isStepByStep()) {
-		int key;// 2555904= ->  100=d
+		/*int key;// 2555904= ->  100=d
 		while (key != 2555904 && key != 100) {
 			key = waitKey(0);
 	//		cout << "key: " << key << endl;
-		}
+		}*/
+		waitKey(0);
 	}
 }

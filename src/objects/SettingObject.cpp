@@ -88,3 +88,15 @@ SettingObject::~SettingObject() {
 bool SettingObject::isSpeach() const {
 	return speach;
 }
+
+bool SettingObject::isBasic() const {
+	return basic;
+}
+
+void SettingObject::setBasic(bool basic) {
+	this->basic = basic;
+	if (basic) {
+		this->showAllSteps = false;
+		this->stepByStep = false;
+	}
+}

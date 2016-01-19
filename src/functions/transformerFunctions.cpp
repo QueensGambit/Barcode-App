@@ -44,27 +44,40 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints, const Se
 		cornerPoints[i][1] = tmpP2;
 		cornerPoints[i][2] = tmpP3;
 		cornerPoints[i][3] = tmpP4;
-		*/
+*/
+		Point2f tmpP[4];
+		if (cornerPoints[i][0].y > cornerPoints[i][1].y && cornerPoints[i][0].x > cornerPoints[i][2].x) {
+			tmpP[0] = cornerPoints[i][2];
+			tmpP[1] = cornerPoints[i][3];
+			tmpP[2] = cornerPoints[i][0];
+			tmpP[3] = cornerPoints[i][1];
 
-
-
+			cornerPoints[i][0] = tmpP[0];
+			cornerPoints[i][1] = tmpP[1];
+			cornerPoints[i][2] = tmpP[2];
+			cornerPoints[i][3] = tmpP[3];
+		}
+		//is the [1] the actual first point?
+		else if (cornerPoints[i][0].y > cornerPoints[i][1].y) {
 		Point2f tmpP[4];
 
-		tmpP[0] = cornerPoints[i][1];
-		tmpP[1] = cornerPoints[i][0];
-		tmpP[2] = cornerPoints[i][2];
-		tmpP[3] = cornerPoints[i][3];
+		tmpP[0] = cornerPoints[i][1]; //1
+		tmpP[1] = cornerPoints[i][0]; //0
+		tmpP[2] = cornerPoints[i][2]; //2
+		tmpP[3] = cornerPoints[i][3]; //3
 
 		cornerPoints[i][0] = tmpP[0];
 		cornerPoints[i][1] = tmpP[1];
 		cornerPoints[i][2] = tmpP[2];
 		cornerPoints[i][3] = tmpP[3];
+		}
+
+
 
 		/*for (int z = 0; z < 4; z++) {
 			cout << "cornerPoints[" << z << "]:" << cornerPoints[i][z] << endl;
 		}*/
 	}
-
 
 		///zoom out
 		for (int i = 0; i < cornerPoints.size(); i++) {
@@ -72,6 +85,8 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints, const Se
 			/*for (int z = 0; z < 4; z++) {
 				cout << "cornerPoints[" << z << "]:" << cornerPoints[i][z] << endl;
 			}*/
+
+			//a simple method to add a constant factor doesn't work all the time
 /*
 			cornerPoints[i][0].x -= scaleVal;
 			cornerPoints[i][0].y -= scaleVal;
@@ -85,6 +100,7 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints, const Se
 			cornerPoints[i][3].x += scaleVal;
 			cornerPoints[i][3].y -= scaleVal;
 		*/
+
 			Point2f v[4][2];
 			Point2f w[4];
 			Point2f w_norm[4];
@@ -117,7 +133,7 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints, const Se
 
 			//2 Variants for each Barcode
 			//1 is Original Size, the other is half the size
-
+//		if (min(height, width) > 25 && max(height, width) / min(height, width) < 10) {
 		Mat transform;
 		float newWidth = width * ((300 / height));
 		if (newWidth > 1400) {
@@ -135,6 +151,7 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints, const Se
 //		cout << "new Width" << newWidth << endl;
 //		cout << "width * height = " << width * height << endl;
 		int scaleVal = width * height * 0.003;
+
 //			Mat transform = Mat::zeros(300, 800, CV_8UC3);
 
 		//see more on:
@@ -182,9 +199,9 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints, const Se
 			//blur is not useful
 			int blurFac = newWidth / 200;
 			if (blurFac == 0) {
-			blurFac = 2;
+			blurFac = 1;
 			}
-			blur(src_bw, src_bw, Size(blurFac, blurFac)); //def: 5, 5
+			blur(src_bw, src_bw, Size(blurFac, blurFac)); //def: 5, 5*/							//15
 			adaptiveThreshold(src_bw, src_bw, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
 			~transform += .6 * ~src_bw;
 //			transform = ~transform;
@@ -213,26 +230,9 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints, const Se
 
 			mBarcode.push_back(src_bw);
 			mBarcode.push_back(transform);
-
-
+//		}
 	}
-		//add the source image to the list
-		Mat src_enhance, src_bw;
-		/*src.copyTo(src_enhance);
 
-		cvtColor(src_enhance, src_enhance, CV_BGR2GRAY);
-		blur(src_enhance, src_bw, Size(5, 5));
-		adaptiveThreshold(src_bw, src_bw, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
-		~src_enhance += .6 * ~src_bw;
-		cvtColor(src_bw, src_bw, CV_GRAY2BGR);
-		cvtColor(src_enhance, src_enhance, CV_GRAY2BGR);*/
-
-		src.copyTo(src_bw);
-		make_adaptiv_bw(src_bw);
-
-//		mBarcode.push_back(src_enhance);
-		mBarcode.push_back(src_bw);
-		mBarcode.push_back(src);
 	return mBarcode;
 
 }

@@ -22,20 +22,24 @@ Mat get_image_from_webcam(char webcamVersion, char webcamStyle) {
 		VideoCapture capture(camIndex);
 		SettingObject s("path");
 
+		if (webcamStyle == 'm') {
+			s.setBasic(true);
+		}
+
 		if (!capture.isOpened()) {
 			cout << "ERROR: Could not open Camera" << endl;
 			return src; //-1 src is empty here
 		}
 
 		namedWindow("Camera", CV_WINDOW_AUTOSIZE);
-		bool readSuccess = false;
+		int readSuccess = 0;
 		Mat frame;
 		String barcode, type;
 		float angle = 0;
 		size_t i;
 		int wKey = 0;
 //		while (true) {
-		while (!readSuccess && wKey != 13) {
+		while (readSuccess == 0 && wKey != 13) { //13 = ENTER
 
 			//if esc is pressed return
 			if (wKey == 27) {
@@ -56,15 +60,20 @@ Mat get_image_from_webcam(char webcamVersion, char webcamStyle) {
 				break;
 			}*/
 
-			if (webcamStyle == 'm') {
-				readSuccess = get_barcode_string(frame, barcode, type, angle, i);
+			if (webcamStyle == 'm') { //many frames
+
+				//use ZBar only
+				/*readSuccess = get_barcode_string(frame, barcode, type, angle, i, s);
 				if (!readSuccess) {
 					Mat bw_frame;
 					frame.copyTo(bw_frame);
 					make_adaptiv_bw(bw_frame);
-					readSuccess = get_barcode_string(bw_frame, barcode, type, angle, i);
+					readSuccess = get_barcode_string(bw_frame, barcode, type, angle, i, s);
 	//				if (readSuccess)
-	//				cout << "success bw" << endl;
+	//				cout << "success bw" << endl;*/
+				readSuccess = get_Barcode(frame, s);
+				if (readSuccess == -1) {
+					return src;
 				}
 			}
 			wKey = waitKey(30);

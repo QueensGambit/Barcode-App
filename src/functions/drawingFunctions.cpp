@@ -26,7 +26,7 @@ Mat draw_massCenter(vector<ContourObject> vecCO, Size size, const SettingObject&
 	if (s.isShowAllSteps()) {
 	namedWindow("malen", CV_WINDOW_AUTOSIZE);
 	imshow("malen", m);
-	waitArrowKey(s);
+	waitAnyKey(s);
 	}
 	return m;
 }

@@ -262,8 +262,7 @@ vector<Vec4i> filter_hough_lines2(vector<Vec4i>& pLines) {
 		cout << "yEnd: " << fLines[i][3] << endl;*/
 	}
 //	cout << "-------------------------------------------" << endl;
-	//lkajsdfklajsflkj
-//	filter_detected_Lines(fLines, vecCO);
+
 	return fLines;
 }
 
@@ -307,6 +306,6 @@ bool isEqual(const Vec4i& _l1, const Vec4i& _l2) {
 	if (dist > max(length1, length2) * 0.1f) //0.5f
 		return false;
 
-	cout << "linien gleich" << endl;
+//	cout << "linien gleich" << endl;
 	return true;
 }

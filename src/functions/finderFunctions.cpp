@@ -159,7 +159,7 @@ vector<ContourObject> find_mser(Mat gray, const SettingObject& s) {
 	if (s.isShowAllSteps()) {
 	namedWindow("mser", WINDOW_AUTOSIZE);
 	imshow("mser", mser);
-	waitArrowKey(s);
+	waitAnyKey(s);
 	}
 	return vecCO;
 
@@ -181,8 +181,6 @@ vector<Vec4i> get_probabilistic_hough_lines(Mat m) {
 	/// 2. Use Probabilistic Hough Transform //30	//80
 	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 30, 30, 60);
 
-	/// Show the result
-	cout << "p_line.size(): " <<  p_lines.size() << endl;
 //	filter_hough_lines(p_lines, 0.00002, m.cols*m.rows);
 //	filter_hough_lines2(p_lines);
 
@@ -294,10 +292,10 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 		}
 //		fillConvexPoly( mBarcodePoints, intRect_points, 4, Scalar(255,255,255), 8, 0);
 	}
-
+	if (!s.isBasic()) {
 	namedWindow("Barocde Punkte", WINDOW_AUTOSIZE); //WINDOW_NORMAL
 	imshow("Barocde Punkte", mBarcodePoints);
-
+	}
 //	cout << "hits start: " << startH << endl;
 //	cout << "hits end: " << endH << endl;
 
@@ -306,7 +304,7 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 }
 
 bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
-		size_t& number) {
+		size_t& number, const SettingObject& s) {
 
 	ImageScanner scanner;
 	scanner.set_config(ZBAR_NONE, ZBAR_CFG_ENABLE, 1);
@@ -394,9 +392,11 @@ bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
 
 		string result = "Result ";
 
+		if (!s.isBasic()) {
 		draw_barcode(res, code, type, number);
 		namedWindow(result + char(number + 48), 1);
 		imshow(result + char(number + 48), res);
+		}
 		return true;
 	}
 	return false;
