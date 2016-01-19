@@ -26,6 +26,9 @@
 #include <sstream>
 #include <fstream>
 
+#include "helperFunctions.h"
+#include "../objects/SettingObject.h"
+
 #include "../ZBar/include/zbar.h"
 #include "../Network/curl-7.34.0-win32/include/curl/curl.h"
 #include "../Network/curl-7.34.0-win32/include/curl/easy.h"
@@ -36,12 +39,12 @@ using namespace std;
 
 
 vector<ContourObject> find_moments(Mat, int, Mat, Size);
-vector<ContourObject> find_mser(Mat);
+vector<ContourObject> find_mser(Mat, const SettingObject&);
 //void find_Colour_for_Groups(map<Scalar, vector< vector< ContourObject> > >&,Scalar, ContourObject);
 //void find_groups(Mat, vector<ContourObject>);
 
 vector<Vec4i> get_probabilistic_hough_lines(Mat);
-vector<vector<Point2f> > get_corner_points(vector<Vec4i>, vector<ContourObject>, Mat);
+vector<vector<Point2f> > get_corner_points(vector<Vec4i>, vector<ContourObject>, Mat, const SettingObject&);
 
 bool get_barcode_string(Mat&, string&, string&, float&, size_t&);
 int writer(char *data, size_t size, size_t nmemb, string *buffer);

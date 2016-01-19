@@ -14,13 +14,14 @@ using namespace std;
 class SettingObject {
 private:
 	const char* execute;
-	bool stepByStep, showAllSteps, search, webcam;
+	bool stepByStep, showAllSteps, search, webcam, speach;
 	const char* file;
 	char webcamVersion; //i(ntern) | e(xter)
 	char webcamStyle; //s(ingle frame) | m(any frames (loop))
 
 public:
-	SettingObject(const char* execute, bool stepByStep=0, bool showAllSteps=0, bool search=0, bool webcam=0,
+	SettingObject(const char* execute, bool stepByStep=0, bool showAllSteps=0,
+			bool search=0, bool webcam=0, bool speach=0,
 			const char* file="media/internet/Chips_rotated.jpg",
 			char webcamVersion='0', char webcamStyle='0');
 	virtual ~SettingObject();
@@ -32,8 +33,11 @@ public:
 	char getWebcamStyle() const;
 	char getWebcamVersion() const;
 	const char* getExecute() const;
-
+	void setValues(bool, bool, bool, bool, bool,
+			const char*,
+			char, char);
 	void printSettings();
+	bool isSpeach() const;
 };
 
 #endif /* SETTINGOBJECT_H_ */

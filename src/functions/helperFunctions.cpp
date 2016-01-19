@@ -269,8 +269,18 @@ void make_adaptiv_bw(Mat& m) {
 }
 
 bool getBoolValue(const char* arg) {
-	if (arg == "true") {
+	if (string(arg) == "true") {
 		return true;
 	}
 	return false;
+}
+
+void waitArrowKey(const SettingObject& s) {
+	if (s.isStepByStep()) {
+		int key;// 2555904= ->  100=d
+		while (key != 2555904 && key != 100) {
+			key = waitKey(0);
+	//		cout << "key: " << key << endl;
+		}
+	}
 }

@@ -8,7 +8,7 @@
 #include "transformerFunctions.h"
 
 
-vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
+vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints, const SettingObject& s) {
 
 	vector<Mat> mBarcode;
 
@@ -206,8 +206,11 @@ vector<Mat> p_transform(Mat src, vector<vector<Point2f> > cornerPoints) {
 	//		cout << "strTransform" << endl;
 			//char(i+48) -> conversion to char
 
+			if (s.isShowAllSteps()) {
 			imshow(strTransform + char(i+48), src_bw); //+ "." + char(u+48)).c_str()
 			imshow(strTransform + char(i+48) + ".2", transform);
+			}
+
 			mBarcode.push_back(src_bw);
 			mBarcode.push_back(transform);
 

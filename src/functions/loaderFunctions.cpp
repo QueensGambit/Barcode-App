@@ -8,18 +8,23 @@
 #include "loaderFunctions.h"
 
 
-Mat get_image_from_webcam() {
+Mat get_image_from_webcam(char webcamVersion, char webcamStyle) {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	//	get source from camera by video capture
 	//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		Mat src;
-		VideoCapture capture(0); 								// open default camera
+		int camIndex = 0;  // 0 is the default camera
+		if (webcamVersion == 'e') {
+			camIndex = -1; //get a menu to choose the camera
+		}
+		VideoCapture capture(camIndex);
+		SettingObject s("path");
 
 		if (!capture.isOpened()) {
-			cout << "ERROR: Could not open Camera";
-			//return -1;
+			cout << "ERROR: Could not open Camera" << endl;
+			return src; //-1 src is empty here
 		}
 
 		namedWindow("Camera", CV_WINDOW_AUTOSIZE);
@@ -51,16 +56,17 @@ Mat get_image_from_webcam() {
 				break;
 			}*/
 
-			readSuccess = get_barcode_string(frame, barcode, type, angle, i);
-			if (!readSuccess) {
-				Mat bw_frame;
-				frame.copyTo(bw_frame);
-				make_adaptiv_bw(bw_frame);
-				readSuccess = get_barcode_string(bw_frame, barcode, type, angle, i);
-//				if (readSuccess)
-//				cout << "success bw" << endl;
+			if (webcamStyle == 'm') {
+				readSuccess = get_barcode_string(frame, barcode, type, angle, i);
+				if (!readSuccess) {
+					Mat bw_frame;
+					frame.copyTo(bw_frame);
+					make_adaptiv_bw(bw_frame);
+					readSuccess = get_barcode_string(bw_frame, barcode, type, angle, i);
+	//				if (readSuccess)
+	//				cout << "success bw" << endl;
+				}
 			}
-
 			wKey = waitKey(30);
 		}
 		frame.copyTo(src);

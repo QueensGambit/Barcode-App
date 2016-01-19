@@ -18,6 +18,6 @@
 using namespace cv;
 using namespace std;
 
-Mat get_image_from_webcam();
+Mat get_image_from_webcam(char, char);
 
 #endif /* LOADERFUNCTIONS_H_ */

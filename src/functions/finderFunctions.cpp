@@ -128,7 +128,7 @@ vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel, Size size) {
 	return vecCO;
 }
 
-vector<ContourObject> find_mser(Mat gray) {
+vector<ContourObject> find_mser(Mat gray, const SettingObject& s) {
 	RNG rng(12345);
 	MSER ms;
 
@@ -156,9 +156,11 @@ vector<ContourObject> find_mser(Mat gray) {
 		vecCO[i] = temp;
 	}
 
+	if (s.isShowAllSteps()) {
 	namedWindow("mser", WINDOW_AUTOSIZE);
 	imshow("mser", mser);
-
+	waitArrowKey(s);
+	}
 	return vecCO;
 
 }
@@ -191,7 +193,7 @@ vector<Vec4i> get_probabilistic_hough_lines(Mat m) {
 	return p_lines;
 }
 
-vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourObject> vecCO, Mat mBarcodePoints) {
+vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourObject> vecCO, Mat mBarcodePoints, const SettingObject& s) {
 
 //	cout << "size of vecCO in filter_detected: " << vecCO.size() << endl;
 
@@ -293,7 +295,7 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 //		fillConvexPoly( mBarcodePoints, intRect_points, 4, Scalar(255,255,255), 8, 0);
 	}
 
-	namedWindow("Barocde Punkte", 1);
+	namedWindow("Barocde Punkte", WINDOW_AUTOSIZE); //WINDOW_NORMAL
 	imshow("Barocde Punkte", mBarcodePoints);
 
 //	cout << "hits start: " << startH << endl;

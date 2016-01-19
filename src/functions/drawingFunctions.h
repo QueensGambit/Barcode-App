@@ -17,6 +17,7 @@
 #include <math.h>
 #include <limits.h>
 #include "../objects/ContourObject.h"
+#include "../objects/SettingObject.h"
 #include "helperFunctions.h"
 #include "filterFunctions.h"
 
@@ -28,7 +29,7 @@ void draw_Circles(vector<ContourObject>, Mat);
 
 void draw_Lines(vector<ContourObject>, Mat);
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
-Mat draw_massCenter(vector<ContourObject>, Size);
+Mat draw_massCenter(vector<ContourObject>, Size, const SettingObject&);
 void draw_hough_lines(Mat , vector<Vec4i>);
 void draw_fit_line(vector<Point2f>, Mat);
 void draw_article_description(const string&, const string&);

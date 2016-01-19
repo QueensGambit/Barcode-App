@@ -19,6 +19,8 @@
 #include <limits.h>
 #include "filterFunctions.h"
 
+#include "../objects/SettingObject.h"
+
 using namespace cv;
 using namespace std;
 
@@ -52,4 +54,5 @@ Vec4i get_Border_Points_from_Rect(Point2f rect_point[4], bool);
 
 bool getBoolValue(const char*);
 
+void waitArrowKey(const SettingObject&);
 #endif /* HELPERFUNCTIONS_H_ */

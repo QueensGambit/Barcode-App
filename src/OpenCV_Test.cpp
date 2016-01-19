@@ -20,55 +20,69 @@
 using namespace cv;
 using namespace std;
 
-//void crop(Mat, Mat);
-
 //global variables
 Mat skel, skel2, skel3, gray;//, //blank;
-int thresh = 127;
-int max_thresh = 255;
 
-const char* skel_window = "Skel Window";
+//const char* skel_window = "Skel Window";
+int get_Barcode(const Mat&, SettingObject& s);
 
 int main(int argc, const char** argv ) {
 
-
-	//example input: Barcode-App.exe false false false false media/internet/chips.jpg
+	//example input: Barcode-App.exe false false false false false media/internet/chips.jpg
 	const char* execute;
-	bool stepByStep, showAllSteps, search, webcam;
+	bool stepByStep, showAllSteps, search, webcam, speach;
 	const char* file;
 	char webcamVersion, webcamStyle;
 
-	SettingObject* s;
 	execute = argv[0];
-	//SettingObject s2();
-	if (argc >= 6) { //6 is the least number of paramters
+	SettingObject s(execute);
+
+	if (argc >= 7) { //6 is the least number of paramters
 		stepByStep = getBoolValue(argv[1]);
 		showAllSteps = getBoolValue(argv[2]);
+		//step by step doesn't make sense if there aren't multiple windows
+		if (!showAllSteps) {
+			stepByStep = false;
+		}
 		search = getBoolValue(argv[3]);
 		webcam = getBoolValue(argv[4]);
-		file = argv[5];
+		speach = getBoolValue(argv[5]);
+		file = argv[6];
 		if (webcam) {
-		webcamVersion = argv[6][0];
-		webcamStyle = argv[7][0];
+		webcamVersion = argv[7][0];//i(ntern) | e(xtern)
+		webcamStyle = argv[8][0]; //s(ingle frame) | m(any frames (loop))
 		}
 		else {
+		//0 means invalid setting
 		webcamVersion = '0';
 		webcamStyle = '0';
 		}
 
-		s = new SettingObject(execute, stepByStep, showAllSteps, search, webcam, file, webcamVersion, webcamStyle);
+		s.setValues(stepByStep, showAllSteps, search, webcam, speach, file, webcamVersion, webcamStyle);
 		//s = s2;
 	}
+
+	Mat src;
+
+	if (webcam) {
+		src = get_image_from_webcam(webcamVersion, webcamStyle);
+	}
 	else {
-		s = new SettingObject(execute);
+	src = imread(s.getFile(), CV_LOAD_IMAGE_COLOR);
 	}
 
-	s->printSettings();
+	get_Barcode(src, s);
+
+	return 0;
+}
+
+int get_Barcode(const Mat& src, SettingObject& s) {
+
+	s.printSettings();
 
 	/// Load source image, convert it to gray and blur it
-	Mat src;	//, gray;
+//	Mat src;	//, gray;
 
-	src = imread(s->getFile(), CV_LOAD_IMAGE_COLOR);
 //	src = get_image_from_webcam();
 //	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
@@ -111,9 +125,11 @@ int main(int argc, const char** argv ) {
 //	imshow("Canny", canny_output);
 
 //	resize(src, src, blank.size());
+	if (s.isShowAllSteps()) {
 	namedWindow("Source", CV_WINDOW_AUTOSIZE);
 	imshow("Source", src);
-
+	waitArrowKey(s);
+	}
 //	namedWindow(skel_window, CV_WINDOW_AUTOSIZE);
 
 	adaptiveThreshold(gray, skel3, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, -8);
@@ -124,18 +140,21 @@ int main(int argc, const char** argv ) {
 //	gray += .4 * canny_output;
 
 //	medianBlur ( gray, gray, 3 );
+	if (s.isShowAllSteps()) {
 	namedWindow( "Gray", CV_WINDOW_AUTOSIZE );
 	imshow( "Gray", gray );
+	waitArrowKey(s);
+	}
 
 //	find_moments(canny_output, 3, skel3, gray.size());
 
-	vector<ContourObject> vecCO(find_mser(gray));
+	vector<ContourObject> vecCO(find_mser(gray, s));
 
 	cout << "vecCO.size() = " << vecCO.size() << endl;
 
-	Mat mfiltered; // = Mat::zeros( skel2.size(), CV_8UC3 );
-	skel3.copyTo(mfiltered);
-	cvtColor(mfiltered, mfiltered, CV_GRAY2BGR);
+	Mat mfiltered  = Mat::zeros( src.size(), CV_8UC3 );
+//	skel3.copyTo(mfiltered);
+//	cvtColor(mfiltered, mfiltered, CV_GRAY2BGR);
 
 
 	vector<ContourObject> fVecCO(filter_by_rect(vecCO, skel3, .4, 5 )); //.95, 7
@@ -148,26 +167,39 @@ int main(int argc, const char** argv ) {
 
 	draw_minRectangles(fVecCO2, mfiltered);
 
+	if (s.isShowAllSteps()) {
 	namedWindow("mFiltered", CV_WINDOW_AUTOSIZE);	//CV_WINDOW_NORMAL
 	imshow("mFiltered", mfiltered);
+	waitArrowKey(s);
+	}
 
+	//cluster_rect was previously used to find potential barcode areas
+	/*
 	Mat cluster = Mat::zeros(mfiltered.size(),CV_8UC1);
 	//cout << "mfilteed size: " << mfiltered.size();
 	cluster_rect(cluster, fVecCO2);
+	 */
 
-	Mat mCenter = draw_massCenter(fVecCO2, mfiltered.size());
+	Mat mCenter = draw_massCenter(fVecCO2, mfiltered.size(), s);
 
 	vector<Vec4i> pLines = get_probabilistic_hough_lines(mCenter);
 	vector<Vec4i> fLines = filter_hough_lines2(pLines);
 	cout << "f_line.size(): " <<  fLines.size() << endl;
 //	cout << "length norm(fLines[0]): " << norm(fLines[0]) << endl;
+	if (s.isShowAllSteps()) {
 	draw_hough_lines(mCenter, fLines);
-	vector<vector<Point2f> > cornerPoints = get_corner_points(fLines, fVecCO2, src.clone());
+	waitArrowKey(s);
+	}
+	vector<vector<Point2f> > cornerPoints = get_corner_points(fLines, fVecCO2, src.clone(), s);
+	if (s.isShowAllSteps()) {
+	waitArrowKey(s);
+	}
 
 	//find_groups(mfiltered, vector<ContourObject> fVecCO2);
 
 	vector<Mat> mBarcodes;
-	mBarcodes = p_transform(src, cornerPoints);
+	mBarcodes = p_transform(src, cornerPoints, s);
+	waitArrowKey(s);
 
 	/*vector<string> barcode;
 	vector<string> type;
@@ -186,7 +218,6 @@ int main(int argc, const char** argv ) {
 				cout << "type: " << type << endl;
 				cout << "barcode-symbol: "  << barcode << endl;
 				cout << "angle: " << angle << endl;
-
 //				string speak = string("espeak.exe -v de \"") + string("Typ: ") + type + string("barcode: ") + barcode + string("\"");
 //				int retCode = system(speak.c_str());
 			}
@@ -195,7 +226,7 @@ int main(int argc, const char** argv ) {
 			}
 		}
 	}
-
+	waitArrowKey(s);
 	String article, descr;
 	article = "Dontodent - Fresh White Zahnpflegekaugummis";
 	descr = "Zuckerfreie Kaugummi-Dragées mit Süßungsmitteln und Aroma glutenfrei laktosefrei ";
@@ -213,7 +244,7 @@ int main(int argc, const char** argv ) {
 		if (searchSuccess) {
 			cout << "article:" << article << endl;
 			cout << "beschr: " << descr << endl;
-		} else {
+		} else if (s.isSearch()){
 			cout << "look-up at codecheck.info..." << endl;
 			searchSuccess = get_article_description_internet(barcode, article, descr);
 			if (searchSuccess) {
@@ -225,8 +256,9 @@ int main(int argc, const char** argv ) {
 	if (searchSuccess) {
 //		cout << "article: " << article << endl;
 		draw_article_description(article, descr);
-
-//		speak_article_descr(article, descr);
+		if (s.isSpeach()) {
+		speak_article_descr(article, descr);
+		}
 	} else {
 		cout << "no article description was found." << endl;
 	}

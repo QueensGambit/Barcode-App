@@ -14,10 +14,11 @@
 #include <iostream>
 
 #include "helperFunctions.h"
+#include "../objects/SettingObject.h"
 
 using namespace cv;
 using namespace std;
 
-vector<Mat> p_transform(Mat, vector<vector<Point2f> > );
+vector<Mat> p_transform(Mat, vector<vector<Point2f> >, const SettingObject&  );
 bool speak_article_descr(const string&, const string&);
 #endif /* TRANSFORMERFUNCTIONS_H_ */

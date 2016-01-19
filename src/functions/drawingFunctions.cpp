@@ -8,7 +8,7 @@
 #include "drawingFunctions.h"
 
 RNG rng(12345);
-Mat draw_massCenter(vector<ContourObject> vecCO, Size size){
+Mat draw_massCenter(vector<ContourObject> vecCO, Size size, const SettingObject& s){
 	Mat m = Mat::zeros(size, CV_8UC1);
 	vector<Point2f> massPoints;
 	Scalar white = Scalar(255,255,255);
@@ -23,9 +23,11 @@ Mat draw_massCenter(vector<ContourObject> vecCO, Size size){
 //	draw_probabilistic_hough(m,vecCO);
 //	draw_fit_line(massPoints, m);
 
+	if (s.isShowAllSteps()) {
 	namedWindow("malen", CV_WINDOW_AUTOSIZE);
 	imshow("malen", m);
-
+	waitArrowKey(s);
+	}
 	return m;
 }
 void draw_Circles(vector<Point2f> mc, Mat m) {
@@ -64,7 +66,7 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 
 	  for( int i = 0; i< vecCO.size(); i++ )
 	     {
-//	       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+	       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
 
 	       Point2f rect_points[4];
 	       vecCO[i].getRectPoints(rect_points);
@@ -74,7 +76,7 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 	    	  intRect_points[j] = rect_points[j];
 	       }
 
-	       fillConvexPoly( m, intRect_points, 4, Scalar(255,255,255), 8, 0);
+	       fillConvexPoly( m, intRect_points, 4, color, 8, 0);//white = Scalar(255,255,255)
 
 	     }
 }

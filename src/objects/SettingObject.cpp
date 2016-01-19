@@ -7,7 +7,8 @@
 
 #include "SettingObject.h"
 
-SettingObject::SettingObject(const char* execute, bool stepByStep, bool showAllSteps, bool search, bool webcam,
+SettingObject::SettingObject(const char* execute, bool stepByStep, bool showAllSteps,
+		bool search, bool webcam, bool speach,
 	const char* file,
 	char webcamVersion, char webcamStyle) {
 	this->execute = execute;
@@ -15,9 +16,10 @@ SettingObject::SettingObject(const char* execute, bool stepByStep, bool showAllS
 	this->showAllSteps = showAllSteps;
 	this->search = search;
 	this->webcam = webcam;
+	this->speach = speach;
+	this->file = file;
 	this->webcamVersion = webcamVersion;
 	this->webcamStyle = webcamStyle;
-	this->file = file;
 }
 
 const char* SettingObject::getFile() const {
@@ -60,13 +62,29 @@ void SettingObject::printSettings() {
 	cout << "showAllSteps: "  << showAllSteps << endl;
 	cout << "search: "  << search << endl;
 	cout << "webcam: "  << webcam << endl;
+	cout << "speach: " << speach << endl;
+	cout << "file: "  << file << endl;
 	cout << "webcamVersion: "  << webcamVersion << endl;
 	cout << "webcamStyle: "  << webcamStyle << endl;
-	cout << "file: "  << file << endl;
 	cout << "---------------------------------------" << endl;
+}
+
+void SettingObject::setValues(bool stepByStep, bool showAllSteps, bool search,
+		bool webcam, bool speach, const char* file, char webcamVersion, char webcamStyle) {
+	this->stepByStep = stepByStep;
+	this->showAllSteps = showAllSteps;
+	this->search = search;
+	this->webcam = webcam;
+	this->speach = speach;
+	this->file = file;
+	this->webcamVersion = webcamVersion;
+	this->webcamStyle = webcamStyle;
 }
 
 SettingObject::~SettingObject() {
 	// TODO Auto-generated destructor stub
 }
 
+bool SettingObject::isSpeach() const {
+	return speach;
+}
