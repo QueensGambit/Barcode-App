@@ -285,3 +285,35 @@ void waitAnyKey(const SettingObject& s) {
 		waitKey(0);
 	}
 }
+
+int start_executable(string command) {
+	 STARTUPINFO si;
+	    PROCESS_INFORMATION pi;
+
+	    ZeroMemory( &si, sizeof(si) );
+	    si.cb = sizeof(si);
+	    ZeroMemory( &pi, sizeof(pi) );
+
+	    LPSTR s_command = const_cast<char *>(command.c_str());
+//	    ".\\src\\eSpeak\\command_line\\espeak.exe --path=\".\\src\\eSpeak\" -v de -p 30 -s 145 -g 3 -m \" hallo das ist ein Test"
+	    if (!CreateProcess(NULL, s_command, NULL, NULL, FALSE,
+	            0, NULL, NULL, &si, &pi )) {
+	        cout << "Error occured" <<  GetLastError() << endl;
+	        // more on http://msdn.microsoft.com/en-us/library/ms680582%28VS.85%29.aspx
+
+	        return 1;
+	    }
+
+	    cout << "Process started correctly, Process-ID:" << pi.dwProcessId << endl;
+       int i = 0;
+       /*while (i < 100) {
+       	cout << i << endl;
+       	Sleep(100);
+       	++i;
+       }*/
+
+	     // Close process and thread handles.
+	     CloseHandle( pi.hProcess );
+	     CloseHandle( pi.hThread );
+   return 0;
+}

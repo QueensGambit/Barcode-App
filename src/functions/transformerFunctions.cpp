@@ -247,6 +247,8 @@ bool speak_article_descr(const string& article, const string& descr) {
 																									//30	//135 //4
 	string speak = string(".\\src\\eSpeak\\command_line\\espeak.exe --path=\".\\src\\eSpeak\" -v de -p 30 -s 145 -g 3 -m \"") + string("artikel: ")
 			+ article + string("<break time = \'1000\'/> beschreibung: ") + descr + string("\"");
-	waitKey(100);
-	system(speak.c_str());
+//	waitKey(100);
+
+//	system(speak.c_str());
+	start_executable(speak);
 }
