@@ -37,7 +37,6 @@ int main(int argc, const char** argv ) {
 		webcamVersion = '0';
 		webcamStyle = '0';
 		}
-		cout << "search: " << search << endl;
 		s.setValues(stepByStep, showAllSteps, search, webcam, speach, file, webcamVersion, webcamStyle);
 		//s = s2;
 	}

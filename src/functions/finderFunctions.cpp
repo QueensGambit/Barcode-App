@@ -388,7 +388,7 @@ bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
 	// clean up
 	image.set_data(NULL, 0);
 
-	if (n >= 1 && code != "" && type != "I2/5" && code.length() > 2) {
+	if (n >= 1 && code != "" && type != "I2/5" && type != "UPC-E" && code.length() > 2) {
 
 		string result = "Result ";
 

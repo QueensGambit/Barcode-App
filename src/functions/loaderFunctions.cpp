@@ -76,7 +76,7 @@ Mat get_image_from_webcam(char webcamVersion, char webcamStyle) {
 					return src;
 				}
 			}
-			wKey = waitKey(30);
+			wKey = waitKey(15);
 		}
 		frame.copyTo(src);
 		destroyAllWindows();
