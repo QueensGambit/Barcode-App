@@ -1,8 +1,7 @@
 # Barcode-App
-semester project at the "Hochschule Furtwangen University"
-faculty of computer science (WS 2015/16)
+semester project (WS 2015/16) at the Faculty of Computer Science of "Hochschule Furtwangen University"
 
-Project participants:
+project participants:
 - Björn Beha
 - Johannes Czech
 - Lukas Scheuerle
