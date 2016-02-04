@@ -1,11 +1,32 @@
 #include "OpenCV_Main.h"
 
-//global variables
-//Mat skel3, gray;//, //blank;
+/*The project is divided in the following parts:
+ *
+ * - Project-Directory: You can start the Barcode-App.exe via the GUI (BarcodeGUI.jar)
+ * or via the command line (with command parameters)
+ * all the necessary .dll files are given to run the executable
+ *
+ * - media/: Here some example images can be found to test the program
+ * - media/database: Here you find the product_database.csv and the adder_database.csv
+ *
+ *
+ * Source Code:
+ * - OpenCV_Main.cpp /.h: Here the main() and the get_Barcode() is defined
+ * - functions/: All the functions for the algorithm are located here
+ * - objects/: The SettingObject and the ContourObject are defined here
+ *
+ * Libraries:
+ * - eSpeak/: The eSpeak function is called here via an executable
+ * - network/: The source files of the libcurl library
+ * - ZBar/: The source files of the ZBar library
+ */
 
-//const char* skel_window = "Skel Window";
-int get_Barcode( Mat&, SettingObject& s);
 
+
+/*In this main method the run-arguments are being read
+ * and the SettingObject is being configured accordingly.
+ * At the end the get_Barcode() method is being called
+ * */
 int main(int argc, const char** argv ) {
 
 	//example input: Barcode-App.exe false false false true false media/internet/chips.jpg i s
@@ -55,6 +76,17 @@ int main(int argc, const char** argv ) {
 	return 0;
 }
 
+
+/*This method packs the whole algorithm in one single function.
+ * If the basic mode for the webcam usage in the SettingObject is set,
+ * then it will return the following states:
+ * It returns -1 if an error occurs (i. e. the src image is empty)
+ * It returns 0 if no barcode on the image was detected
+ * It returns 1 if one or more barcodes were detected
+ *
+ * Furthermore it reads all the settings from the SettingObject,
+ * to check if additionally informations should be shown.
+ *  */
 int get_Barcode( Mat& src, SettingObject& s) {
 
 	if (!s.isBasic()) {
