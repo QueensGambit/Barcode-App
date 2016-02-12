@@ -27,11 +27,11 @@ using namespace std;
 void draw_Circles(vector<Point2f>, Mat);
 void draw_Circles(vector<ContourObject>, Mat);
 
-void draw_Lines(vector<ContourObject>, Mat);
+void draw_Lines(vector<ContourObject>, Mat); //!not in use!
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m);
 Mat draw_massCenter(vector<ContourObject>, Size, const SettingObject&);
 void draw_hough_lines(Mat , vector<Vec4i>);
-void draw_fit_line(vector<Point2f>, Mat);
+void draw_fit_line(vector<Point2f>, Mat); //!not in use!
 void draw_article_description(const string&, const string&);
 
 void draw_barcode(Mat&, const string&, const string&, size_t&);

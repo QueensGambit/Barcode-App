@@ -8,6 +8,12 @@
 #include "drawingFunctions.h"
 
 RNG rng(12345);
+
+/*
+ * Draws the massCenterPoints of a given vector of ContourObjects
+ * and displays them in a new window depending on the SettingObject.
+ * Furthermore the matrix were the MassCenters were printed on is returned.
+ */
 Mat draw_massCenter(vector<ContourObject> vecCO, Size size, const SettingObject& s){
 	Mat m = Mat::zeros(size, CV_8UC1);
 	vector<Point2f> massPoints;
@@ -30,6 +36,10 @@ Mat draw_massCenter(vector<ContourObject> vecCO, Size size, const SettingObject&
 	}
 	return m;
 }
+
+/*
+ * Draws filled circles for every Point2f in the vector on a given matrix
+ */
 void draw_Circles(vector<Point2f> mc, Mat m) {
 
 	cout << "mc.size() = " << mc.size() << endl;
@@ -41,6 +51,9 @@ void draw_Circles(vector<Point2f> mc, Mat m) {
 	}
 }
 
+/*
+ * Draws filled circles for every massCenter of the vector ContourObject on a given matrix
+ */
 void draw_Circles(vector<ContourObject> vecCO, Mat m) {
 
 	cout << "vecCO.size() = " << vecCO.size() << endl;
@@ -52,6 +65,10 @@ void draw_Circles(vector<ContourObject> vecCO, Mat m) {
 	}
 }
 
+/*
+ * !Not in use!
+ * Draws lines for every Contour of the contourObjects on a given matrix
+ */
 void draw_Lines(vector<ContourObject> vecCO, Mat m) {
 
 	cout << "mc.size() lines = " << vecCO.size() << endl;
@@ -62,6 +79,10 @@ void draw_Lines(vector<ContourObject> vecCO, Mat m) {
 	}
 }
 
+/*
+ * Draws the minimum rotated rectangles, which were calculated before and
+ * are now read via the getRectPoints() functions, on a given matrix.
+ */
 void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 
 	  for( int i = 0; i< vecCO.size(); i++ )
@@ -81,6 +102,10 @@ void draw_minRectangles (vector<ContourObject> vecCO, Mat m) {
 	     }
 }
 
+/*
+ * !not in use!
+ * A line is calculated to a set of points via the fitLine method
+ */
 void draw_fit_line(vector<Point2f> points, Mat m) {
 
 //	Mat mLines;
@@ -99,6 +124,12 @@ void draw_fit_line(vector<Point2f> points, Mat m) {
 //	imshow("fitLines Window", mLines); //hough
 }
 
+/*
+ * Draws the hough lines, which are stored in a vector of Vec4i on a given matrix and displays it
+ * in a new window.
+ * Vec4i is a representation of line by storing 4 Integer values.
+ * [1]StartX, [2]StartY, [3]EndX, [4]EndY
+ */
 void draw_hough_lines(Mat m, vector<Vec4i> p_lines) {
 
 	Mat hough(m);
@@ -113,14 +144,8 @@ void draw_hough_lines(Mat m, vector<Vec4i> p_lines) {
 
 //			cout << "length in draw:" << norm(p_lines[i]) << endl;
 			Vec4i l = p_lines[i];
-//			Vec4i l = Vec4i(p_lines[i]);
-	//		Vec4i l = p_lines[0];
-//			cout << "l: " << l << endl;
-//			cout << "l: " << l[0] << ", " << l[1] << ", " << l[2] << ", " << l[3] << endl;
-//			cout << "length in draw:" << norm(Point(p_lines[i][0], p_lines[i][1])-Point(p_lines[i][2], p_lines[i][3])) << endl;
-//			cout << "length in draw:" << norm(l) << endl;
+
 			line(hough, Point(l[0], l[1]), Point(l[2], l[3]), color, 1);
-//			line(hough, Point(0, 0), Point(l[0], l[1]), color, 1);
 
 		}
 
@@ -128,6 +153,9 @@ void draw_hough_lines(Mat m, vector<Vec4i> p_lines) {
 		imshow("hough Window", hough); //hough
 }
 
+/*
+ * Puts the text of the article-name and the belonging description on a new window
+ */
 void draw_article_description(const string& article, const string& descr) {
 
 	Mat canvas = Mat::zeros(300, 1200, CV_8UC3);
@@ -176,12 +204,13 @@ void draw_article_description(const string& article, const string& descr) {
 	imshow("Article Description", canvas);
 }
 
-
+/*
+ * Draws the barcode-ID and its type on a given Matrix.
+ * The function is called to draw the barcode on top of the cropped barcode images.
+ */
 void draw_barcode(Mat& img, const string& barcode, const string& type, size_t& number) {
-	// imshow("imgout.jpg",imgout);
-	//    namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
-	//    imshow("MyWindow", imgout);
 
+	//Different type of fonts:
 //		int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
 //		int fontFace = FONT_HERSHEY_SIMPLEX;
 //		int fontFace = FONT_HERSHEY_DUPLEX;
