@@ -14,6 +14,8 @@ using namespace std;
 class SettingObject {
 private:
 	const char* execute;
+	//attributes mean the following:
+	//  go on manually by pressing any key, show all steps of the algorimth, perform an internet search, webcam is selected, text2speech is selected
 	bool stepByStep, showAllSteps, search, webcam, speach;
 	const char* file;
 	char webcamVersion; //i(ntern) | e(xter)

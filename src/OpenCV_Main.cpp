@@ -19,6 +19,13 @@
  * - eSpeak/: The eSpeak function is called here via an executable
  * - network/: The source files of the libcurl library
  * - ZBar/: The source files of the ZBar library
+ *
+ * Every function has a short summary for its purpose or behavior
+ *
+ * !not in use!: means that the function was used in an earlier stage of the system
+ * 				 but was later replaced with another method or idea
+ * (!not in use!): means that the function is called in a function which is currently
+ * 				   not in use
  */
 
 

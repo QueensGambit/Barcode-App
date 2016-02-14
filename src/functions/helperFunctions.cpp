@@ -6,6 +6,11 @@
  */
 #include "helperFunctions.h"
 
+/*
+ * !not in use!
+ * brings a Point back into the valid range
+ * if it was outside of the matrix
+ */
 Point normalize (Point p, Mat m) {
 	if (p.x < 0) {
 		p.x = 0;
@@ -22,10 +27,10 @@ Point normalize (Point p, Mat m) {
 	return p;
 }
 
-//-------------------------------------------------------------
-/*checks if there's a white Pixel in the Area (defined by dst)
-/around the centerPoint*/
-//-------------------------------------------------------------
+/*
+ * checks if there's a white Pixel in the Area (defined by dst)
+ * around the centerPoint
+ */
 bool wPxl_in_Area(Point2f& center, Mat& m, float dst) {
 
 	float endX = center.x + dst;
@@ -45,16 +50,30 @@ bool wPxl_in_Area(Point2f& center, Mat& m, float dst) {
 	return false;
 }
 
+/*
+ * calculates the distance between 2 points
+ * or rather the length of the vector
+ */
 float get_length(Point p1, Point p2) {
 	float x = p2.x - p1.x;
 	float y = p2.y - p1.y;
 	return sqrt(x * x + y * y);
 }
 
+/*
+ * !not in use!
+ * calculates the distance between 2 points
+ * via the chess length method
+ */
 int chess_length(Point p1, Point p2) {
 	return max(abs(p2.x - p1.x), abs(p2.y - p1.y));
 }
 
+/*
+ * (!not in use!)
+ * counts the white Pixels on a given matrix in an area which is defined
+ * by the topLeft and the bottomRight Pixel
+ */
 int count_whitePixel(Point2f topLeft, Point2f bottomRight, Mat skel) {
 	int c = 0;
 	for (int x = topLeft.x; x <= bottomRight.x; x++) {
@@ -68,7 +87,10 @@ int count_whitePixel(Point2f topLeft, Point2f bottomRight, Mat skel) {
 	return c;
 }
 
-//get top left white pixel
+/*
+ * (!not in use!)
+ * gets the top left white pixel of a white pixel area
+ */
 Point2f topLeftPixel(Point2f mc, Mat skel) {
 
 	Point2f topLeftPixel;
@@ -146,7 +168,11 @@ Point2f bottomRightPixel(Point2f mc, Mat skel) {
 	return bRPixel;
 }
 
-
+/*
+ * !not in use!
+ * calculates and returns the ratio of white pixels to black pixel
+ * in an area of a rectangle
+ */
 double getfilledRatio(Mat& img, RotatedRect& rect){
 
     double non_zero = 0;
@@ -171,7 +197,11 @@ double getfilledRatio(Mat& img, RotatedRect& rect){
     return non_zero/total;
 }
 
-//function with side-effects
+/*
+ * !not in use!
+ * creates the skeleton of a given bw-matrix
+ * this function has side-effects and manipulates the paramter
+ */
 void make_skelekton(Mat img) {
 
 	Mat skel(img.size(), CV_8UC1, cv::Scalar(0));
@@ -194,7 +224,9 @@ void make_skelekton(Mat img) {
 	skel.copyTo(img);
 }
 
-
+/*
+ * returns the nearest ContourObject (specified by its index) to a given Point
+ */
 int get_Contour_Min_Dst (vector<ContourObject> vecCO, Point2f p) {
 	int minDst = INT_MAX;
 	int dst;
@@ -210,6 +242,10 @@ int get_Contour_Min_Dst (vector<ContourObject> vecCO, Point2f p) {
 	return index;
 }
 
+/*
+ * returns the nearest point of the rectangle
+ * to the first point of the first point of the rectangle
+ */
 int get_min_Point_from_Rect (Point2f rect_point[4]) {
 
 	int minDst = INT_MAX;
@@ -226,6 +262,11 @@ int get_min_Point_from_Rect (Point2f rect_point[4]) {
 	return index;
 }
 
+/*
+ * returns the 2 points which are the mean values
+ * of the 2 top and the 2 bottom points of the rectangle.
+ * The 2 points are represented by 4 integers values.
+ */
 Vec4i get_Border_Points_from_Rect(Point2f rect_point[4], bool b) {
 
 	Point2f p = rect_point[0];
@@ -255,12 +296,19 @@ Vec4i get_Border_Points_from_Rect(Point2f rect_point[4], bool b) {
 	return v;
 }
 
-
+/*
+ * calculates the length of a vector given with 4 integer values
+ * the norm(Vec4i) function doesn't seem to work correctly and caused bugs
+ */
 float get_length(Vec4i v) {
 
 	return norm(Point(v[0], v[1]) - Point(v[2], v[3]));
 }
 
+/*
+ * manipulates a given matrix by converting its color space
+ * and adaptive thresholding it
+ */
 void make_adaptiv_bw(Mat& m) {
 	cvtColor(m, m, CV_BGR2GRAY);
 //	blur(m, m, Size(5, 5));
@@ -268,6 +316,10 @@ void make_adaptiv_bw(Mat& m) {
 	cvtColor(m, m, CV_GRAY2BGR);
 }
 
+/*
+ * return true if the arg is "true" otherwise false
+ * manual conversion from char to bool
+ */
 bool getBoolValue(const char* arg) {
 	if (string(arg) == "true") {
 		return true;
@@ -275,8 +327,14 @@ bool getBoolValue(const char* arg) {
 	return false;
 }
 
+/*
+ * pauses the program by waiting for any key,
+ * if the setting object allows it
+ */
 void waitAnyKey(const SettingObject& s) {
 	if (s.isStepByStep()) {
+		//idea only to accept the arrows keys was later replaced
+		//by any key
 		/*int key;// 2555904= ->  100=d
 		while (key != 2555904 && key != 100) {
 			key = waitKey(0);
@@ -286,6 +344,10 @@ void waitAnyKey(const SettingObject& s) {
 	}
 }
 
+/*
+ * starts an executable as a parallel external process
+ * this function is used to start the command-line-exe of eSpeaks
+ */
 int start_executable(string command) {
 	 STARTUPINFO si;
 	    PROCESS_INFORMATION pi;
@@ -306,11 +368,6 @@ int start_executable(string command) {
 
 	    cout << "Process started correctly, Process-ID:" << pi.dwProcessId << endl;
        int i = 0;
-       /*while (i < 100) {
-       	cout << i << endl;
-       	Sleep(100);
-       	++i;
-       }*/
 
 	     // Close process and thread handles.
 	     CloseHandle( pi.hProcess );

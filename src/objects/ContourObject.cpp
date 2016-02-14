@@ -7,6 +7,10 @@
 
 #include "ContourObject.h"
 
+/*
+ * Constructor to initialize a ContourObject
+ * with its area-contour and its masscenter
+ */
 ContourObject::ContourObject(Point2f mc, vector<Point>c) {
 			massCenter = mc;
 			contour.swap(c);
@@ -17,22 +21,32 @@ ContourObject::ContourObject(Point2f mc, vector<Point>c) {
 			//lastPoint = contour[4];
 }
 
+/*
+ * Constructor to initialize a ContourObject
+ * with its area-contour
+ */
 ContourObject::ContourObject(vector<Point> c) {
 	contour.swap(c);
 	angle = 0;
 	quadrant = 0;
 }
 
+/*
+ * default constructor
+ */
 ContourObject::ContourObject() {
 	angle = 0;
 	quadrant = 0;
 }
 
+/*
+ * default destructor
+ */
 ContourObject::~ContourObject() {
 	// TODO Auto-generated destructor stub
 }
 
-//getter setter
+//getter setter Methods:
 void ContourObject::setMassCenter(Point2f p){
 	massCenter = p;
 }
@@ -48,14 +62,20 @@ vector<Point> ContourObject::getContour() {
 Point ContourObject::getLastPoint(){
 	return lastPoint;
 }
+
 Point ContourObject::getFirstPoint(){
 	return firstPoint;
 }
+
 void ContourObject::setRectPoints(Point2f point[4]){
 	for(int i =0; i<4;i++){
 		rect_point[i] = point[i];
 	}
 }
+
+/*
+ * function returns the rectPoints via the parameter
+ */
 void ContourObject::getRectPoints(Point2f p[4]){
 //	return rect_point;
 	for (int i = 0; i<4; i++){
@@ -68,12 +88,19 @@ void ContourObject::getRectPoints(Point2f p[4]){
 	return out;
 }*/
 
+/*
+ * draws single circles for every point of the contour
+ */
 void ContourObject::drawContourOnMat(Mat m) {
 	for (size_t i = 0; i < contour.size(); i++) {
 		circle(m, contour[i], 4, Scalar(0,255,0), -1, 8, 0);
 	}
 }
 
+/*
+ * sets up the angle of the ContourObject
+ * and the associating 'quadrant' with it
+ */
 void ContourObject::setAngle(float a) {
 	angle = a;
 	if (a >= 0 && a < 90) {

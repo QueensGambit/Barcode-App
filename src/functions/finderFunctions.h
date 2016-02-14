@@ -38,10 +38,10 @@ using namespace cv;
 using namespace std;
 
 
-vector<ContourObject> find_moments(Mat, int, Mat, Size);
+vector<ContourObject> find_moments(Mat, int, Mat, Size); // !not in use!
 vector<ContourObject> find_mser(Mat, const SettingObject&);
-//void find_Colour_for_Groups(map<Scalar, vector< vector< ContourObject> > >&,Scalar, ContourObject);
-//void find_groups(Mat, vector<ContourObject>);
+//void find_Colour_for_Groups(map<Scalar, vector< vector< ContourObject> > >&,Scalar, ContourObject);// !not in use!
+//void find_groups(Mat, vector<ContourObject>);// !not in use!
 
 vector<Vec4i> get_probabilistic_hough_lines(Mat);
 vector<vector<Point2f> > get_corner_points(vector<Vec4i>, vector<ContourObject>, Mat, const SettingObject&);

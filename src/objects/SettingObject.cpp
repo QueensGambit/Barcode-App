@@ -7,6 +7,11 @@
 
 #include "SettingObject.h"
 
+/*
+ * the only contructor of the SettingObject
+ * it initialiazes all important attributes of the object
+ * more about commentary the attributes is in the SettingObject.h file
+ */
 SettingObject::SettingObject(const char* execute, bool stepByStep, bool showAllSteps,
 		bool search, bool webcam, bool speach,
 	const char* file,
@@ -22,6 +27,7 @@ SettingObject::SettingObject(const char* execute, bool stepByStep, bool showAllS
 	this->webcamStyle = webcamStyle;
 }
 
+//getter setter methods:
 const char* SettingObject::getFile() const {
 	return file;
 }
@@ -54,6 +60,9 @@ char SettingObject::getWebcamVersion() const {
 	return webcamVersion;
 }
 
+/*
+ * prints all configured attributes on the console
+ */
 void SettingObject::printSettings() {
 	cout << "---------------------------------------" << endl;
 	cout << "Settings: " << endl;
@@ -69,6 +78,9 @@ void SettingObject::printSettings() {
 	cout << "---------------------------------------" << endl;
 }
 
+/*
+ * setter function to define or change all attributes manually
+ */
 void SettingObject::setValues(bool stepByStep, bool showAllSteps, bool search,
 		bool webcam, bool speach, const char* file, char webcamVersion, char webcamStyle) {
 	this->stepByStep = stepByStep;
@@ -81,10 +93,14 @@ void SettingObject::setValues(bool stepByStep, bool showAllSteps, bool search,
 	this->webcamStyle = webcamStyle;
 }
 
+/*
+ * default destructor
+ */
 SettingObject::~SettingObject() {
 	// TODO Auto-generated destructor stub
 }
 
+//getter setter methods:
 bool SettingObject::isSpeach() const {
 	return speach;
 }

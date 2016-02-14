@@ -8,6 +8,9 @@
 #include "finderFunctions.h"
 
 /*
+ * !not in use!
+ * Earlier attempt to sort all single lines of a barcode into one group
+ * The idea was to give every hough line a specific colour to identify belonging barcode lines
  * Lines of Barcodes have to be grouped now
  */
 
@@ -37,6 +40,7 @@
 ////
 ////	}
 //}
+//!not in use!
 //void find_groups(Mat m, vector<ContourObject> vecCO) {
 //	vector<vector<ContourObject> > group;
 //	for (int i = 0; i < vecCO.size(); i++) {
@@ -47,7 +51,11 @@
 //	}
 //}
 
-
+/*
+ * !not in use!
+ * It was used in association with the approach to get contours with the canny filter
+ * later this procedure was replaced with the usage mser-detection
+ *  */
 vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel, Size size) {
 
 	RNG rng(12345);
@@ -128,6 +136,12 @@ vector<ContourObject> find_moments(Mat gray, int thresh, Mat skel, Size size) {
 	return vecCO;
 }
 
+/*
+ * This function finds maximum stable areas
+ * and saves them as a set of points in a vector.
+ * The parameters are set up in a way to fit a the criteria of a single barcode stripe
+ * as closely as possible.
+ */
 vector<ContourObject> find_mser(Mat gray, const SettingObject& s) {
 	RNG rng(12345);
 	MSER ms;
@@ -165,35 +179,33 @@ vector<ContourObject> find_mser(Mat gray, const SettingObject& s) {
 
 }
 
+/*
+ * Calculates possible lines on the matrix where the mass-centers are printed on.
+ * It return a vector of lines, which are define by 4 integer values.
+ */
 vector<Vec4i> get_probabilistic_hough_lines(Mat m) {
 	vector<Vec4i> p_lines;
 
 	Mat dst;
-//	blur(m, m, Size(3, 3));
-//	Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
-//	dilate( m, m, element );
-	 Canny(m, dst, 50, 200, 3);
 
-//	cvtColor(m, gray, COLOR_BGR2GRAY);
+	Canny(m, dst, 50, 200, 3);
 
-//	Mat bw = m > 128;
-
-	/// 2. Use Probabilistic Hough Transform //30	//80
+	/// 2nd Use Probabilistic Hough Transform //30	//80
 	HoughLinesP(dst, p_lines, 1, CV_PI / 180, 30, 30, 60);
-
-//	filter_hough_lines(p_lines, 0.00002, m.cols*m.rows);
-//	filter_hough_lines2(p_lines);
-
-
-
-
 
 	return p_lines;
 }
 
+/*
+ * Calculates the 4 corner points of a barcode
+ * with the help of the found and filtered hough lines.
+ * It calls the get_Border_Points_from_Rect() function for the ContourObject(single stripe)
+ * which represents the start of a barcode
+ * and the ContourObject which represents the end of a barcode.
+ * At the end it returns a vector of a vector
+ * in which each element contains 4 belonging corner points.
+ */
 vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourObject> vecCO, Mat mBarcodePoints, const SettingObject& s) {
-
-//	cout << "size of vecCO in filter_detected: " << vecCO.size() << endl;
 
 	vector<Vec4i>::const_iterator it2 = lines.begin();
 
@@ -209,21 +221,14 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 
 		Point2f start((*it2)[0], (*it2)[1]);
 		Point2f end((*it2)[2], (*it2)[3]);
-//		cout << "startpoint: " << start << endl;
-//		cout << "endpoint: " << end << endl;
-//		cout << "entree" << endl;
 
+		//approach to use pointPolygonTest was replaced
 			//startpoint inside countour?
 			/*
 			 * It returns positive (inside), negative (outside), or zero (on an edge) value,
 			 * correspondingly. When measureDist=false , the return value is +1, -1, and 0
 			 *
 			 */
-
-			//cout << "test: " << i << endl;
-			//cout << "start " << pointPolygonTest(vecCO[i].getContour(), start, false) << endl;
-			//cout << "ende " << pointPolygonTest(vecCO[i].getContour(), end, false) << endl;
-
 
 //			if (pointPolygonTest(vecCO[i].getContour(), start, false) >= 0) {
 			int sIndex = get_Contour_Min_Dst(vecCO, start);
@@ -259,77 +264,51 @@ vector<vector<Point2f> > get_corner_points(vector<Vec4i> lines, vector<ContourOb
 				cornerPoints.push_back(tmpCPoints);
 
 			}
-//			}
-
-				//break;
-//			}
-
 
 		it2++;
 
 	}
-//	Size s = Size(324, 244);
-//	Size s = Size(1138, 1600);
 
-//	Mat mBarcodePoints =  Mat::zeros(size, CV_8UC3);
 	RNG rng(12345);
 
-//	cout << "cornerPoints:" << cornerPoints.size() << endl;
 	vector<Point2f> tmpCPoints(4);
 
 	mBarcodePoints -= .5 * mBarcodePoints;
 	for(size_t p = 0; p < cornerPoints.size(); p++){
 		tmpCPoints = cornerPoints[p];
 		Scalar color = Scalar(rng.uniform(0, 2) * 255, rng.uniform(0, 2)* 255,rng.uniform(0, 2) * 255);
-//		Scalar color = Scalar(255, 255, 0);
-//	    Point intRect_points[4];
+
 		for(int z = 0; z<4; z++){
-//			cout << "Punkt" << z << " " << tmpCPoints[z] << endl;
 
 			circle(mBarcodePoints, tmpCPoints[z], 3, color, -1, 8, 0);
-//			intRect_points[z] = tmpCPoints[z];
 
 		}
-//		fillConvexPoly( mBarcodePoints, intRect_points, 4, Scalar(255,255,255), 8, 0);
+
 	}
 	if (!s.isBasic()) {
 	namedWindow("Barocde Punkte", WINDOW_AUTOSIZE); //WINDOW_NORMAL
 	imshow("Barocde Punkte", mBarcodePoints);
 	}
-//	cout << "hits start: " << startH << endl;
-//	cout << "hits end: " << endH << endl;
 
 	return cornerPoints;
 
 }
 
+/*
+ * Uses the ZBar Library in order to detect and receive barcode informations on a given matrix.
+ * The function returns via the parameters the resulting barcode-string, barcode-type and the barcode-angle
+ */
 bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
 		size_t& number, const SettingObject& s) {
 
+	//Scanner is used for the ZBar library
 	ImageScanner scanner;
 	scanner.set_config(ZBAR_NONE, ZBAR_CFG_ENABLE, 1);
-	// obtain image data
-	//char file[256];
-	//cin>>file;
-	//Mat img = imread(file,0);
-//      Mat img = imread("D:/Gimp/DBV/media/gut/mandarine_scaled.jpg", CV_LOAD_IMAGE_COLOR);
-//       Mat img = imread("D:/Gimp/DBV/media/gut/auschnitt_himbeere.jpg", CV_LOAD_IMAGE_COLOR);
-//       Mat img = imread("D:/Gimp/DBV/media/gut/auschnitt_joghurt2.jpg", CV_LOAD_IMAGE_COLOR);
-//       Mat img = imread("D:/Gimp/DBV/barcode_schnitt2_mirrored.png", CV_LOAD_IMAGE_COLOR);
-//     Mat img = imread("D:/Gimp/DBV/barcode_schnitt4.jpg", CV_LOAD_IMAGE_COLOR);
-//      Mat img = imread("D:/Gimp/DBV/media/gut/mandarine.jpg", CV_LOAD_IMAGE_COLOR);
-	//Mat img = imread("D:/Program Files (x86)/ZBar/examples/barcode.png", CV_LOAD_IMAGE_COLOR);
-
-	//Mat img = imread("D:/Gimp/DBV/Lenna.png", CV_LOAD_IMAGE_COLOR);
-
-	//cvtColor(img,imgout,CV_GRAY2RGB);
 
 	Mat imgout;
 	cvtColor(img, imgout, CV_RGB2GRAY);
 	int width = img.cols;
 	int height = img.rows;
-//    cout << "cols: " << width << endl;
-//    cout << "height: " << height << endl;
 
 	uchar *raw = (uchar *) imgout.data;
 	// wrap image data
@@ -344,10 +323,8 @@ bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
 	for (Image::SymbolIterator symbol = image.symbol_begin();
 			symbol != image.symbol_end(); ++symbol) {
 		vector<Point> vp;
-		// do something useful with results
-		/*cout << "decoded " << symbol->get_type_name()
-		 << " symbol \"" << symbol->get_data() << '"' <<" "<< endl;*/
 
+		// save the results in variables
 		code = symbol->get_data();
 		type = symbol->get_type_name();
 
@@ -374,7 +351,7 @@ bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
 
 ///addition
 
-	// extract results
+	// print results in the console
 	for (Image::SymbolIterator symbol = image.symbol_begin();
 			symbol != image.symbol_end(); ++symbol) {
 		// do something useful with results
@@ -382,8 +359,6 @@ bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
 				<< symbol->get_data() << '"' << endl;
 	}
 	//////
-
-//cout << "The Barcode is: " << n << endl;
 
 	// clean up
 	image.set_data(NULL, 0);
@@ -402,11 +377,18 @@ bool get_barcode_string(Mat& img, string& code, string& type, float& angle,
 	return false;
 }
 
-
+/*
+ * Looks up the barcode-string on codecheck.info if it wasn't found in the local csv-files.
+ * Here the LibCurl library is used to create a http-get-request.
+ * The result containing the article name and the article description is excrated
+ * via string operations on the http site-string and are saved in the parameters.
+ * The function returns true if the article was successfully found, otherwise it return false.
+ */
 bool get_article_description_internet(const string& barcode, string& article, string& description) {
 
 	//	const char* url = "http://www.example.com";
 
+	//example barcode-strings
 	//	string barcode = "8430631154438";
 	//	string barcode = "3423621672";
 	//	string barcode = "42103684";
@@ -414,13 +396,14 @@ bool get_article_description_internet(const string& barcode, string& article, st
 	//	string barcode = "4018077711770";
 	//	string barcode = "8430631216549";
 	//	string barcode = "4018077711770";
-//	string barcode = "4250589702215";
+	//	string barcode = "4250589702215";
+	//	string barcode = "4014400400007";
 
 	if (barcode.size() == 0) {
 		return false;
 	}
 
-	//	string barcode = "4014400400007";
+	//url of codecheck.info
 	string url = "http://www.codecheck.info/product.search?q=" + barcode;
 	string result = curl_httpget(url);
 
@@ -475,6 +458,7 @@ bool get_article_description_internet(const string& barcode, string& article, st
 
 	cout << "beschreibung: " << description << endl;
 
+	//print the result on the console till letter 900
 	/*cout << "result:" << endl;
 
 	 int stop = 900;
@@ -485,6 +469,10 @@ bool get_article_description_internet(const string& barcode, string& article, st
 	return true;
 }
 
+/*
+ * This function is used in association with the LibCurl library
+ * to get the http-answer string of an url.
+ */
 string curl_httpget(const string &url)
 {
     string buffer;
@@ -501,6 +489,8 @@ string curl_httpget(const string &url)
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
 
+      //here its necessary to follow the http request
+      //because you are automaticly redirected
       //-----------------------------------------------------
       curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
       //-----------------------------------------------------
@@ -521,6 +511,10 @@ string curl_httpget(const string &url)
     return "";
 }
 
+/*
+ * Is used in association with the LibCurl-Library
+ * to write the data form the buffer.
+ */
 int writer(char *data, size_t size, size_t nmemb, string *buffer)
 {
   int result = 0;
@@ -532,8 +526,13 @@ int writer(char *data, size_t size, size_t nmemb, string *buffer)
   return result;
 }
 
-
-//http://www.cplusplus.com/forum/general/17771/
+/*
+ * Looks up the barcode-string in the csv-file, which is specified by its file-path.
+ * The result containing the article name and the article description is saved in the parameters.
+ *
+ * More information about reading data from a csv-file on:
+ * //http://www.cplusplus.com/forum/general/17771/
+ */
 bool get_article_descr_csv(const char* path, string& code, string& article,
 		string& descr) {
 	vector<vector<string> > data;
@@ -596,7 +595,11 @@ bool get_article_descr_csv(const char* path, string& code, string& article,
 	return false;
 }
 
-
+/*
+ * Adds a new article-description to the end of the adder.csv file.
+ * Tabs are used as the delimiter.
+ * The entry contains the the code, the article name and the article-description
+ */
 bool add_article_descr_to_csv(const char* path, string& code, string& article, string& descr) {
 
 	ofstream out;
@@ -611,14 +614,6 @@ bool add_article_descr_to_csv(const char* path, string& code, string& article, s
 	// new data will be written tostr the end of the file.
 	out.open(path, ios::app);
 
-	/*
-	if (!out.eof()) {
-		//add Header if file doesn't exist yet
-		cout << "barcode-EAN\tarticle\tdescr" << endl;
-	}*/
-
-//	string newLine  = code; //+ "," + article + "," + descr;
-//	cout << "newLine: " << newLine << endl;
 	cout << "code: " << code << endl;
 	cout << "article: " << article << endl;
 	out << code << "\t" << article << "\t" << descr << endl;

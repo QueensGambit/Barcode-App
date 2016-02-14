@@ -25,24 +25,24 @@ using namespace cv;
 using namespace std;
 
 //helper fuctions
-Point normalize (Point, Mat);
+Point normalize (Point, Mat);// !not in use!
 
 bool wPxl_in_Area(Point2f&, Mat&, float);
 
 float get_length(Point, Point);
 float get_length(Vec4i);
 
-int chess_length(Point, Point);
+int chess_length(Point, Point);// !not in use!
 
-int count_whitePixel(Point2f, Point2f, Mat);
+int count_whitePixel(Point2f, Point2f, Mat);// (!not in use!)
 
-Point2f topLeftPixel(Point2f, Mat);
+Point2f topLeftPixel(Point2f, Mat);// (!not in use!)
 
-Point2f bottomRightPixel(Point2f, Mat);
+Point2f bottomRightPixel(Point2f, Mat);// (!not in use!)
 
-double getfilledRatio(Mat&, RotatedRect&);
+double getfilledRatio(Mat&, RotatedRect&);// !not in use!
 
-void make_skelekton(Mat);
+void make_skelekton(Mat);// !not in use!
 
 void make_adaptiv_bw(Mat&);
 

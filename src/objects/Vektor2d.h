@@ -17,6 +17,12 @@ using namespace std;
  */
 
 
+/*
+ * (!not in use!)
+ * This object was created to have the functionality
+ * of a vector in 2d space
+ * Later the default representation of OpenCV for a line was used.
+ */
 class Vektor2d {
 private:
 	Point ortsV;

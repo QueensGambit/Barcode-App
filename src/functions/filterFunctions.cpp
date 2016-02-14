@@ -7,13 +7,17 @@
 
 #include "filterFunctions.h"
 
+/*
+ * !not in use!
+ * filters the moments based on whether they are on a white pixel
+ */
 vector<Point2f> filter_moments(vector<Point2f> mc, Mat skel) {
 
 	int xDst = 0, yDst = 0;
 	cout << "mc.size() = " << mc.size() << endl;
 	vector<Point2f> tempMC;
 	for (unsigned int i = 0; i < mc.size(); i++) {
-		//weisser Punkt auf moment Zentrum
+		//white point on moment center
 		if (skel.at<uchar>(Point(mc[i].x + xDst, mc[i].y + yDst)) == 255) {
 			tempMC.push_back(mc[i]);
 		}
@@ -23,7 +27,13 @@ vector<Point2f> filter_moments(vector<Point2f> mc, Mat skel) {
 }
 
 
-
+/*
+ * first calculates the minimum rotated rectangle for every contour
+ * then filters them based on their aspect ratio (float threshAspect)
+ * the new filtered vector of ContourObjects is returned at the end
+ * (a filtering based on the number of white pixel behind the rectangle was removed
+ * 	due to lack of usefulness and causing some bugs)
+ */
 vector<ContourObject> filter_by_rect(vector<ContourObject> vecCO, Mat m,
 		float threshWPxl, float threshAspect) {
 
@@ -65,6 +75,12 @@ vector<ContourObject> filter_by_rect(vector<ContourObject> vecCO, Mat m,
 	return fVecCO;
 }
 
+/*
+ * !not in use!
+ * checks based on the hitThresh if there enough white pixels behind the line
+ * of the ContourObject
+ * The line is calculated by the first and the last point of the contour set
+ */
 vector<ContourObject> filter_lines(vector<ContourObject> vecCO, Mat skel,
 		int hitThresh) {
 	Point last;
@@ -99,6 +115,10 @@ vector<ContourObject> filter_lines(vector<ContourObject> vecCO, Mat skel,
 	return newVecCO;
 }
 
+/*
+ * !not in use!
+ * checks based on a thresh hold if there are enough white pixel in the area of the contour
+ */
 vector<Point2f> island_filter(vector<Point2f> mc, Mat skel, int thresh) {
 
 	Point2f tL, bR;
@@ -115,6 +135,10 @@ vector<Point2f> island_filter(vector<Point2f> mc, Mat skel, int thresh) {
 	return temp;
 }
 
+/*
+ * !not in use!
+ * filters the contours based on their nearest neighbor distance
+ */
 vector<ContourObject> filter_by_dst(vector<ContourObject> vecCO, int pxlSum,
 		float threshDst, Size size) {
 
@@ -144,6 +168,12 @@ vector<ContourObject> filter_by_dst(vector<ContourObject> vecCO, int pxlSum,
 	return fVecCO;
 }
 
+/*
+ * !not in use!
+ * morphological closing and opening operation for the rectangles
+ * At this stage it was tried to find the barcode by merging the rotated rectangles
+ * and cropping out the largest area
+ */
 void cluster_rect(Mat b, vector<ContourObject> vecCO) {
 
 	draw_minRectangles(vecCO, b);
@@ -163,7 +193,11 @@ void cluster_rect(Mat b, vector<ContourObject> vecCO) {
 	imshow("RectDilate", b);
 
 }
-
+/*
+ * !not in use!
+ * checks if houghLines are similar to each other and merges them
+ * it's not used to its extreme run time
+ */
 //sideEffect for pLine
 void filter_hough_lines(vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 
@@ -215,57 +249,47 @@ void filter_hough_lines(vector<Vec4i>& pLine, float threshDst, int pxlSum) {
 	cout << "pLine.size: " << pLine.size() << endl;
 }
 
+/*
+ * more performant version of the filter_hough_lines() method
+ * It sorts similar lines in an equivalence class and the take the longest representative  of it
+ * The sorting is based on the defined isEqual() function
+ */
 vector<Vec4i> filter_hough_lines2(vector<Vec4i>& pLines) {
 
-//	cout << "pLine.size(): " << pLines.size() << endl;
 	vector<int> labels;
 
 	//partition sorts the line into similar equivalence classes
 	int numberOfLines = partition(pLines, labels, isEqual);
-	/*	cout << "numberOfLines: " << numberOfLines << endl;
-	 for (int i = 0; i < labels.size(); i++) {
-	 cout << "label[" << i << "]: " << labels[i] << endl;
-	 }
-	 //	cout << "labels.size(): " << labels.size() << endl;*/
 
 	//get the longest line out of the equivalence classes
 	vector<Vec4i> fLines(numberOfLines);
 	float maxLength;
 	int indexWithMaxLength;
-//	cout << "--------- direktes Auslesen ---------------------" << endl;
-//	cout << "single points:" << endl;
-//	cout << "labels.size() " << labels.size() << endl;
-//	cout << "pLines.size() " << pLines.size() << endl;
+
 	for (int i = 0; i < numberOfLines; i++) {
 		maxLength = 0;
 		for (size_t z = 0; z < labels.size(); z++) {
 			if (labels[z] == i) {
-//				cout << "lenght[" << z << "]: " << norm(pLines[z]) << endl;
-//				cout << "lenght[" << z << "]: "
-//						<< norm(Point(pLines[z][0], pLines[z][1]) - Point(pLines[z][2], pLines[z][3])) << endl;
-//				cout << "lenght[" << z << "]: " << get_length(pLines[z]) << endl;
-//				if (norm(pLines[z]) > maxLength) {
+
 				if (get_length(pLines[z]) > maxLength) {
 					indexWithMaxLength = z;
 					maxLength = get_length(pLines[z]);
 				}
 			}
 		}
-//		cout << "indexWithMaxLength: " << indexWithMaxLength << endl;
-//		cout << "maxLength: " << get_length(pLines[indexWithMaxLength]) << endl;
+
 		fLines[i] = pLines[indexWithMaxLength];
-//		cout << "fLines[i]: " << fLines[i] << endl;
-		/*cout << "Line[" << i << "]:" << endl;
-		cout << "xStart: " << fLines[i][0] << " ";
-		cout << "yStart: " << fLines[i][1] << endl;
-		cout << "xEnd: " << fLines[i][2] << " ";
-		cout << "yEnd: " << fLines[i][3] << endl;*/
+
 	}
-//	cout << "-------------------------------------------" << endl;
 
 	return fLines;
 }
 
+/*
+ * It is used to sort similar lines in the partition() function
+ * by checking if their attributes (length, endpoint distance, angle) are roughly equal
+ * If this is the case it return true otherwise false
+ */
 bool isEqual(const Vec4i& _l1, const Vec4i& _l2) {
 	Vec4i l1(_l1), l2(_l2);
 

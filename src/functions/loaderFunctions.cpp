@@ -7,7 +7,13 @@
 
 #include "loaderFunctions.h"
 
-
+/*
+ * reads the frames from the webcam and permamently checks for barcodes,
+ * if the 'm' (many frames) style was selected.
+ * As soon as a barcode was successfully found it returns the current frame.
+ * Alternatively you can check one single frame manually by pressing enter with
+ * the webcamstyle 's' (single frame) selected.
+ */
 Mat get_image_from_webcam(char webcamVersion, char webcamStyle) {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -71,6 +77,9 @@ Mat get_image_from_webcam(char webcamVersion, char webcamStyle) {
 					readSuccess = get_barcode_string(bw_frame, barcode, type, angle, i, s);
 	//				if (readSuccess)
 	//				cout << "success bw" << endl;*/
+
+
+				//calls our whole algorithm as a single methode
 				readSuccess = get_Barcode(frame, s);
 				if (readSuccess == -1) {
 					return src;

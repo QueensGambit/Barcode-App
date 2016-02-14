@@ -26,6 +26,8 @@ private:
 	vector<Point> contour;
 	Point firstPoint, lastPoint;
 	Point2f rect_point[4];
+
+	//the angle and the quadrant is not actively used
 	float angle;
 	int quadrant;
 
