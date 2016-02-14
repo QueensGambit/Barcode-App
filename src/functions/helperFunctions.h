@@ -57,4 +57,6 @@ bool getBoolValue(const char*);
 int start_executable(string command);
 
 void waitAnyKey(const SettingObject&);
+
+void prepareSrc(const Mat&, Mat&, Mat&);
 #endif /* HELPERFUNCTIONS_H_ */

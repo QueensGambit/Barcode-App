@@ -103,6 +103,7 @@ int get_Barcode( Mat& src, SettingObject& s) {
 	/// Load source image, convert it to gray and blur it
 //	Mat src;	//, gray;
 
+	//sample images for testing purposes:
 //	src = get_image_from_webcam();
 //	src = imread("media/gut/joghurt_scaled.jpg");
 //	src = imread("media/gut/highQu_scaled.jpg");
@@ -136,33 +137,13 @@ int get_Barcode( Mat& src, SettingObject& s) {
 //	Mat canny_output;
 	Mat bw_thresh, gray;
 
-	cvtColor(src, gray, CV_BGR2GRAY);
-//	blur(gray, canny_output, Size(3, 3));
+	prepareSrc(src, bw_thresh, gray);
 
-	//invert the image !
-	gray = ~gray;
-
-//	Canny(gray, canny_output, 50, 150, 3);
-//	namedWindow("Canny", CV_WINDOW_AUTOSIZE);
-//	imshow("Canny", canny_output);
-
-//	resize(src, src, blank.size());
+//	medianBlur ( gray, gray, 3 );
 	if (s.isShowAllSteps()) {
 	namedWindow("Source", CV_WINDOW_AUTOSIZE);
 	imshow("Source", src);
 	waitAnyKey(s);
-	}
-//	namedWindow(skel_window, CV_WINDOW_AUTOSIZE);
-
-	adaptiveThreshold(gray, bw_thresh, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, -8);
-
-//	gray += ~gray;
-//	gray /= 2;
-	gray += .4 * bw_thresh; //*.4
-//	gray += .4 * canny_output;
-
-//	medianBlur ( gray, gray, 3 );
-	if (s.isShowAllSteps()) {
 	namedWindow( "Gray", CV_WINDOW_AUTOSIZE );
 	imshow( "Gray", gray );
 	waitAnyKey(s);

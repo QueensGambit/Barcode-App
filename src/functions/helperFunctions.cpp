@@ -374,3 +374,37 @@ int start_executable(string command) {
 	     CloseHandle( pi.hThread );
    return 0;
 }
+
+/*
+ * converts the src-image into a gray image with enhanced edges
+ * and a bw-image via the adaptive-threshold method
+ */
+void prepareSrc(const Mat& src, Mat& bw_thresh, Mat& gray) {
+	cvtColor(src, gray, CV_BGR2GRAY);
+
+	///blurring was used prior the canny filter
+//	blur(gray, canny_output, Size(3, 3));
+
+	//invert the image !
+	gray = ~gray;
+
+	//earlier attempt with the canny filter
+//	Canny(gray, canny_output, 50, 150, 3);
+//	namedWindow("Canny", CV_WINDOW_AUTOSIZE);
+//	imshow("Canny", canny_output);
+
+//resizing is an option if the src image is too big for the screen display
+//	resize(src, src, blank.size());
+
+//	namedWindow(skel_window, CV_WINDOW_AUTOSIZE);
+
+	adaptiveThreshold(gray, bw_thresh, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, -8);
+
+	//other ideas to use the canny filter to enhance edges
+//	gray += ~gray;
+//	gray /= 2;
+//	gray += .4 * canny_output;
+
+	gray += .4 * bw_thresh;
+
+}
